@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Copy, Check, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +20,7 @@ export default function OrderSuccessDialog({
   onClose,
 }: OrderSuccessDialogProps) {
   const [copied, setCopied] = useState(false);
+  const { t } = useTranslation();
 
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
@@ -29,7 +31,7 @@ export default function OrderSuccessDialog({
       // Try native share on mobile only
       if (isMobile && navigator.share) {
         await navigator.share({
-          title: "My Order",
+          title: t("orderSuccess.shareTitle"),
           url: orderUrl,
         });
         return;
@@ -62,13 +64,13 @@ export default function OrderSuccessDialog({
     <Dialog open={!!orderUrl} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Order Placed Successfully!</DialogTitle>
+          <DialogTitle>{t("orderSuccess.title")}</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-3 rounded-lg bg-amber-50 border border-amber-200 p-4">
             <Share2 className="h-6 w-6 text-amber-600 shrink-0" />
             <p className="text-sm font-medium text-amber-800">
-              Don't forget to share this link with your host.
+              {t("orderSuccess.shareReminder")}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -87,11 +89,11 @@ export default function OrderSuccessDialog({
           </div>
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={onClose}>
-              Close
+              {t("common.close")}
             </Button>
             <Button asChild>
               <Link to={orderUrl?.replace(window.location.origin, "") || "#"}>
-                View Order
+                {t("orderSuccess.viewOrder")}
               </Link>
             </Button>
           </div>

@@ -1,0 +1,41 @@
+{
+  "product": {
+    "title": "Products",
+    "loadError": "Failed to load products. Please try again later."
+  },
+  "common": {
+    "close": "Close",
+    "loading": "Loading...",
+    "total": "Total"
+  },
+  "navbar": {
+    "catalog": "Catalog"
+  },
+  "cart": {
+    "title": "Cart",
+    "loading": "Loading cart...",
+    "empty": "Your cart is empty.",
+    "quantity": "Quantity",
+    "checkout": "Checkout",
+    "processing": "Processing..."
+  },
+  "order": {
+    "title": "Order Details",
+    "orderId": "Order ID",
+    "placedOn": "Placed on {{date}}",
+    "items": "Items",
+    "notes": "Notes",
+    "loadError": "Failed to load order. Please check the order ID and try again.",
+    "status": {
+      "confirmed": "Confirmed",
+      "processed": "Processed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "orderSuccess": {
+    "title": "Order placed successfully!",
+    "shareReminder": "Don't forget to share this link with your host.",
+    "viewOrder": "View Order",
+    "shareTitle": "My Order"
+  }
+}

@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "@/components/ui/toaster";
 
-import HomePage from "@/pages/home/HomePage";
+import ProductPage from "@/pages/product/ProductPage";
 import CartPage from "@/pages/cart/CartPage";
 import OrderPage from "@/pages/order/OrderPage";
 import LanguageLayout from "@/layouts/LanguageLayout";
@@ -31,7 +31,7 @@ function App() {
           {/* Language-prefixed routes */}
           <Route path="/:lang" element={<LanguageLayout />}>
             <Route index element={<Navigate to="products" replace />} />
-            <Route path="products" element={<HomePage />} />
+            <Route path="products" element={<ProductPage />} />
             <Route path="cart" element={<CartPage />} />
             <Route path="orders/:orderId" element={<OrderPage />} />
           </Route>

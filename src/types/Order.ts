@@ -9,7 +9,7 @@ export interface OrderItem {
 
 export interface Order {
   id: string;
-  status: "pending" | "confirmed" | "cancelled";
+  status: "confirmed" | "processed" | "cancelled";
   total: string;
   notes: string | null;
   items: OrderItem[];

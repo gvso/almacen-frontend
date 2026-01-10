@@ -1,0 +1,41 @@
+{
+  "product": {
+    "title": "Productos",
+    "loadError": "No se pudieron cargar los productos. Por favor, inténtalo de nuevo más tarde."
+  },
+  "common": {
+    "close": "Cerrar",
+    "loading": "Cargando...",
+    "total": "Total"
+  },
+  "navbar": {
+    "catalog": "Catálogo"
+  },
+  "cart": {
+    "title": "Carrito",
+    "loading": "Cargando carrito...",
+    "empty": "Tu carrito está vacío.",
+    "quantity": "Cantidad",
+    "checkout": "Pagar",
+    "processing": "Procesando..."
+  },
+  "order": {
+    "title": "Detalles del Pedido",
+    "orderId": "ID de Pedido",
+    "placedOn": "Realizado el {{date}}",
+    "items": "Artículos",
+    "notes": "Notas",
+    "loadError": "No se pudo cargar el pedido. Verifica el ID del pedido e intenta de nuevo.",
+    "status": {
+      "confirmed": "Confirmado",
+      "processed": "Procesado",
+      "cancelled": "Cancelado"
+    }
+  },
+  "orderSuccess": {
+    "title": "¡Pedido realizado con éxito!",
+    "shareReminder": "No olvides compartir este enlace con tu anfitrión.",
+    "viewOrder": "Ver Pedido",
+    "shareTitle": "Mi Pedido"
+  }
+}

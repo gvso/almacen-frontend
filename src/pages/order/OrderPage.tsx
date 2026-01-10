@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Package, CheckCircle, Clock, XCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Package, CheckCircle, XCircle } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import PageTitle from "@/components/PageTitle";
 import Spinner from "@/components/Spinner";
@@ -12,27 +13,22 @@ function formatPrice(value: string | number): string {
   return Number(value).toFixed(2);
 }
 
-const statusConfig = {
-  pending: {
-    label: "Pending",
-    icon: Clock,
-    className: "text-yellow-600 bg-yellow-50",
-  },
-  confirmed: {
-    label: "Confirmed",
-    icon: CheckCircle,
-    className: "text-green-600 bg-green-50",
-  },
-  cancelled: {
-    label: "Cancelled",
-    icon: XCircle,
-    className: "text-red-600 bg-red-50",
-  },
+const statusIcons = {
+  confirmed: CheckCircle,
+  processed: CheckCircle,
+  cancelled: XCircle,
+};
+
+const statusStyles = {
+  confirmed: "text-yellow-600 bg-yellow-50",
+  processed: "text-green-600 bg-green-50",
+  cancelled: "text-red-600 bg-red-50",
 };
 
 export default function OrderPage() {
   const { orderId } = useParams<{ orderId: string }>();
   const language = useLanguage();
+  const { t } = useTranslation();
 
   const { data: order, isLoading, isError } = useQuery({
     queryKey: ["order", orderId, language],
@@ -40,14 +36,15 @@ export default function OrderPage() {
     enabled: !!orderId,
   });
 
-  const status = order ? statusConfig[order.status] : null;
-  const StatusIcon = status?.icon;
+  const StatusIcon = order ? statusIcons[order.status] : null;
+  const statusStyle = order ? statusStyles[order.status] : null;
+  const statusLabel = order ? t(`order.status.${order.status}`) : null;
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <PageTitle>Order Details</PageTitle>
+        <PageTitle>{t("order.title")}</PageTitle>
 
         {isLoading && (
           <div className="flex justify-center py-16">
@@ -56,7 +53,7 @@ export default function OrderPage() {
         )}
 
         {isError && (
-          <ErrorAlert message="Failed to load order. Please check the order ID and try again." />
+          <ErrorAlert message={t("order.loadError")} />
         )}
 
         {order && (
@@ -65,26 +62,26 @@ export default function OrderPage() {
             <div className="rounded-lg border p-6">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Order ID</p>
+                  <p className="text-sm text-muted-foreground">{t("order.orderId")}</p>
                   <p className="font-mono text-lg font-medium">{order.id}</p>
                 </div>
-                {status && StatusIcon && (
-                  <div className={`inline-flex items-center gap-2 rounded-full px-4 py-2 ${status.className}`}>
+                {statusStyle && StatusIcon && (
+                  <div className={`inline-flex items-center gap-2 rounded-full px-4 py-2 ${statusStyle}`}>
                     <StatusIcon className="h-5 w-5" />
-                    <span className="font-medium">{status.label}</span>
+                    <span className="font-medium">{statusLabel}</span>
                   </div>
                 )}
               </div>
               {order.insertedAt && (
                 <p className="mt-4 text-sm text-muted-foreground">
-                  Placed on {new Date(order.insertedAt).toLocaleDateString()}
+                  {t("order.placedOn", { date: new Date(order.insertedAt).toLocaleDateString() })}
                 </p>
               )}
             </div>
 
             {/* Order Items */}
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold">Items</h2>
+              <h2 className="text-xl font-semibold">{t("order.items")}</h2>
               {order.items.map((item) => (
                 <div
                   key={item.productId}
@@ -116,13 +113,13 @@ export default function OrderPage() {
 
             {/* Order Total */}
             <div className="border-t pt-4 text-right">
-              <p className="text-xl font-bold">Total: ${formatPrice(order.total)}</p>
+              <p className="text-xl font-bold">{t("common.total")}: ${formatPrice(order.total)}</p>
             </div>
 
             {/* Notes */}
             {order.notes && (
               <div className="rounded-lg border p-4">
-                <h2 className="mb-2 font-semibold">Notes</h2>
+                <h2 className="mb-2 font-semibold">{t("order.notes")}</h2>
                 <p className="text-muted-foreground">{order.notes}</p>
               </div>
             )}

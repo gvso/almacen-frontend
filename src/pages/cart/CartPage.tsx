@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Package } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import PageTitle from "@/components/PageTitle";
@@ -18,6 +19,7 @@ export default function CartPage() {
   const { cart, isLoading, itemCount, resetCart } = useCart();
   const language = useLanguage();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [orderUrl, setOrderUrl] = useState<string | null>(null);
 
@@ -47,12 +49,12 @@ export default function CartPage() {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <PageTitle>Cart</PageTitle>
+        <PageTitle>{t("cart.title")}</PageTitle>
 
-        {isLoading && <p>Loading cart...</p>}
+        {isLoading && <p>{t("cart.loading")}</p>}
 
         {!isLoading && itemCount === 0 && (
-          <p className="text-muted-foreground">Your cart is empty.</p>
+          <p className="text-muted-foreground">{t("cart.empty")}</p>
         )}
 
         {!isLoading && cart?.items && cart.items.length > 0 && (
@@ -78,7 +80,7 @@ export default function CartPage() {
                 <div className="flex-1">
                   <p className="font-medium">{item.productName}</p>
                   <p className="text-sm text-muted-foreground">
-                    Quantity: {item.quantity}
+                    {t("cart.quantity")}: {item.quantity}
                   </p>
                 </div>
                 <p className="font-bold">${formatPrice(item.subtotal)}</p>
@@ -86,14 +88,14 @@ export default function CartPage() {
             ))}
             <div className="border-t pt-4">
               <div className="flex flex-col gap-4">
-                <p className="text-xl font-bold text-right">Total: ${formatPrice(cart.total)}</p>
+                <p className="text-xl font-bold text-right">{t("common.total")}: ${formatPrice(cart.total)}</p>
                 <Button
                   size="lg"
                   className="w-full mt-8 sm:w-auto sm:ml-auto"
                   onClick={handleCheckout}
                   disabled={isCheckingOut}
                 >
-                  {isCheckingOut ? "Processing..." : "Checkout"}
+                  {isCheckingOut ? t("cart.processing") : t("cart.checkout")}
                 </Button>
               </div>
             </div>

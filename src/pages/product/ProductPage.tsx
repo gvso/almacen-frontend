@@ -1,17 +1,19 @@
+import { useTranslation } from "react-i18next";
 import { ProductGrid, useProducts } from "@/features/products";
 import Navbar from "@/components/Navbar";
 import PageTitle from "@/components/PageTitle";
 import Spinner from "@/components/Spinner";
 import { ErrorAlert } from "@/components/Alert";
 
-export default function HomePage() {
+export default function ProductPage() {
   const { data, isLoading, isError } = useProducts();
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <PageTitle>Products</PageTitle>
+        <PageTitle>{t("product.title")}</PageTitle>
 
         {isLoading && (
           <div className="flex justify-center py-16">
@@ -20,7 +22,7 @@ export default function HomePage() {
         )}
 
         {isError && (
-          <ErrorAlert message="Failed to load products. Please try again later." />
+          <ErrorAlert message={t("product.loadError")} />
         )}
 
         {data?.data && <ProductGrid products={data.data} />}

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { ShoppingCart } from "lucide-react";
 import { Button } from "./ui/button";
 import { useCart } from "@/features/cart";
@@ -7,12 +8,13 @@ import { useLanguage } from "@/contexts/LanguageContext";
 function Navbar() {
   const { itemCount } = useCart();
   const language = useLanguage();
+  const { t } = useTranslation();
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-white shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to={`/${language}/products`} className="text-xl font-bold text-foreground">
-          Catalog
+          {t("navbar.catalog")}
         </Link>
 
         <div className="flex items-center gap-4">
