@@ -1,5 +1,22 @@
-import { Cart } from "@/types/Cart";
+import { Cart, SuccessResponse } from "@/types/Cart";
 import { fetchApi } from "./api";
+import { toCamelCase } from "@/utils/casing";
+
+/** Raw API response types (snake_case from backend) */
+interface ApiCartItem {
+  product_id: number;
+  product_name: string;
+  product_image_url: string | null;
+  unit_price: string;
+  quantity: number;
+  subtotal: string;
+}
+
+interface ApiCart {
+  token: string;
+  items: ApiCartItem[];
+  total: string;
+}
 
 const CART_TOKEN_KEY = "cart_token";
 
@@ -15,8 +32,10 @@ export function clearCartToken(): void {
   localStorage.removeItem(CART_TOKEN_KEY);
 }
 
-export async function createCart(): Promise<Cart> {
-  const cart = await fetchApi<Cart>("/api/v1/cart", { method: "POST" });
+export async function createCart(language?: string): Promise<Cart> {
+  const params = language ? `?language=${language}` : "";
+  const response = await fetchApi<ApiCart>(`/api/v1/cart${params}`, { method: "POST" });
+  const cart = toCamelCase(response) as Cart;
   if (!cart.token) {
     throw new Error("Failed to create cart: no token returned");
   }
@@ -24,24 +43,26 @@ export async function createCart(): Promise<Cart> {
   return cart;
 }
 
-export async function getCart(token: string): Promise<Cart> {
-  return fetchApi<Cart>(`/api/v1/cart/${token}`);
+export async function getCart(token: string, language?: string): Promise<Cart> {
+  const params = language ? `?language=${language}` : "";
+  const response = await fetchApi<ApiCart>(`/api/v1/cart/${token}${params}`);
+  return toCamelCase(response) as Cart;
 }
 
-export async function getOrCreateCart(): Promise<Cart> {
+export async function getOrCreateCart(language?: string): Promise<Cart> {
   const token = getCartToken();
   if (token) {
     try {
-      return await getCart(token);
+      return await getCart(token, language);
     } catch {
       // Cart not found, create a new one
       clearCartToken();
     }
   }
-  return createCart();
+  return createCart(language);
 }
 
-export async function addToCart(productId: number, quantity: number = 1): Promise<Cart> {
+export async function addToCart(productId: number, quantity: number = 1, language?: string): Promise<Cart> {
   // Always ensure we have a valid cart first
   const existingToken = getCartToken();
   let token: string;
@@ -49,37 +70,41 @@ export async function addToCart(productId: number, quantity: number = 1): Promis
   if (existingToken) {
     token = existingToken;
   } else {
-    const newCart = await createCart();
+    const newCart = await createCart(language);
     token = newCart.token;
   }
 
-  const cart = await fetchApi<Cart>(`/api/v1/cart/${token}/items`, {
+  const params = language ? `?language=${language}` : "";
+  const response = await fetchApi<ApiCart>(`/api/v1/cart/${token}/items${params}`, {
     method: "POST",
     body: JSON.stringify({ product_id: productId, quantity }),
   });
 
-  return cart;
+  return toCamelCase(response) as Cart;
 }
 
-export async function updateCartItem(productId: number, quantity: number): Promise<Cart> {
+export async function updateCartItem(productId: number, quantity: number, language?: string): Promise<Cart> {
   const token = getCartToken();
   if (!token) {
     throw new Error("No cart found");
   }
 
-  return fetchApi<Cart>(`/api/v1/cart/${token}/items/${productId}`, {
+  const params = language ? `?language=${language}` : "";
+  const response = await fetchApi<ApiCart>(`/api/v1/cart/${token}/items/${productId}${params}`, {
     method: "PUT",
     body: JSON.stringify({ quantity }),
   });
+
+  return toCamelCase(response) as Cart;
 }
 
-export async function removeFromCart(productId: number): Promise<Cart> {
+export async function removeFromCart(productId: number): Promise<SuccessResponse> {
   const token = getCartToken();
   if (!token) {
     throw new Error("No cart found");
   }
 
-  return fetchApi<Cart>(`/api/v1/cart/${token}/items/${productId}`, {
+  return fetchApi<SuccessResponse>(`/api/v1/cart/${token}/items/${productId}`, {
     method: "DELETE",
   });
 }

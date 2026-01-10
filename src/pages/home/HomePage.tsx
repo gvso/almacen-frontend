@@ -10,7 +10,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <h1 className="mb-8 text-3xl font-bold text-foreground">Products</h1>
+        <h1 className="mb-8 text-xl font-medium text-foreground">Products</h1>
 
         {isLoading && (
           <div className="flex justify-center py-16">

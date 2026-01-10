@@ -7,38 +7,40 @@ import {
   updateCartItem,
 } from "@/services/cart";
 import { Cart } from "@/types/Cart";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export function useCart() {
   const queryClient = useQueryClient();
+  const language = useLanguage();
 
   const cartQuery = useQuery({
-    queryKey: ["cart"],
-    queryFn: getOrCreateCart,
+    queryKey: ["cart", language],
+    queryFn: () => getOrCreateCart(language),
     enabled: !!getCartToken(),
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
   const addItemMutation = useMutation({
     mutationFn: ({ productId, quantity = 1 }: { productId: number; quantity?: number }) =>
-      addToCart(productId, quantity),
+      addToCart(productId, quantity, language),
     onSuccess: (cart) => {
       // Ensure cart data is properly typed and set
-      queryClient.setQueryData<Cart>(["cart"], cart);
+      queryClient.setQueryData<Cart>(["cart", language], cart);
     },
   });
 
   const updateItemMutation = useMutation({
     mutationFn: ({ productId, quantity }: { productId: number; quantity: number }) =>
-      updateCartItem(productId, quantity),
+      updateCartItem(productId, quantity, language),
     onSuccess: (cart) => {
-      queryClient.setQueryData<Cart>(["cart"], cart);
+      queryClient.setQueryData<Cart>(["cart", language], cart);
     },
   });
 
   const removeItemMutation = useMutation({
     mutationFn: (productId: number) => removeFromCart(productId),
-    onSuccess: (cart) => {
-      queryClient.setQueryData<Cart>(["cart"], cart);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart", language] });
     },
   });
 
