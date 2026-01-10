@@ -16,9 +16,9 @@ function Navbar() {
         </Link>
 
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="relative" asChild>
+          <Button variant="ghost" className="relative h-10 w-10 p-0 sm:h-9 sm:w-9" asChild>
             <Link to={`/${language}/cart`}>
-              <ShoppingCart className="h-5 w-5" />
+              <ShoppingCart className="h-6 w-6" />
               {itemCount > 0 && (
                 <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
                   {itemCount > 99 ? "99+" : itemCount}

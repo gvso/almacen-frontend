@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Package } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import PageTitle from "@/components/PageTitle";
 import { Button } from "@/components/ui/button";
 import { OrderSuccessDialog } from "@/features/orders";
 import { useCart } from "@/features/cart";
@@ -46,7 +47,7 @@ export default function CartPage() {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <h1 className="mb-8 text-3xl font-bold text-foreground">Shopping Cart</h1>
+        <PageTitle>Cart</PageTitle>
 
         {isLoading && <p>Loading cart...</p>}
 
@@ -84,10 +85,11 @@ export default function CartPage() {
               </div>
             ))}
             <div className="border-t pt-4">
-              <div className="flex flex-col items-end gap-4">
-                <p className="text-xl font-bold">Total: ${formatPrice(cart.total)}</p>
+              <div className="flex flex-col gap-4">
+                <p className="text-xl font-bold text-right">Total: ${formatPrice(cart.total)}</p>
                 <Button
                   size="lg"
+                  className="w-full mt-8 sm:w-auto sm:ml-auto"
                   onClick={handleCheckout}
                   disabled={isCheckingOut}
                 >

@@ -20,11 +20,42 @@ export default function OrderSuccessDialog({
 }: OrderSuccessDialogProps) {
   const [copied, setCopied] = useState(false);
 
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
   const handleCopy = async () => {
     if (!orderUrl) return;
-    await navigator.clipboard.writeText(orderUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    
+    try {
+      // Try native share on mobile only
+      if (isMobile && navigator.share) {
+        await navigator.share({
+          title: "My Order",
+          url: orderUrl,
+        });
+        return;
+      }
+      
+      // Use clipboard on desktop
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(orderUrl);
+      } else {
+        // Fallback for older browsers
+        const textArea = document.createElement("textarea");
+        textArea.value = orderUrl;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
+      
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error("Failed to copy:", error);
+    }
   };
 
   return (

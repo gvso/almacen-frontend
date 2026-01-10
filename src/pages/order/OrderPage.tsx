@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Package, CheckCircle, Clock, XCircle } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import PageTitle from "@/components/PageTitle";
 import Spinner from "@/components/Spinner";
 import { ErrorAlert } from "@/components/Alert";
 import { getOrder } from "@/services/orders";
@@ -46,7 +47,7 @@ export default function OrderPage() {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <h1 className="mb-8 text-3xl font-bold text-foreground">Order Details</h1>
+        <PageTitle>Order Details</PageTitle>
 
         {isLoading && (
           <div className="flex justify-center py-16">

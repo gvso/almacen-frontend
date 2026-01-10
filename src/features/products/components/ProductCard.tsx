@@ -38,7 +38,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Card className="group overflow-hidden transition-all hover:shadow-lg">
-      <div className="aspect-square overflow-hidden bg-muted">
+      <div className="aspect-3/2 overflow-hidden bg-muted sm:aspect-square">
         {product.imageUrl ? (
           <img
             src={product.imageUrl}
@@ -84,12 +84,11 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
           ) : (
             <Button
-              size="sm"
-              className="w-full sm:w-auto"
+              className="h-10 w-full sm:h-9 sm:w-auto"
               onClick={handleAddToCart}
               disabled={isAddingItem}
             >
-              <ShoppingCart className="h-4 w-4" />
+              <ShoppingCart className="h-5 w-5" />
               Add
             </Button>
           )}

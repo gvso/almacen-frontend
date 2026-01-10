@@ -4,6 +4,7 @@
 
 @theme {
   --font-sans: "Roboto", sans-serif;
+  --breakpoint-xs: 480px;
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
