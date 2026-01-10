@@ -16,6 +16,9 @@
     "loading": "Loading cart...",
     "empty": "Your cart is empty.",
     "quantity": "Quantity",
+    "increase": "Increase quantity",
+    "decrease": "Decrease quantity",
+    "remove": "Remove from cart",
     "checkout": "Checkout",
     "processing": "Processing..."
   },
@@ -33,8 +36,8 @@
     }
   },
   "orderSuccess": {
-    "title": "Order placed successfully!",
-    "shareReminder": "Don't forget to share this link with your host.",
+    "title": "Share with your host!",
+    "shareReminder": "To confirm your order, please share this link with your host.",
     "viewOrder": "View Order",
     "shareTitle": "My Order"
   }

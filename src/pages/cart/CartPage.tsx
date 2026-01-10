@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Package } from "lucide-react";
+import { Minus, Package, Plus, Trash2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import PageTitle from "@/components/PageTitle";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ function formatPrice(value: string | number): string {
 }
 
 export default function CartPage() {
-  const { cart, isLoading, itemCount, resetCart } = useCart();
+  const { cart, isLoading, itemCount, resetCart, updateItem, removeItem } = useCart();
   const language = useLanguage();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -79,11 +79,41 @@ export default function CartPage() {
                 </div>
                 <div className="flex-1">
                   <p className="font-medium">{item.productName}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {t("cart.quantity")}: {item.quantity}
-                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={() => updateItem({ productId: item.productId, quantity: item.quantity - 1 })}
+                      disabled={item.quantity <= 1}
+                      aria-label={t("cart.decrease")}
+                    >
+                      <Minus className="h-3 w-3" />
+                    </Button>
+                    <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={() => updateItem({ productId: item.productId, quantity: item.quantity + 1 })}
+                      aria-label={t("cart.increase")}
+                    >
+                      <Plus className="h-3 w-3" />
+                    </Button>
+                  </div>
                 </div>
-                <p className="font-bold">${formatPrice(item.subtotal)}</p>
+                <div className="flex flex-col items-end gap-2">
+                  <p className="font-bold">${formatPrice(item.subtotal)}</p>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                    onClick={() => removeItem(item.productId)}
+                    aria-label={t("cart.remove")}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             ))}
             <div className="border-t pt-4">

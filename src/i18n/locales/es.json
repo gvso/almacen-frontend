@@ -16,6 +16,9 @@
     "loading": "Cargando carrito...",
     "empty": "Tu carrito está vacío.",
     "quantity": "Cantidad",
+    "increase": "Aumentar cantidad",
+    "decrease": "Disminuir cantidad",
+    "remove": "Eliminar del carrito",
     "checkout": "Pagar",
     "processing": "Procesando..."
   },
@@ -33,8 +36,8 @@
     }
   },
   "orderSuccess": {
-    "title": "¡Pedido realizado con éxito!",
-    "shareReminder": "No olvides compartir este enlace con tu anfitrión.",
+    "title": "¡Comparte con tu anfitrión!",
+    "shareReminder": "Para confirmar tu pedido, por favor comparte este enlace con tu anfitrión.",
     "viewOrder": "Ver Pedido",
     "shareTitle": "Mi Pedido"
   }
