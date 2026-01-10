@@ -47,6 +47,10 @@ export function useCart() {
   const cart = cartQuery.data ?? addItemMutation.data;
   const itemCount = cart?.items?.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
 
+  const resetCart = () => {
+    queryClient.removeQueries({ queryKey: ["cart"] });
+  };
+
   return {
     cart,
     isLoading: cartQuery.isLoading,
@@ -55,5 +59,6 @@ export function useCart() {
     updateItem: updateItemMutation.mutate,
     removeItem: removeItemMutation.mutate,
     isAddingItem: addItemMutation.isPending,
+    resetCart,
   };
 }

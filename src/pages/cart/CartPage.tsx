@@ -1,13 +1,46 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Package } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import { Button } from "@/components/ui/button";
+import { OrderSuccessDialog } from "@/features/orders";
 import { useCart } from "@/features/cart";
+import { checkout } from "@/services/orders";
+import { clearCartToken } from "@/services/cart";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 function formatPrice(value: string | number): string {
   return Number(value).toFixed(2);
 }
 
 export default function CartPage() {
-  const { cart, isLoading, itemCount } = useCart();
+  const { cart, isLoading, itemCount, resetCart } = useCart();
+  const language = useLanguage();
+  const navigate = useNavigate();
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [orderUrl, setOrderUrl] = useState<string | null>(null);
+
+  const handleCheckout = async () => {
+    if (!cart?.token) return;
+
+    setIsCheckingOut(true);
+    try {
+      const order = await checkout(cart.token, { language });
+      const url = `${window.location.origin}/${language}/orders/${order.id}`;
+      setOrderUrl(url);
+    } catch (error) {
+      console.error("Checkout failed:", error);
+      setIsCheckingOut(false);
+    }
+  };
+
+  const handleCloseDialog = () => {
+    clearCartToken();
+    resetCart();
+    setOrderUrl(null);
+    setIsCheckingOut(false);
+    navigate(`/${language}/products`);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -50,12 +83,23 @@ export default function CartPage() {
                 <p className="font-bold">${formatPrice(item.subtotal)}</p>
               </div>
             ))}
-            <div className="border-t pt-4 text-right">
-              <p className="text-xl font-bold">Total: ${formatPrice(cart.total)}</p>
+            <div className="border-t pt-4">
+              <div className="flex flex-col items-end gap-4">
+                <p className="text-xl font-bold">Total: ${formatPrice(cart.total)}</p>
+                <Button
+                  size="lg"
+                  onClick={handleCheckout}
+                  disabled={isCheckingOut}
+                >
+                  {isCheckingOut ? "Processing..." : "Checkout"}
+                </Button>
+              </div>
             </div>
           </div>
         )}
       </main>
+
+      <OrderSuccessDialog orderUrl={orderUrl} onClose={handleCloseDialog} />
     </div>
   );
 }

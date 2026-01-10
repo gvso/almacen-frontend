@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 
 import HomePage from "@/pages/home/HomePage";
 import CartPage from "@/pages/cart/CartPage";
+import OrderPage from "@/pages/order/OrderPage";
 import LanguageLayout from "@/layouts/LanguageLayout";
 import { DEFAULT_LANGUAGE } from "@/contexts/LanguageContext";
 import { toCamelCase } from "./utils/casing";
@@ -29,8 +30,10 @@ function App() {
           
           {/* Language-prefixed routes */}
           <Route path="/:lang" element={<LanguageLayout />}>
+            <Route index element={<Navigate to="products" replace />} />
             <Route path="products" element={<HomePage />} />
             <Route path="cart" element={<CartPage />} />
+            <Route path="orders/:orderId" element={<OrderPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
