@@ -69,7 +69,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const displayImage = selectedVariation?.imageUrl ?? product.imageUrl;
 
   return (
-    <Card className="group overflow-hidden transition-all hover:shadow-lg">
+    <Card className="group flex h-full flex-col overflow-hidden transition-all hover:shadow-lg">
       <div className="aspect-3/2 overflow-hidden bg-muted sm:aspect-square">
         {displayImage ? (
           <img
@@ -83,7 +83,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
         )}
       </div>
-      <CardContent className="p-4">
+      <CardContent className="flex flex-1 flex-col p-4">
         <h3 className="font-medium text-foreground line-clamp-2">{product.name}</h3>
         {product.description && (
           <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
@@ -91,58 +91,61 @@ export function ProductCard({ product }: ProductCardProps) {
           </p>
         )}
 
-        <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:gap-2 sm:items-center sm:justify-between">
-          <p className="text-lg font-semibold text-primary">{priceDisplay}</p>
-          {quantityInCart > 0 ? (
-            <div className="flex w-full items-center justify-center gap-1 sm:w-auto">
-              <Button
-                size="icon"
-                variant="outline"
-                className="h-8 w-8"
-                onClick={handleDecrement}
-                disabled={isAddingItem}
-              >
-                <Minus className="h-4 w-4" />
-              </Button>
-              <span className="w-8 text-center font-medium">{quantityInCart}</span>
-              <Button
-                size="icon"
-                variant="outline"
-                className="h-8 w-8"
-                onClick={handleIncrement}
-                disabled={isAddingItem}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
+        {/* Bottom section: variations first, then price/button always at bottom */}
+        <div className="mt-auto pt-3">
+          {/* Variation options */}
+          {hasVariations && (
+            <div className="mb-3 flex flex-wrap gap-2">
+              {product.variations.map((variation) => (
+                <Button
+                  key={variation.id}
+                  variant={selectedVariation?.id === variation.id ? "default" : "outline"}
+                  size="sm"
+                  className="h-10 text-sm sm:h-7 sm:text-xs"
+                  onClick={(e) => handleVariationClick(e, variation)}
+                >
+                  {variation.name}
+                </Button>
+              ))}
             </div>
-          ) : (
-            <Button
-              className="h-10 w-full sm:h-9 sm:w-auto"
-              onClick={handleAddToCart}
-              disabled={isAddingItem || (hasVariations && !selectedVariation)}
-            >
-              <ShoppingCart className="h-5 w-5" />
-              Add
-            </Button>
           )}
-        </div>
 
-        {/* Variation options */}
-        {hasVariations && (
-          <div className="mt-5 flex flex-wrap gap-2 sm:mt-3">
-            {product.variations.map((variation) => (
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-2 sm:items-center sm:justify-between">
+            <p className="text-lg font-semibold text-primary">{priceDisplay}</p>
+            {quantityInCart > 0 ? (
+              <div className="flex w-full items-center justify-center gap-1 sm:w-auto">
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="h-8 w-8"
+                  onClick={handleDecrement}
+                  disabled={isAddingItem}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <span className="w-8 text-center font-medium">{quantityInCart}</span>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="h-8 w-8"
+                  onClick={handleIncrement}
+                  disabled={isAddingItem}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
               <Button
-                key={variation.id}
-                variant={selectedVariation?.id === variation.id ? "default" : "outline"}
-                size="sm"
-                className="h-10 text-sm sm:h-7 sm:text-xs"
-                onClick={(e) => handleVariationClick(e, variation)}
+                className="h-10 w-full sm:h-9 sm:w-auto"
+                onClick={handleAddToCart}
+                disabled={isAddingItem || (hasVariations && !selectedVariation)}
               >
-                {variation.name}
+                <ShoppingCart className="h-5 w-5" />
+                Add
               </Button>
-            ))}
+            )}
           </div>
-        )}
+        </div>
       </CardContent>
     </Card>
   );
