@@ -6,6 +6,9 @@ import { toCamelCase } from "@/utils/casing";
 interface ApiOrderItem {
   product_id: number;
   product_name: string;
+  image_url: string | null;
+  variation_id: number | null;
+  variation_name: string | null;
   unit_price: string;
   quantity: number;
   subtotal: string;

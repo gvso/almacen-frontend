@@ -21,8 +21,15 @@ export function useCart() {
   });
 
   const addItemMutation = useMutation({
-    mutationFn: ({ productId, quantity = 1 }: { productId: number; quantity?: number }) =>
-      addToCart(productId, quantity, language),
+    mutationFn: ({
+      productId,
+      variationId = null,
+      quantity = 1,
+    }: {
+      productId: number;
+      variationId?: number | null;
+      quantity?: number;
+    }) => addToCart(productId, variationId, quantity, language),
     onSuccess: (cart) => {
       // Ensure cart data is properly typed and set
       queryClient.setQueryData<Cart>(["cart", language], cart);
@@ -30,15 +37,15 @@ export function useCart() {
   });
 
   const updateItemMutation = useMutation({
-    mutationFn: ({ productId, quantity }: { productId: number; quantity: number }) =>
-      updateCartItem(productId, quantity, language),
+    mutationFn: ({ itemId, quantity }: { itemId: number; quantity: number }) =>
+      updateCartItem(itemId, quantity, language),
     onSuccess: (cart) => {
       queryClient.setQueryData<Cart>(["cart", language], cart);
     },
   });
 
   const removeItemMutation = useMutation({
-    mutationFn: (productId: number) => removeFromCart(productId),
+    mutationFn: (itemId: number) => removeFromCart(itemId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart", language] });
     },

@@ -1,4 +1,5 @@
-import { Product } from "@/types/Product";
+import { useState } from "react";
+import { Product, ProductVariation } from "@/types/Product";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Minus, Package, Plus, ShoppingCart } from "lucide-react";
@@ -8,40 +9,71 @@ interface ProductCardProps {
   product: Product;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
-  const { cart, addItem, updateItem, isAddingItem } = useCart();
-
-  const formattedPrice = new Intl.NumberFormat("en-US", {
+function formatCurrency(value: string | number): string {
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-  }).format(Number(product.price));
+  }).format(Number(value));
+}
 
-  const cartItem = cart?.items?.find((item) => item.productId === product.id);
+function getDefaultVariation(product: Product): ProductVariation | null {
+  if (product.variations && product.variations.length > 0) {
+    return product.variations[0];
+  }
+  return null;
+}
+
+export function ProductCard({ product }: ProductCardProps) {
+  const { cart, addItem, updateItem, isAddingItem } = useCart();
+  const [selectedVariation, setSelectedVariation] = useState<ProductVariation | null>(() =>
+    getDefaultVariation(product)
+  );
+
+  const hasVariations = product.variations && product.variations.length > 0;
+
+  // Show price of selected variation if it has one, otherwise product base price
+  const displayPrice = selectedVariation?.price ?? product.price;
+  const priceDisplay = formatCurrency(displayPrice);
+
+  // Find cart item matching product and selected variation
+  const cartItem = cart?.items?.find(
+    (item) =>
+      item.productId === product.id &&
+      item.variationId === (selectedVariation?.id ?? null)
+  );
   const quantityInCart = cartItem?.quantity ?? 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    addItem({ productId: product.id });
+    addItem({ productId: product.id, variationId: selectedVariation?.id ?? null });
   };
 
   const handleIncrement = (e: React.MouseEvent) => {
     e.stopPropagation();
-    addItem({ productId: product.id });
+    addItem({ productId: product.id, variationId: selectedVariation?.id ?? null });
   };
 
   const handleDecrement = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (quantityInCart > 0) {
-      updateItem({ productId: product.id, quantity: quantityInCart - 1 });
+    if (cartItem && quantityInCart > 0) {
+      updateItem({ itemId: cartItem.id, quantity: quantityInCart - 1 });
     }
   };
+
+  const handleVariationClick = (e: React.MouseEvent, variation: ProductVariation | null) => {
+    e.stopPropagation();
+    setSelectedVariation(variation);
+  };
+
+  // Display image: variation image if selected and has one, otherwise product image
+  const displayImage = selectedVariation?.imageUrl ?? product.imageUrl;
 
   return (
     <Card className="group overflow-hidden transition-all hover:shadow-lg">
       <div className="aspect-3/2 overflow-hidden bg-muted sm:aspect-square">
-        {product.imageUrl ? (
+        {displayImage ? (
           <img
-            src={product.imageUrl}
+            src={displayImage}
             alt={product.name}
             className="h-full w-full object-contain p-2 transition-transform group-hover:scale-105"
           />
@@ -58,8 +90,9 @@ export function ProductCard({ product }: ProductCardProps) {
             {product.description}
           </p>
         )}
-        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-lg font-semibold text-primary">{formattedPrice}</p>
+
+        <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:gap-2 sm:items-center sm:justify-between">
+          <p className="text-lg font-semibold text-primary">{priceDisplay}</p>
           {quantityInCart > 0 ? (
             <div className="flex w-full items-center justify-center gap-1 sm:w-auto">
               <Button
@@ -86,13 +119,30 @@ export function ProductCard({ product }: ProductCardProps) {
             <Button
               className="h-10 w-full sm:h-9 sm:w-auto"
               onClick={handleAddToCart}
-              disabled={isAddingItem}
+              disabled={isAddingItem || (hasVariations && !selectedVariation)}
             >
               <ShoppingCart className="h-5 w-5" />
               Add
             </Button>
           )}
         </div>
+
+        {/* Variation options */}
+        {hasVariations && (
+          <div className="mt-5 flex flex-wrap gap-2 sm:mt-3">
+            {product.variations.map((variation) => (
+              <Button
+                key={variation.id}
+                variant={selectedVariation?.id === variation.id ? "default" : "outline"}
+                size="sm"
+                className="h-10 text-sm sm:h-7 sm:text-xs"
+                onClick={(e) => handleVariationClick(e, variation)}
+              >
+                {variation.name}
+              </Button>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

@@ -4,9 +4,12 @@ import { toCamelCase } from "@/utils/casing";
 
 /** Raw API response types (snake_case from backend) */
 interface ApiCartItem {
+  id: number;
   product_id: number;
   product_name: string;
-  product_image_url: string | null;
+  variation_id: number | null;
+  variation_name: string | null;
+  image_url: string | null;
   unit_price: string;
   quantity: number;
   subtotal: string;
@@ -62,7 +65,12 @@ export async function getOrCreateCart(language?: string): Promise<Cart> {
   return createCart(language);
 }
 
-export async function addToCart(productId: number, quantity: number = 1, language?: string): Promise<Cart> {
+export async function addToCart(
+  productId: number,
+  variationId: number | null = null,
+  quantity: number = 1,
+  language?: string
+): Promise<Cart> {
   // Always ensure we have a valid cart first
   const existingToken = getCartToken();
   let token: string;
@@ -77,20 +85,20 @@ export async function addToCart(productId: number, quantity: number = 1, languag
   const params = language ? `?language=${language}` : "";
   const response = await fetchApi<ApiCart>(`/api/v1/cart/${token}/items${params}`, {
     method: "POST",
-    body: JSON.stringify({ product_id: productId, quantity }),
+    body: JSON.stringify({ product_id: productId, variation_id: variationId, quantity }),
   });
 
   return toCamelCase(response) as Cart;
 }
 
-export async function updateCartItem(productId: number, quantity: number, language?: string): Promise<Cart> {
+export async function updateCartItem(itemId: number, quantity: number, language?: string): Promise<Cart> {
   const token = getCartToken();
   if (!token) {
     throw new Error("No cart found");
   }
 
   const params = language ? `?language=${language}` : "";
-  const response = await fetchApi<ApiCart>(`/api/v1/cart/${token}/items/${productId}${params}`, {
+  const response = await fetchApi<ApiCart>(`/api/v1/cart/${token}/items/${itemId}${params}`, {
     method: "PUT",
     body: JSON.stringify({ quantity }),
   });
@@ -98,13 +106,13 @@ export async function updateCartItem(productId: number, quantity: number, langua
   return toCamelCase(response) as Cart;
 }
 
-export async function removeFromCart(productId: number): Promise<SuccessResponse> {
+export async function removeFromCart(itemId: number): Promise<SuccessResponse> {
   const token = getCartToken();
   if (!token) {
     throw new Error("No cart found");
   }
 
-  return fetchApi<SuccessResponse>(`/api/v1/cart/${token}/items/${productId}`, {
+  return fetchApi<SuccessResponse>(`/api/v1/cart/${token}/items/${itemId}`, {
     method: "DELETE",
   });
 }

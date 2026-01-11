@@ -1,7 +1,10 @@
 export interface CartItem {
+  id: number;
   productId: number;
   productName: string;
-  productImageUrl: string | null;
+  variationId: number | null;
+  variationName: string | null;
+  imageUrl: string | null;
   unitPrice: string;
   quantity: number;
   subtotal: string;

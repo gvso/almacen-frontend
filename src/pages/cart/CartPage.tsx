@@ -61,13 +61,13 @@ export default function CartPage() {
           <div className="space-y-4">
             {cart.items.map((item) => (
               <div
-                key={item.productId}
+                key={item.id}
                 className="flex items-center gap-4 rounded-lg border p-4"
               >
                 <div className="h-16 w-16 shrink-0 overflow-hidden rounded-md bg-muted">
-                  {item.productImageUrl ? (
+                  {item.imageUrl ? (
                     <img
-                      src={item.productImageUrl}
+                      src={item.imageUrl}
                       alt={item.productName}
                       className="h-full w-full object-contain p-1"
                     />
@@ -79,12 +79,15 @@ export default function CartPage() {
                 </div>
                 <div className="flex-1">
                   <p className="font-medium">{item.productName}</p>
+                  {item.variationName && (
+                    <p className="text-sm text-muted-foreground">{item.variationName}</p>
+                  )}
                   <div className="flex items-center gap-2 mt-1">
                     <Button
                       variant="outline"
                       size="icon"
                       className="h-7 w-7"
-                      onClick={() => updateItem({ productId: item.productId, quantity: item.quantity - 1 })}
+                      onClick={() => updateItem({ itemId: item.id, quantity: item.quantity - 1 })}
                       disabled={item.quantity <= 1}
                       aria-label={t("cart.decrease")}
                     >
@@ -95,7 +98,7 @@ export default function CartPage() {
                       variant="outline"
                       size="icon"
                       className="h-7 w-7"
-                      onClick={() => updateItem({ productId: item.productId, quantity: item.quantity + 1 })}
+                      onClick={() => updateItem({ itemId: item.id, quantity: item.quantity + 1 })}
                       aria-label={t("cart.increase")}
                     >
                       <Plus className="h-3 w-3" />
@@ -108,7 +111,7 @@ export default function CartPage() {
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                    onClick={() => removeItem(item.productId)}
+                    onClick={() => removeItem(item.id)}
                     aria-label={t("cart.remove")}
                   >
                     <Trash2 className="h-4 w-4" />

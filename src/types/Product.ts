@@ -1,3 +1,11 @@
+export interface ProductVariation {
+  id: number;
+  name: string;
+  price: string | null;
+  imageUrl: string | null;
+  isActive: boolean;
+}
+
 export interface Product {
   id: number;
   name: string;
@@ -7,4 +15,5 @@ export interface Product {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  variations: ProductVariation[];
 }

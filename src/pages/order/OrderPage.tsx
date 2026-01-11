@@ -82,15 +82,15 @@ export default function OrderPage() {
             {/* Order Items */}
             <div className="space-y-4">
               <h2 className="text-xl font-semibold">{t("order.items")}</h2>
-              {order.items.map((item) => (
+              {order.items.map((item, index) => (
                 <div
-                  key={item.productId}
+                  key={`${item.productId}-${item.variationId ?? index}`}
                   className="flex items-center gap-4 rounded-lg border p-4"
                 >
                   <div className="h-16 w-16 shrink-0 overflow-hidden rounded-md bg-muted">
-                    {item.productImageUrl ? (
+                    {item.imageUrl ? (
                       <img
-                        src={item.productImageUrl}
+                        src={item.imageUrl}
                         alt={item.productName}
                         className="h-full w-full object-contain p-1"
                       />
@@ -102,6 +102,9 @@ export default function OrderPage() {
                   </div>
                   <div className="flex-1">
                     <p className="font-medium">{item.productName}</p>
+                    {item.variationName && (
+                      <p className="text-sm text-muted-foreground">{item.variationName}</p>
+                    )}
                     <p className="text-sm text-muted-foreground">
                       ${formatPrice(item.unitPrice)} × {item.quantity}
                     </p>

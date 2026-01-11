@@ -1,7 +1,9 @@
 export interface OrderItem {
   productId: number;
   productName: string;
-  productImageUrl: string | null;
+  imageUrl: string | null;
+  variationId: number | null;
+  variationName: string | null;
   unitPrice: string;
   quantity: number;
   subtotal: string;
