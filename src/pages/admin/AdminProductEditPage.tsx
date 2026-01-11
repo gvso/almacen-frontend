@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useForm, useWatch, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowLeft, Save, Plus, Trash2, Languages, Layers, GripVertical } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, Languages, Layers, GripVertical, Package, Wrench } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -40,7 +40,7 @@ import {
   verifyAdminToken,
 } from "@/services/admin";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { AdminProduct, AdminVariation } from "@/types/AdminProduct";
+import type { AdminProduct, AdminVariation, ProductType } from "@/types/AdminProduct";
 
 const SUPPORTED_LANGUAGES = ["en", "es"];
 
@@ -75,7 +75,12 @@ type VariationFormData = z.infer<typeof variationSchema>;
 type VariationTranslationFormData = z.infer<typeof variationTranslationSchema>;
 
 export default function AdminProductEditPage() {
-  const { productId } = useParams<{ productId: string }>();
+  const { productId, itemType } = useParams<{ productId: string; itemType: string }>();
+  const productType: ProductType = itemType === "services" ? "service" : "product";
+  const isService = productType === "service";
+  const itemLabel = isService ? "Service" : "Product";
+  const ItemIcon = isService ? Wrench : Package;
+
   const isNewProduct = productId === "new";
   const [product, setProduct] = useState<AdminProduct | null>(null);
   const [isLoading, setIsLoading] = useState(!isNewProduct);
@@ -112,7 +117,7 @@ export default function AdminProductEditPage() {
 
   const loadProduct = useCallback(async () => {
     try {
-      const response = await fetchAdminProducts();
+      const response = await fetchAdminProducts({ type: productType });
       const found = response.data.find((p) => p.id === Number(productId));
       if (found) {
         setProduct(found);
@@ -129,7 +134,7 @@ export default function AdminProductEditPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [productId, form]);
+  }, [productId, productType, form]);
 
   useEffect(() => {
     if (!isCheckingAuth && productId && !isNewProduct) {
@@ -146,8 +151,9 @@ export default function AdminProductEditPage() {
           price: data.price,
           image_url: data.imageUrl || null,
           is_active: data.isActive,
+          type: productType,
         });
-        navigate(`/${language}/admin/products/${created.id}`, { replace: true });
+        navigate(`/${language}/admin/${itemType}/${created.id}`, { replace: true });
       } else if (product) {
         const updated = await updateProduct(product.id, {
           name: data.name,
@@ -264,12 +270,12 @@ export default function AdminProductEditPage() {
 
   const handleDeleteProduct = async () => {
     if (!product) return;
-    if (!window.confirm("Are you sure you want to delete this product? This action cannot be undone.")) {
+    if (!window.confirm(`Are you sure you want to delete this ${itemLabel.toLowerCase()}? This action cannot be undone.`)) {
       return;
     }
     try {
       await deleteProduct(product.id);
-      navigate(`/${language}/admin/products`);
+      navigate(`/${language}/admin/${itemType}`);
     } catch (error) {
       console.error("Failed to delete product:", error);
     }
@@ -288,10 +294,10 @@ export default function AdminProductEditPage() {
       <div className="min-h-screen bg-background">
         <header className="border-b bg-card">
           <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate(`/${language}/admin/products`)}>
+            <Button variant="ghost" size="icon" onClick={() => navigate(`/${language}/admin/${itemType}`)}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-xl font-bold">Product Not Found</h1>
+            <h1 className="text-xl font-bold">{itemLabel} Not Found</h1>
           </div>
         </header>
       </div>
@@ -303,15 +309,16 @@ export default function AdminProductEditPage() {
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate(`/${language}/admin/products`)}>
+            <Button variant="ghost" size="icon" onClick={() => navigate(`/${language}/admin/${itemType}`)}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-xl font-bold">{isNewProduct ? "New Product" : "Edit Product"}</h1>
+            <ItemIcon className="h-5 w-5" />
+            <h1 className="text-xl font-bold">{isNewProduct ? `New ${itemLabel}` : `Edit ${itemLabel}`}</h1>
           </div>
           {!isNewProduct && (
             <Button variant="destructive" size="sm" onClick={handleDeleteProduct}>
               <Trash2 className="h-4 w-4 mr-2" />
-              Delete Product
+              Delete {itemLabel}
             </Button>
           )}
         </div>
@@ -321,14 +328,14 @@ export default function AdminProductEditPage() {
         {/* Base Product Info */}
         <Card>
           <CardHeader>
-            <CardTitle>Product Details</CardTitle>
+            <CardTitle>{itemLabel} Details</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={form.handleSubmit(handleSaveProduct)} className="space-y-4">
               <div className="flex flex-col md:flex-row gap-6">
                 {/* Image on the left */}
                 <div className="w-full md:w-64 shrink-0">
-                  <label className="text-sm font-medium block mb-2">Product Image</label>
+                  <label className="text-sm font-medium block mb-2">{itemLabel} Image</label>
                   <Controller
                     name="imageUrl"
                     control={form.control}
@@ -386,7 +393,7 @@ export default function AdminProductEditPage() {
               <div className="flex justify-end">
                 <Button type="submit" disabled={form.formState.isSubmitting || (!isNewProduct && !form.formState.isDirty)}>
                   <Save className="h-4 w-4 mr-2" />
-                  {form.formState.isSubmitting ? "Saving..." : isNewProduct ? "Create Product" : "Save Product"}
+                  {form.formState.isSubmitting ? "Saving..." : isNewProduct ? `Create ${itemLabel}` : `Save ${itemLabel}`}
                 </Button>
               </div>
             </form>
@@ -404,7 +411,7 @@ export default function AdminProductEditPage() {
           <CardContent className="space-y-4">
             {isNewProduct ? (
               <p className="text-sm text-muted-foreground text-center py-4">
-                Save the product first to add translations.
+                Save the {itemLabel.toLowerCase()} first to add translations.
               </p>
             ) : (
               SUPPORTED_LANGUAGES.map((lang) => {
@@ -439,7 +446,7 @@ export default function AdminProductEditPage() {
           <CardContent className="space-y-4">
             {isNewProduct ? (
               <p className="text-sm text-muted-foreground text-center py-4">
-                Save the product first to add variations.
+                Save the {itemLabel.toLowerCase()} first to add variations.
               </p>
             ) : product!.variations.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-4">No variations yet.</p>

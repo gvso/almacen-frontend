@@ -44,8 +44,8 @@ function App() {
             <Route path="admin" element={<AdminLoginPage />} />
             <Route path="admin/dashboard" element={<AdminDashboardPage />} />
             <Route path="admin/orders" element={<AdminOrdersPage />} />
-            <Route path="admin/products" element={<AdminProductsPage />} />
-            <Route path="admin/products/:productId" element={<AdminProductEditPage />} />
+            <Route path="admin/:itemType" element={<AdminProductsPage />} />
+            <Route path="admin/:itemType/:productId" element={<AdminProductEditPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

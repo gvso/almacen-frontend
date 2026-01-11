@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogOut, LayoutDashboard, Package, ShoppingCart, ChevronRight } from "lucide-react";
+import { LogOut, LayoutDashboard, Package, Wrench, ShoppingCart, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { clearAdminToken, verifyAdminToken } from "@/services/admin";
@@ -49,21 +49,21 @@ export default function AdminDashboardPage() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2">
           <Card
             className="cursor-pointer hover:bg-muted/50 transition-colors"
             onClick={() => navigate(`/${language}/admin/orders`)}
           >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Orders</CardTitle>
-              <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-lg font-semibold">Orders</CardTitle>
+              <ShoppingCart className="h-6 w-6 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 View and manage customer orders
               </p>
-              <div className="flex items-center text-sm text-primary mt-2">
-                View all <ChevronRight className="h-4 w-4 ml-1" />
+              <div className="flex items-center text-base text-primary mt-3 font-medium">
+                View all <ChevronRight className="h-5 w-5 ml-1" />
               </div>
             </CardContent>
           </Card>
@@ -72,16 +72,34 @@ export default function AdminDashboardPage() {
             className="cursor-pointer hover:bg-muted/50 transition-colors"
             onClick={() => navigate(`/${language}/admin/products`)}
           >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Products</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-lg font-semibold">Products</CardTitle>
+              <Package className="h-6 w-6 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 Manage products, translations, and variations
               </p>
-              <div className="flex items-center text-sm text-primary mt-2">
-                View all <ChevronRight className="h-4 w-4 ml-1" />
+              <div className="flex items-center text-base text-primary mt-3 font-medium">
+                View all <ChevronRight className="h-5 w-5 ml-1" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card
+            className="cursor-pointer hover:bg-muted/50 transition-colors"
+            onClick={() => navigate(`/${language}/admin/services`)}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-lg font-semibold">Services</CardTitle>
+              <Wrench className="h-6 w-6 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Manage services, translations, and variations
+              </p>
+              <div className="flex items-center text-base text-primary mt-3 font-medium">
+                View all <ChevronRight className="h-5 w-5 ml-1" />
               </div>
             </CardContent>
           </Card>

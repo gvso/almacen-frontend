@@ -1,3 +1,5 @@
+export type ProductType = "product" | "service";
+
 export interface ProductTranslation {
   language: string;
   name: string;
@@ -30,6 +32,7 @@ export interface AdminProduct {
   imageUrl: string | null;
   order: number;
   isActive: boolean;
+  type: ProductType;
   insertedAt: string;
   updatedAt: string;
   translations: ProductTranslation[];
@@ -44,6 +47,7 @@ export interface ProductCreateData {
   image_url?: string | null;
   order?: number;
   is_active?: boolean;
+  type?: ProductType;
 }
 
 export interface ProductUpdateData {
@@ -53,6 +57,7 @@ export interface ProductUpdateData {
   image_url?: string | null;
   order?: number;
   is_active?: boolean;
+  type?: ProductType;
 }
 
 export interface TranslationData {

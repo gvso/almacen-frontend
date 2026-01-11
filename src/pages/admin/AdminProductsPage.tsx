@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Check, X, Package, Plus, Search, Trash2, GripVertical } from "lucide-react";
+import { useEffect, useState, useCallback } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { ArrowLeft, Check, X, Package, Wrench, Plus, Search, Trash2, GripVertical } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -24,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import { fetchAdminProducts, deleteProduct, reorderProducts, verifyAdminToken } from "@/services/admin";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDebounce } from "@/hooks/useDebounce";
-import type { AdminProduct } from "@/types/AdminProduct";
+import type { AdminProduct, ProductType } from "@/types/AdminProduct";
 
 interface SortableProductCardProps {
   product: AdminProduct;
@@ -121,6 +121,13 @@ function SortableProductCard({ product, onNavigate, onDelete }: SortableProductC
 }
 
 export default function AdminProductsPage() {
+  const { itemType } = useParams<{ itemType: string }>();
+  const productType: ProductType = itemType === "services" ? "service" : "product";
+  const isService = productType === "service";
+  const pageTitle = isService ? "Services" : "Products";
+  const itemLabel = isService ? "Service" : "Product";
+  const ItemIcon = isService ? Wrench : Package;
+
   const [products, setProducts] = useState<AdminProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
@@ -145,26 +152,29 @@ export default function AdminProductsPage() {
     });
   }, [navigate, language]);
 
-  useEffect(() => {
-    if (!isCheckingAuth) {
-      loadProducts();
-    }
-  }, [isCheckingAuth, debouncedSearch]);
-
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetchAdminProducts(debouncedSearch || undefined);
+      const response = await fetchAdminProducts({
+        search: debouncedSearch || undefined,
+        type: productType,
+      });
       setProducts(response.data);
     } catch (error) {
       console.error("Failed to load products:", error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [debouncedSearch, productType]);
+
+  useEffect(() => {
+    if (!isCheckingAuth) {
+      loadProducts();
+    }
+  }, [isCheckingAuth, loadProducts]);
 
   const handleAddProduct = () => {
-    navigate(`/${language}/admin/products/new`);
+    navigate(`/${language}/admin/${itemType}/new`);
   };
 
   const handleDeleteProduct = async (productId: number, productName: string) => {
@@ -217,11 +227,12 @@ export default function AdminProductsPage() {
             <Button variant="ghost" size="icon" onClick={() => navigate(`/${language}/admin/dashboard`)}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-xl font-bold">Products</h1>
+            <ItemIcon className="h-5 w-5" />
+            <h1 className="text-xl font-bold">{pageTitle}</h1>
           </div>
           <Button onClick={handleAddProduct}>
             <Plus className="h-4 w-4 mr-2" />
-            Add Product
+            Add {itemLabel}
           </Button>
         </div>
       </header>
@@ -231,7 +242,7 @@ export default function AdminProductsPage() {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Search products..."
+            placeholder={`Search ${pageTitle.toLowerCase()}...`}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="pl-10"
@@ -245,7 +256,7 @@ export default function AdminProductsPage() {
         ) : products.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center text-muted-foreground">
-              No products found.
+              No {pageTitle.toLowerCase()} found.
             </CardContent>
           </Card>
         ) : (
@@ -263,7 +274,7 @@ export default function AdminProductsPage() {
                   <SortableProductCard
                     key={product.id}
                     product={product}
-                    onNavigate={() => navigate(`/${language}/admin/products/${product.id}`)}
+                    onNavigate={() => navigate(`/${language}/admin/${itemType}/${product.id}`)}
                     onDelete={() => handleDeleteProduct(product.id, product.name)}
                   />
                 ))}

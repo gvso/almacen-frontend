@@ -2,6 +2,7 @@ import type {
   AdminProduct,
   ProductCreateData,
   ProductUpdateData,
+  ProductType,
   TranslationData,
   VariationCreateData,
   VariationUpdateData,
@@ -11,9 +12,17 @@ import { fetchAdminApi } from "./api";
 
 // ============ Product API ============
 
-export async function fetchAdminProducts(search?: string): Promise<{ data: AdminProduct[] }> {
-  const params = search ? `?search=${encodeURIComponent(search)}` : "";
-  return fetchAdminApi(`/api/v1/admin/products${params}`);
+export interface FetchAdminProductsOptions {
+  search?: string;
+  type?: ProductType;
+}
+
+export async function fetchAdminProducts(options?: FetchAdminProductsOptions): Promise<{ data: AdminProduct[] }> {
+  const params = new URLSearchParams();
+  if (options?.search) params.set("search", options.search);
+  if (options?.type) params.set("type", options.type);
+  const queryString = params.toString();
+  return fetchAdminApi(`/api/v1/admin/products${queryString ? `?${queryString}` : ""}`);
 }
 
 export async function createProduct(data: ProductCreateData): Promise<AdminProduct> {

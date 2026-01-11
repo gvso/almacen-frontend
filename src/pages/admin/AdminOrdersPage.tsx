@@ -9,6 +9,7 @@ import {
   Pencil,
   Check,
   X,
+  ShoppingCart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -303,6 +304,7 @@ export default function AdminOrdersPage() {
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
+            <ShoppingCart className="h-5 w-5" />
             <h1 className="text-xl font-bold">Orders</h1>
           </div>
         </div>
