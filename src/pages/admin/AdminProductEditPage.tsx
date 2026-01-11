@@ -1,12 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowLeft, Save, Plus, Trash2, Languages, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ImageDropzone } from "@/components/ImageDropzone";
 import {
   fetchAdminProducts,
   createProduct,
@@ -283,48 +284,67 @@ export default function AdminProductEditPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={form.handleSubmit(handleSaveProduct)} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Name (Default)</label>
-                  <Input {...form.register("name")} />
-                  {form.formState.errors.name && (
-                    <p className="text-xs text-destructive">{form.formState.errors.name.message}</p>
-                  )}
+              <div className="flex flex-col md:flex-row gap-6">
+                {/* Image on the left */}
+                <div className="w-full md:w-64 shrink-0">
+                  <label className="text-sm font-medium block mb-2">Product Image</label>
+                  <Controller
+                    name="imageUrl"
+                    control={form.control}
+                    render={({ field }) => (
+                      <ImageDropzone
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Price</label>
-                  <Input type="number" step="0.01" {...form.register("price")} />
-                  {form.formState.errors.price && (
-                    <p className="text-xs text-destructive">{form.formState.errors.price.message}</p>
-                  )}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Description (Default)</label>
-                <textarea
-                  className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                  {...form.register("description")}
-                />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Image URL</label>
-                  <Input {...form.register("imageUrl")} />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Order</label>
-                  <Input type="number" {...form.register("order", { valueAsNumber: true })} />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Status</label>
-                  <div className="flex items-center gap-2 h-9">
-                    <input
-                      type="checkbox"
-                      id="isActive"
-                      {...form.register("isActive")}
-                      className="h-4 w-4"
+
+                {/* Form fields on the right */}
+                <div className="flex-1 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Name (Default)</label>
+                      <Input {...form.register("name")} />
+                      {form.formState.errors.name && (
+                        <p className="text-xs text-destructive">{form.formState.errors.name.message}</p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Price</label>
+                      <div className="flex">
+                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground">$</span>
+                        <Input type="number" step="0.01" className="rounded-l-none" {...form.register("price")} />
+                      </div>
+                      {form.formState.errors.price && (
+                        <p className="text-xs text-destructive">{form.formState.errors.price.message}</p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Description (Default)</label>
+                    <textarea
+                      className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      {...form.register("description")}
                     />
-                    <label htmlFor="isActive" className="text-sm">Active</label>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Order</label>
+                      <Input type="number" {...form.register("order", { valueAsNumber: true })} />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Status</label>
+                      <div className="flex items-center gap-2 h-9">
+                        <input
+                          type="checkbox"
+                          id="isActive"
+                          {...form.register("isActive")}
+                          className="h-4 w-4"
+                        />
+                        <label htmlFor="isActive" className="text-sm">Active</label>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -390,17 +410,20 @@ export default function AdminProductEditPage() {
               <p className="text-sm text-muted-foreground text-center py-4">No variations yet.</p>
             ) : (
               <>
-                <div className="hidden md:grid grid-cols-5 gap-3 px-4 text-xs font-medium text-muted-foreground uppercase">
-                  <span>Name</span>
-                  <span>Price</span>
-                  <span>Image URL</span>
-                  <span>Order</span>
-                  <span>Status</span>
+                <div className="hidden md:flex gap-4 px-4 text-xs font-medium text-muted-foreground uppercase">
+                  <span className="w-24 shrink-0">Image</span>
+                  <div className="flex-1 grid grid-cols-4 gap-3">
+                    <span>Name</span>
+                    <span>Price</span>
+                    <span>Order</span>
+                    <span>Status</span>
+                  </div>
                 </div>
                 {product!.variations.map((variation) => (
                   <VariationForm
                     key={`${variation.id}-${JSON.stringify(variation)}`}
                     variation={variation}
+                    defaultImageUrl={product!.imageUrl || ""}
                     onUpdate={(data) => handleUpdateVariation(variation.id, data)}
                     onDelete={() => handleDeleteVariation(variation.id)}
                     onSaveTranslation={(lang, data) => handleSaveVariationTranslation(variation.id, lang, data)}
@@ -461,12 +484,13 @@ function TranslationForm({ language, initialName, initialDescription, onSave, on
 
 interface VariationFormProps {
   variation: AdminVariation;
+  defaultImageUrl: string;
   onUpdate: (data: VariationFormData) => void;
   onDelete: () => void;
   onSaveTranslation: (language: string, data: VariationTranslationFormData) => void;
 }
 
-function VariationForm({ variation, onUpdate, onDelete, onSaveTranslation }: VariationFormProps) {
+function VariationForm({ variation, defaultImageUrl, onUpdate, onDelete, onSaveTranslation }: VariationFormProps) {
   const hasTranslations = variation.translations && variation.translations.length > 0;
   const [showTranslations, setShowTranslations] = useState(hasTranslations);
 
@@ -481,31 +505,56 @@ function VariationForm({ variation, onUpdate, onDelete, onSaveTranslation }: Var
     },
   });
 
+  const imageUrl = useWatch({ control: form.control, name: "imageUrl" });
+
+  const handleImageChange = (url: string) => {
+    form.setValue("imageUrl", url, { shouldDirty: true });
+  };
+
   return (
     <div className="border rounded-lg p-4 space-y-3">
-      <div className="flex justify-end gap-2">
-        <Button size="sm" variant="ghost" onClick={() => setShowTranslations(!showTranslations)}>
-          <Languages className="h-3 w-3 mr-1" /> Translations
-        </Button>
-        <Button size="sm" variant="ghost" className="text-destructive" onClick={onDelete}>
-          <Trash2 className="h-3 w-3" />
-        </Button>
+      <div className="flex gap-4 items-center">
+        {/* Image dropzone */}
+        <div className="w-24 shrink-0">
+          <ImageDropzone
+            value={imageUrl}
+            onChange={handleImageChange}
+            compact
+            fallbackImage={defaultImageUrl}
+          />
+        </div>
+
+        {/* Form fields */}
+        <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-3 items-center">
+          <Input placeholder="Name" {...form.register("name")} />
+          <div className="flex">
+            <span className="inline-flex items-center px-2 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground">$</span>
+            <Input placeholder="Price" type="number" step="0.01" className="rounded-l-none" {...form.register("price")} />
+          </div>
+          <Input placeholder="Order" type="number" {...form.register("order", { valueAsNumber: true })} />
+          <div className="flex items-center gap-2">
+            <input type="checkbox" {...form.register("isActive")} className="h-4 w-4" />
+            <span className="text-sm">Active</span>
+            {form.formState.isDirty && (
+              <Button size="sm" onClick={form.handleSubmit(onUpdate)} className="ml-auto">
+                <Save className="h-3 w-3" />
+              </Button>
+            )}
+            <Button size="sm" variant="ghost" className="text-destructive ml-auto" onClick={onDelete}>
+              <Trash2 className="h-3 w-3" />
+            </Button>
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <Input placeholder="Name" {...form.register("name")} />
-        <Input placeholder="Price (optional)" type="number" step="0.01" {...form.register("price")} />
-        <Input placeholder="Image URL" {...form.register("imageUrl")} />
-        <Input placeholder="Order" type="number" {...form.register("order", { valueAsNumber: true })} />
-        <div className="flex items-center gap-2">
-          <input type="checkbox" {...form.register("isActive")} className="h-4 w-4" />
-          <span className="text-sm">Active</span>
-          {form.formState.isDirty && (
-            <Button size="sm" onClick={form.handleSubmit(onUpdate)} className="ml-auto">
-              <Save className="h-3 w-3" />
-            </Button>
-          )}
-        </div>
+      <div className="flex justify-start">
+        <Button
+          size="sm"
+          variant={showTranslations ? "secondary" : "ghost"}
+          onClick={() => setShowTranslations(!showTranslations)}
+        >
+          <Languages className="h-3 w-3 mr-1" /> Translations
+        </Button>
       </div>
 
       {showTranslations && (

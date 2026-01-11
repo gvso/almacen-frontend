@@ -4,6 +4,9 @@ export { getAdminToken, setAdminToken, clearAdminToken, fetchAdminApi } from "./
 // Auth
 export { adminLogin, verifyAdminToken } from "./auth";
 
+// Documents
+export { getSignedUploadUrl, uploadImageToGCS } from "./documents";
+
 // Products
 export {
   fetchAdminProducts,

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Check, X, Edit, Package, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Check, X, Package, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { fetchAdminProducts, deleteProduct, verifyAdminToken } from "@/services/admin";
@@ -95,7 +95,11 @@ export default function AdminProductsPage() {
         ) : (
           <div className="space-y-4">
             {products.map((product) => (
-              <Card key={product.id} className="hover:bg-muted/50 transition-colors">
+              <Card
+                key={product.id}
+                className="hover:bg-muted/50 transition-colors cursor-pointer"
+                onClick={() => navigate(`/${language}/admin/products/${product.id}`)}
+              >
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
                     <div className="h-16 w-16 shrink-0 overflow-hidden rounded-md bg-muted">
@@ -133,17 +137,12 @@ export default function AdminProductsPage() {
                     <div className="flex gap-2">
                       <Button
                         variant="outline"
-                        size="sm"
-                        onClick={() => navigate(`/${language}/admin/products/${product.id}`)}
-                      >
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit
-                      </Button>
-                      <Button
-                        variant="outline"
                         size="icon"
                         className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                        onClick={() => handleDeleteProduct(product.id, product.name)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteProduct(product.id, product.name);
+                        }}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
