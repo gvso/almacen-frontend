@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Check, X, Edit, Package } from "lucide-react";
+import { ArrowLeft, Check, X, Edit, Package, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { fetchAdminProducts, verifyAdminToken } from "@/services/admin";
+import { Card, CardContent } from "@/components/ui/card";
+import { fetchAdminProducts, createProduct, verifyAdminToken } from "@/services/admin";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { AdminProduct } from "@/types/AdminProduct";
 
@@ -40,6 +40,18 @@ export default function AdminProductsPage() {
     }
   };
 
+  const handleAddProduct = async () => {
+    try {
+      const newProduct = await createProduct({
+        name: "New Product",
+        price: "0.00",
+      });
+      navigate(`/${language}/admin/products/${newProduct.id}`);
+    } catch (error) {
+      console.error("Failed to create product:", error);
+    }
+  };
+
   if (isCheckingAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -51,11 +63,17 @@ export default function AdminProductsPage() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate(`/${language}/admin/dashboard`)}>
-            <ArrowLeft className="h-5 w-5" />
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => navigate(`/${language}/admin/dashboard`)}>
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <h1 className="text-xl font-bold">Products</h1>
+          </div>
+          <Button onClick={handleAddProduct}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Product
           </Button>
-          <h1 className="text-xl font-bold">Products</h1>
         </div>
       </header>
 

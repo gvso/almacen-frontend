@@ -1,5 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { ArrowLeft, Save, Plus, Trash2, Languages, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,22 +23,57 @@ import type { AdminProduct, AdminVariation } from "@/types/AdminProduct";
 
 const SUPPORTED_LANGUAGES = ["en", "es"];
 
+// Zod Schemas
+const productSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  description: z.string(),
+  price: z.string().min(1, "Price is required"),
+  imageUrl: z.string(),
+  order: z.number().int(),
+  isActive: z.boolean(),
+});
+
+const translationSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  description: z.string(),
+});
+
+const variationSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  price: z.string(),
+  imageUrl: z.string(),
+  order: z.number().int(),
+  isActive: z.boolean(),
+});
+
+const variationTranslationSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+});
+
+type ProductFormData = z.infer<typeof productSchema>;
+type TranslationFormData = z.infer<typeof translationSchema>;
+type VariationFormData = z.infer<typeof variationSchema>;
+type VariationTranslationFormData = z.infer<typeof variationTranslationSchema>;
+
 export default function AdminProductEditPage() {
   const { productId } = useParams<{ productId: string }>();
   const [product, setProduct] = useState<AdminProduct | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const navigate = useNavigate();
   const language = useLanguage();
 
-  // Form state
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [order, setOrder] = useState(0);
-  const [isActive, setIsActive] = useState(true);
+  const form = useForm<ProductFormData>({
+    resolver: zodResolver(productSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      price: "",
+      imageUrl: "",
+      order: 0,
+      isActive: true,
+    },
+  });
 
   useEffect(() => {
     verifyAdminToken().then((isValid) => {
@@ -46,59 +84,59 @@ export default function AdminProductEditPage() {
     });
   }, [navigate, language]);
 
-  useEffect(() => {
-    if (!isCheckingAuth && productId) {
-      loadProduct();
-    }
-  }, [isCheckingAuth, productId]);
-
-  const loadProduct = async () => {
+  const loadProduct = useCallback(async () => {
     try {
       const response = await fetchAdminProducts();
       const found = response.data.find((p) => p.id === Number(productId));
       if (found) {
         setProduct(found);
-        setName(found.name);
-        setDescription(found.description || "");
-        setPrice(found.price);
-        setImageUrl(found.imageUrl || "");
-        setOrder(found.order);
-        setIsActive(found.isActive);
+        form.reset({
+          name: found.name,
+          description: found.description || "",
+          price: found.price,
+          imageUrl: found.imageUrl || "",
+          order: found.order,
+          isActive: found.isActive,
+        });
       }
     } catch (error) {
       console.error("Failed to load product:", error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [productId, form]);
 
-  const handleSaveProduct = async () => {
+  useEffect(() => {
+    if (!isCheckingAuth && productId) {
+      loadProduct();
+    }
+  }, [isCheckingAuth, productId, loadProduct]);
+
+  const handleSaveProduct = async (data: ProductFormData) => {
     if (!product) return;
-    setIsSaving(true);
     try {
       const updated = await updateProduct(product.id, {
-        name,
-        description: description || null,
-        price,
-        image_url: imageUrl || null,
-        order,
-        is_active: isActive,
+        name: data.name,
+        description: data.description || null,
+        price: data.price,
+        image_url: data.imageUrl || null,
+        order: data.order,
+        is_active: data.isActive,
       });
       setProduct(updated);
+      form.reset(data);
     } catch (error) {
       console.error("Failed to update product:", error);
-    } finally {
-      setIsSaving(false);
     }
   };
 
-  const handleSaveTranslation = async (lang: string, transName: string, transDesc: string) => {
+  const handleSaveTranslation = async (lang: string, data: TranslationFormData) => {
     if (!product) return;
     try {
       const updated = await createOrUpdateTranslation(product.id, {
         language: lang,
-        name: transName,
-        description: transDesc || null,
+        name: data.name,
+        description: data.description || null,
       });
       setProduct(updated);
     } catch (error) {
@@ -129,13 +167,16 @@ export default function AdminProductEditPage() {
     }
   };
 
-  const handleUpdateVariation = async (
-    variationId: number,
-    data: { name?: string; price?: string | null; image_url?: string | null; order?: number; is_active?: boolean }
-  ) => {
+  const handleUpdateVariation = async (variationId: number, data: VariationFormData) => {
     if (!product) return;
     try {
-      const updated = await updateVariation(product.id, variationId, data);
+      const updated = await updateVariation(product.id, variationId, {
+        name: data.name,
+        price: data.price || null,
+        image_url: data.imageUrl || null,
+        order: data.order,
+        is_active: data.isActive,
+      });
       setProduct(updated);
     } catch (error) {
       console.error("Failed to update variation:", error);
@@ -152,12 +193,12 @@ export default function AdminProductEditPage() {
     }
   };
 
-  const handleSaveVariationTranslation = async (variationId: number, lang: string, transName: string) => {
+  const handleSaveVariationTranslation = async (variationId: number, lang: string, data: VariationTranslationFormData) => {
     if (!product) return;
     try {
       const updated = await createOrUpdateVariationTranslation(product.id, variationId, {
         language: lang,
-        name: transName,
+        name: data.name,
       });
       setProduct(updated);
     } catch (error) {
@@ -205,54 +246,60 @@ export default function AdminProductEditPage() {
           <CardHeader>
             <CardTitle>Product Details</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Name (Default)</label>
-                <Input value={name} onChange={(e) => setName(e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Price</label>
-                <Input type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Description (Default)</label>
-              <textarea
-                className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Image URL</label>
-                <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Order</label>
-                <Input type="number" value={order} onChange={(e) => setOrder(Number(e.target.value))} />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Status</label>
-                <div className="flex items-center gap-2 h-9">
-                  <input
-                    type="checkbox"
-                    id="isActive"
-                    checked={isActive}
-                    onChange={(e) => setIsActive(e.target.checked)}
-                    className="h-4 w-4"
-                  />
-                  <label htmlFor="isActive" className="text-sm">Active</label>
+          <CardContent>
+            <form onSubmit={form.handleSubmit(handleSaveProduct)} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Name (Default)</label>
+                  <Input {...form.register("name")} />
+                  {form.formState.errors.name && (
+                    <p className="text-xs text-destructive">{form.formState.errors.name.message}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Price</label>
+                  <Input type="number" step="0.01" {...form.register("price")} />
+                  {form.formState.errors.price && (
+                    <p className="text-xs text-destructive">{form.formState.errors.price.message}</p>
+                  )}
                 </div>
               </div>
-            </div>
-            <div className="flex justify-end">
-              <Button onClick={handleSaveProduct} disabled={isSaving}>
-                <Save className="h-4 w-4 mr-2" />
-                {isSaving ? "Saving..." : "Save Product"}
-              </Button>
-            </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Description (Default)</label>
+                <textarea
+                  className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  {...form.register("description")}
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Image URL</label>
+                  <Input {...form.register("imageUrl")} />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Order</label>
+                  <Input type="number" {...form.register("order", { valueAsNumber: true })} />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Status</label>
+                  <div className="flex items-center gap-2 h-9">
+                    <input
+                      type="checkbox"
+                      id="isActive"
+                      {...form.register("isActive")}
+                      className="h-4 w-4"
+                    />
+                    <label htmlFor="isActive" className="text-sm">Active</label>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <Button type="submit" disabled={form.formState.isSubmitting || !form.formState.isDirty}>
+                  <Save className="h-4 w-4 mr-2" />
+                  {form.formState.isSubmitting ? "Saving..." : "Save Product"}
+                </Button>
+              </div>
+            </form>
           </CardContent>
         </Card>
 
@@ -268,12 +315,12 @@ export default function AdminProductEditPage() {
             {SUPPORTED_LANGUAGES.map((lang) => {
               const existing = product.translations.find((t) => t.language === lang);
               return (
-                <TranslationRow
-                  key={lang}
+                <TranslationForm
+                  key={`${lang}-${existing?.name || ""}-${existing?.description || ""}`}
                   language={lang}
-                  name={existing?.name || ""}
-                  description={existing?.description || ""}
-                  onSave={(n, d) => handleSaveTranslation(lang, n, d)}
+                  initialName={existing?.name || ""}
+                  initialDescription={existing?.description || ""}
+                  onSave={(data) => handleSaveTranslation(lang, data)}
                   onDelete={existing ? () => handleDeleteTranslation(lang) : undefined}
                 />
               );
@@ -298,7 +345,6 @@ export default function AdminProductEditPage() {
               <p className="text-sm text-muted-foreground text-center py-4">No variations yet.</p>
             ) : (
               <>
-                {/* Column headers */}
                 <div className="hidden md:grid grid-cols-5 gap-3 px-4 text-xs font-medium text-muted-foreground uppercase">
                   <span>Name</span>
                   <span>Price</span>
@@ -307,12 +353,12 @@ export default function AdminProductEditPage() {
                   <span>Status</span>
                 </div>
                 {product.variations.map((variation) => (
-                  <VariationCard
-                    key={`${variation.id}-${JSON.stringify(variation.translations)}`}
+                  <VariationForm
+                    key={`${variation.id}-${JSON.stringify(variation)}`}
                     variation={variation}
                     onUpdate={(data) => handleUpdateVariation(variation.id, data)}
                     onDelete={() => handleDeleteVariation(variation.id)}
-                    onSaveTranslation={(lang, name) => handleSaveVariationTranslation(variation.id, lang, name)}
+                    onSaveTranslation={(lang, data) => handleSaveVariationTranslation(variation.id, lang, data)}
                   />
                 ))}
               </>
@@ -326,38 +372,30 @@ export default function AdminProductEditPage() {
 
 // Sub-components
 
-interface TranslationRowProps {
+interface TranslationFormProps {
   language: string;
-  name: string;
-  description: string;
-  onSave: (name: string, description: string) => void;
+  initialName: string;
+  initialDescription: string;
+  onSave: (data: TranslationFormData) => void;
   onDelete?: () => void;
 }
 
-function TranslationRow({ language, name: initialName, description: initialDesc, onSave, onDelete }: TranslationRowProps) {
-  const [name, setName] = useState(initialName);
-  const [description, setDescription] = useState(initialDesc);
-  const [isDirty, setIsDirty] = useState(false);
-
-  useEffect(() => {
-    setName(initialName);
-    setDescription(initialDesc);
-    setIsDirty(false);
-  }, [initialName, initialDesc]);
-
-  const handleChange = (n: string, d: string) => {
-    setName(n);
-    setDescription(d);
-    setIsDirty(true);
-  };
+function TranslationForm({ language, initialName, initialDescription, onSave, onDelete }: TranslationFormProps) {
+  const form = useForm<TranslationFormData>({
+    resolver: zodResolver(translationSchema),
+    defaultValues: {
+      name: initialName,
+      description: initialDescription,
+    },
+  });
 
   return (
     <div className="border rounded-lg p-4 space-y-3">
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium uppercase">{language}</span>
         <div className="flex gap-2">
-          {isDirty && (
-            <Button size="sm" variant="outline" onClick={() => onSave(name, description)}>
+          {form.formState.isDirty && (
+            <Button size="sm" variant="outline" onClick={form.handleSubmit(onSave)}>
               <Save className="h-3 w-3 mr-1" /> Save
             </Button>
           )}
@@ -369,60 +407,34 @@ function TranslationRow({ language, name: initialName, description: initialDesc,
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <Input
-          placeholder="Translated name"
-          value={name}
-          onChange={(e) => handleChange(e.target.value, description)}
-        />
-        <Input
-          placeholder="Translated description"
-          value={description}
-          onChange={(e) => handleChange(name, e.target.value)}
-        />
+        <Input placeholder="Translated name" {...form.register("name")} />
+        <Input placeholder="Translated description" {...form.register("description")} />
       </div>
     </div>
   );
 }
 
-interface VariationCardProps {
+interface VariationFormProps {
   variation: AdminVariation;
-  onUpdate: (data: { name?: string; price?: string | null; image_url?: string | null; order?: number; is_active?: boolean }) => void;
+  onUpdate: (data: VariationFormData) => void;
   onDelete: () => void;
-  onSaveTranslation: (language: string, name: string) => void;
+  onSaveTranslation: (language: string, data: VariationTranslationFormData) => void;
 }
 
-function VariationCard({ variation, onUpdate, onDelete, onSaveTranslation }: VariationCardProps) {
-  const [name, setName] = useState(variation.name);
-  const [price, setPrice] = useState(variation.price || "");
-  const [imageUrl, setImageUrl] = useState(variation.imageUrl || "");
-  const [order, setOrder] = useState(variation.order);
-  const [isActive, setIsActive] = useState(variation.isActive);
-  const [isDirty, setIsDirty] = useState(false);
+function VariationForm({ variation, onUpdate, onDelete, onSaveTranslation }: VariationFormProps) {
   const hasTranslations = variation.translations && variation.translations.length > 0;
   const [showTranslations, setShowTranslations] = useState(hasTranslations);
 
-  useEffect(() => {
-    setName(variation.name);
-    setPrice(variation.price || "");
-    setImageUrl(variation.imageUrl || "");
-    setOrder(variation.order);
-    setIsActive(variation.isActive);
-    setIsDirty(false);
-    if (variation.translations && variation.translations.length > 0) {
-      setShowTranslations(true);
-    }
-  }, [variation]);
-
-  const handleSave = () => {
-    onUpdate({
-      name,
-      price: price || null,
-      image_url: imageUrl || null,
-      order,
-      is_active: isActive,
-    });
-    setIsDirty(false);
-  };
+  const form = useForm<VariationFormData>({
+    resolver: zodResolver(variationSchema),
+    defaultValues: {
+      name: variation.name,
+      price: variation.price || "",
+      imageUrl: variation.imageUrl || "",
+      order: variation.order,
+      isActive: variation.isActive,
+    },
+  });
 
   return (
     <div className="border rounded-lg p-4 space-y-3">
@@ -436,39 +448,15 @@ function VariationCard({ variation, onUpdate, onDelete, onSaveTranslation }: Var
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <Input
-          placeholder="Name"
-          value={name}
-          onChange={(e) => { setName(e.target.value); setIsDirty(true); }}
-        />
-        <Input
-          placeholder="Price (optional)"
-          type="number"
-          step="0.01"
-          value={price}
-          onChange={(e) => { setPrice(e.target.value); setIsDirty(true); }}
-        />
-        <Input
-          placeholder="Image URL"
-          value={imageUrl}
-          onChange={(e) => { setImageUrl(e.target.value); setIsDirty(true); }}
-        />
-        <Input
-          placeholder="Order"
-          type="number"
-          value={order}
-          onChange={(e) => { setOrder(Number(e.target.value)); setIsDirty(true); }}
-        />
+        <Input placeholder="Name" {...form.register("name")} />
+        <Input placeholder="Price (optional)" type="number" step="0.01" {...form.register("price")} />
+        <Input placeholder="Image URL" {...form.register("imageUrl")} />
+        <Input placeholder="Order" type="number" {...form.register("order", { valueAsNumber: true })} />
         <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={isActive}
-            onChange={(e) => { setIsActive(e.target.checked); setIsDirty(true); }}
-            className="h-4 w-4"
-          />
+          <input type="checkbox" {...form.register("isActive")} className="h-4 w-4" />
           <span className="text-sm">Active</span>
-          {isDirty && (
-            <Button size="sm" onClick={handleSave} className="ml-auto">
+          {form.formState.isDirty && (
+            <Button size="sm" onClick={form.handleSubmit(onUpdate)} className="ml-auto">
               <Save className="h-3 w-3" />
             </Button>
           )}
@@ -481,11 +469,11 @@ function VariationCard({ variation, onUpdate, onDelete, onSaveTranslation }: Var
           {SUPPORTED_LANGUAGES.map((lang) => {
             const existing = variation.translations?.find((t) => t.language === lang);
             return (
-              <VariationTranslationRow
-                key={`${variation.id}-${lang}`}
+              <VariationTranslationForm
+                key={`${variation.id}-${lang}-${existing?.name || ""}`}
                 language={lang}
-                name={existing?.name || ""}
-                onSave={(n) => onSaveTranslation(lang, n)}
+                initialName={existing?.name || ""}
+                onSave={(data) => onSaveTranslation(lang, data)}
               />
             );
           })}
@@ -495,32 +483,26 @@ function VariationCard({ variation, onUpdate, onDelete, onSaveTranslation }: Var
   );
 }
 
-interface VariationTranslationRowProps {
+interface VariationTranslationFormProps {
   language: string;
-  name: string;
-  onSave: (name: string) => void;
+  initialName: string;
+  onSave: (data: VariationTranslationFormData) => void;
 }
 
-function VariationTranslationRow({ language, name: initialName, onSave }: VariationTranslationRowProps) {
-  const [name, setName] = useState(initialName);
-  const [isDirty, setIsDirty] = useState(false);
-
-  useEffect(() => {
-    setName(initialName);
-    setIsDirty(false);
-  }, [initialName]);
+function VariationTranslationForm({ language, initialName, onSave }: VariationTranslationFormProps) {
+  const form = useForm<VariationTranslationFormData>({
+    resolver: zodResolver(variationTranslationSchema),
+    defaultValues: {
+      name: initialName,
+    },
+  });
 
   return (
     <div className="flex items-center gap-2">
       <span className="text-xs font-medium uppercase w-8">{language}</span>
-      <Input
-        placeholder="Translated name"
-        value={name}
-        onChange={(e) => { setName(e.target.value); setIsDirty(true); }}
-        className="flex-1"
-      />
-      {isDirty && (
-        <Button size="sm" variant="outline" onClick={() => { onSave(name); setIsDirty(false); }}>
+      <Input placeholder="Translated name" {...form.register("name")} className="flex-1" />
+      {form.formState.isDirty && (
+        <Button size="sm" variant="outline" onClick={form.handleSubmit(onSave)}>
           <Save className="h-3 w-3" />
         </Button>
       )}

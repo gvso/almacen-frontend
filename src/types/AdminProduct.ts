@@ -37,6 +37,15 @@ export interface AdminProduct {
 }
 
 // Request types
+export interface ProductCreateData {
+  name: string;
+  description?: string | null;
+  price: string;
+  image_url?: string | null;
+  order?: number;
+  is_active?: boolean;
+}
+
 export interface ProductUpdateData {
   name?: string;
   description?: string | null;
