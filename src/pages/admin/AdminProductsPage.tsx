@@ -1,11 +1,122 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Check, X, Package, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Check, X, Package, Plus, Trash2, GripVertical } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { fetchAdminProducts, deleteProduct, verifyAdminToken } from "@/services/admin";
+import { fetchAdminProducts, deleteProduct, reorderProducts, verifyAdminToken } from "@/services/admin";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { AdminProduct } from "@/types/AdminProduct";
+
+interface SortableProductCardProps {
+  product: AdminProduct;
+  onNavigate: () => void;
+  onDelete: () => void;
+}
+
+function SortableProductCard({ product, onNavigate, onDelete }: SortableProductCardProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: product.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <Card
+      ref={setNodeRef}
+      style={style}
+      className={`hover:bg-muted/50 transition-colors ${isDragging ? "opacity-50 shadow-lg" : ""}`}
+    >
+      <CardContent className="p-4">
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            className="cursor-grab active:cursor-grabbing touch-none p-1 text-muted-foreground hover:text-foreground"
+            {...attributes}
+            {...listeners}
+          >
+            <GripVertical className="h-5 w-5" />
+          </button>
+
+          <div
+            className="flex-1 flex items-center gap-4 cursor-pointer"
+            onClick={onNavigate}
+          >
+            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-md bg-muted">
+              {product.imageUrl ? (
+                <img
+                  src={product.imageUrl}
+                  alt={product.name}
+                  className="h-full w-full object-contain p-1"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center">
+                  <Package className="h-8 w-8 text-muted-foreground" />
+                </div>
+              )}
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="font-medium truncate">{product.name}</h3>
+                {product.isActive ? (
+                  <span className="inline-flex items-center gap-1 text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded-full">
+                    <Check className="h-3 w-3" /> Active
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 text-xs text-red-600 bg-red-100 px-2 py-0.5 rounded-full">
+                    <X className="h-3 w-3" /> Inactive
+                  </span>
+                )}
+              </div>
+              <p className="text-sm text-muted-foreground">
+                ${Number(product.price).toFixed(2)} · {product.variations.length} variations · {product.translations.length} translations
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<AdminProduct[]>([]);
@@ -13,6 +124,13 @@ export default function AdminProductsPage() {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const navigate = useNavigate();
   const language = useLanguage();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   useEffect(() => {
     verifyAdminToken().then((isValid) => {
@@ -56,6 +174,28 @@ export default function AdminProductsPage() {
     }
   };
 
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = products.findIndex((p) => p.id === active.id);
+      const newIndex = products.findIndex((p) => p.id === over.id);
+
+      const newProducts = arrayMove(products, oldIndex, newIndex);
+      setProducts(newProducts);
+
+      // Save new order to backend
+      try {
+        const items = newProducts.map((p, index) => ({ id: p.id, order: index }));
+        await reorderProducts(items);
+      } catch (error) {
+        console.error("Failed to save order:", error);
+        // Revert on error
+        loadProducts();
+      }
+    }
+  };
+
   if (isCheckingAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -93,65 +233,27 @@ export default function AdminProductsPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4">
-            {products.map((product) => (
-              <Card
-                key={product.id}
-                className="hover:bg-muted/50 transition-colors cursor-pointer"
-                onClick={() => navigate(`/${language}/admin/products/${product.id}`)}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-4">
-                    <div className="h-16 w-16 shrink-0 overflow-hidden rounded-md bg-muted">
-                      {product.imageUrl ? (
-                        <img
-                          src={product.imageUrl}
-                          alt={product.name}
-                          className="h-full w-full object-contain p-1"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center">
-                          <Package className="h-8 w-8 text-muted-foreground" />
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-medium truncate">{product.name}</h3>
-                        {product.isActive ? (
-                          <span className="inline-flex items-center gap-1 text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded-full">
-                            <Check className="h-3 w-3" /> Active
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 text-xs text-red-600 bg-red-100 px-2 py-0.5 rounded-full">
-                            <X className="h-3 w-3" /> Inactive
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        ${Number(product.price).toFixed(2)} · {product.variations.length} variations · {product.translations.length} translations
-                      </p>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteProduct(product.id, product.name);
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={products.map((p) => p.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-4">
+                {products.map((product) => (
+                  <SortableProductCard
+                    key={product.id}
+                    product={product}
+                    onNavigate={() => navigate(`/${language}/admin/products/${product.id}`)}
+                    onDelete={() => handleDeleteProduct(product.id, product.name)}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         )}
       </main>
     </div>

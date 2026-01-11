@@ -19,4 +19,6 @@ export {
   updateVariation,
   deleteVariation,
   createOrUpdateVariationTranslation,
+  reorderProducts,
+  reorderVariations,
 } from "./products";

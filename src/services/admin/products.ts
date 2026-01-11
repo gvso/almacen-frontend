@@ -88,3 +88,24 @@ export async function createOrUpdateVariationTranslation(
     body: JSON.stringify(data),
   });
 }
+
+// ============ Reorder API ============
+
+export interface ReorderItem {
+  id: number;
+  order: number;
+}
+
+export async function reorderProducts(items: ReorderItem[]): Promise<{ data: AdminProduct[] }> {
+  return fetchAdminApi("/api/v1/admin/products/reorder", {
+    method: "PATCH",
+    body: JSON.stringify({ items }),
+  });
+}
+
+export async function reorderVariations(productId: number, items: ReorderItem[]): Promise<AdminProduct> {
+  return fetchAdminApi(`/api/v1/admin/products/${productId}/variations/reorder`, {
+    method: "PATCH",
+    body: JSON.stringify({ items }),
+  });
+}

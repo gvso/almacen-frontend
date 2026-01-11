@@ -3,7 +3,24 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useForm, useWatch, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowLeft, Save, Plus, Trash2, Languages, Layers } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, Languages, Layers, GripVertical } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,6 +36,7 @@ import {
   updateVariation,
   deleteVariation,
   createOrUpdateVariationTranslation,
+  reorderVariations,
   verifyAdminToken,
 } from "@/services/admin";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -32,7 +50,6 @@ const productSchema = z.object({
   description: z.string(),
   price: z.string().min(1, "Price is required"),
   imageUrl: z.string(),
-  order: z.number().int(),
   isActive: z.boolean(),
 });
 
@@ -45,7 +62,6 @@ const variationSchema = z.object({
   name: z.string().min(1, "Name is required"),
   price: z.string(),
   imageUrl: z.string(),
-  order: z.number().int(),
   isActive: z.boolean(),
 });
 
@@ -74,10 +90,16 @@ export default function AdminProductEditPage() {
       description: "",
       price: "",
       imageUrl: "",
-      order: 0,
       isActive: true,
     },
   });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   useEffect(() => {
     verifyAdminToken().then((isValid) => {
@@ -99,7 +121,6 @@ export default function AdminProductEditPage() {
           description: found.description || "",
           price: found.price,
           imageUrl: found.imageUrl || "",
-          order: found.order,
           isActive: found.isActive,
         });
       }
@@ -124,7 +145,6 @@ export default function AdminProductEditPage() {
           description: data.description || null,
           price: data.price,
           image_url: data.imageUrl || null,
-          order: data.order,
           is_active: data.isActive,
         });
         navigate(`/${language}/admin/products/${created.id}`, { replace: true });
@@ -134,7 +154,6 @@ export default function AdminProductEditPage() {
           description: data.description || null,
           price: data.price,
           image_url: data.imageUrl || null,
-          order: data.order,
           is_active: data.isActive,
         });
         setProduct(updated);
@@ -189,7 +208,6 @@ export default function AdminProductEditPage() {
         name: data.name,
         price: data.price || null,
         image_url: data.imageUrl || null,
-        order: data.order,
         is_active: data.isActive,
       });
       setProduct(updated);
@@ -205,6 +223,29 @@ export default function AdminProductEditPage() {
       setProduct(updated);
     } catch (error) {
       console.error("Failed to delete variation:", error);
+    }
+  };
+
+  const handleVariationDragEnd = async (event: DragEndEvent) => {
+    if (!product) return;
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = product.variations.findIndex((v) => v.id === active.id);
+      const newIndex = product.variations.findIndex((v) => v.id === over.id);
+
+      const newVariations = arrayMove(product.variations, oldIndex, newIndex);
+      setProduct({ ...product, variations: newVariations });
+
+      // Save new order to backend
+      try {
+        const items = newVariations.map((v, index) => ({ id: v.id, order: index }));
+        await reorderVariations(product.id, items);
+      } catch (error) {
+        console.error("Failed to save variation order:", error);
+        // Reload to revert on error
+        loadProduct();
+      }
     }
   };
 
@@ -312,7 +353,7 @@ export default function AdminProductEditPage() {
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Price</label>
-                      <div className="flex">
+                      <div className="flex max-w-40">
                         <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground">$</span>
                         <Input type="number" step="0.01" className="rounded-l-none" {...form.register("price")} />
                       </div>
@@ -328,22 +369,16 @@ export default function AdminProductEditPage() {
                       {...form.register("description")}
                     />
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Order</label>
-                      <Input type="number" {...form.register("order", { valueAsNumber: true })} />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Status</label>
-                      <div className="flex items-center gap-2 h-9">
-                        <input
-                          type="checkbox"
-                          id="isActive"
-                          {...form.register("isActive")}
-                          className="h-4 w-4"
-                        />
-                        <label htmlFor="isActive" className="text-sm">Active</label>
-                      </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Status</label>
+                    <div className="flex items-center gap-2 h-9">
+                      <input
+                        type="checkbox"
+                        id="isActive"
+                        {...form.register("isActive")}
+                        className="h-4 w-4"
+                      />
+                      <label htmlFor="isActive" className="text-sm">Active</label>
                     </div>
                   </div>
                 </div>
@@ -409,27 +444,39 @@ export default function AdminProductEditPage() {
             ) : product!.variations.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-4">No variations yet.</p>
             ) : (
-              <>
-                <div className="hidden md:flex gap-4 px-4 text-xs font-medium text-muted-foreground uppercase">
-                  <span className="w-24 shrink-0">Image</span>
-                  <div className="flex-1 grid grid-cols-4 gap-3">
-                    <span>Name</span>
-                    <span>Price</span>
-                    <span>Order</span>
-                    <span>Status</span>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleVariationDragEnd}
+              >
+                <SortableContext
+                  items={product!.variations.map((v) => v.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="hidden md:flex gap-4 px-4 text-xs font-medium text-muted-foreground uppercase items-center">
+                    <span className="w-6 shrink-0"></span>
+                    <span className="w-24 shrink-0 text-center">Image</span>
+                    <div className="flex-1 grid grid-cols-3 gap-3 text-center">
+                      <span>Name</span>
+                      <span>Price</span>
+                      <span>Active</span>
+                    </div>
+                    <span className="w-8 shrink-0"></span>
                   </div>
-                </div>
-                {product!.variations.map((variation) => (
-                  <VariationForm
-                    key={`${variation.id}-${JSON.stringify(variation)}`}
-                    variation={variation}
-                    defaultImageUrl={product!.imageUrl || ""}
-                    onUpdate={(data) => handleUpdateVariation(variation.id, data)}
-                    onDelete={() => handleDeleteVariation(variation.id)}
-                    onSaveTranslation={(lang, data) => handleSaveVariationTranslation(variation.id, lang, data)}
-                  />
-                ))}
-              </>
+                  <div className="space-y-4">
+                    {product!.variations.map((variation) => (
+                      <SortableVariationForm
+                        key={variation.id}
+                        variation={variation}
+                        defaultImageUrl={product!.imageUrl || ""}
+                        onUpdate={(data) => handleUpdateVariation(variation.id, data)}
+                        onDelete={() => handleDeleteVariation(variation.id)}
+                        onSaveTranslation={(lang, data) => handleSaveVariationTranslation(variation.id, lang, data)}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
             )}
           </CardContent>
         </Card>
@@ -488,9 +535,32 @@ interface VariationFormProps {
   onUpdate: (data: VariationFormData) => void;
   onDelete: () => void;
   onSaveTranslation: (language: string, data: VariationTranslationFormData) => void;
+  dragHandleProps?: React.HTMLAttributes<HTMLButtonElement> & { ref?: React.Ref<HTMLButtonElement> };
 }
 
-function VariationForm({ variation, defaultImageUrl, onUpdate, onDelete, onSaveTranslation }: VariationFormProps) {
+function SortableVariationForm(props: Omit<VariationFormProps, "dragHandleProps">) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: props.variation.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className={isDragging ? "opacity-50" : ""}>
+      <VariationForm {...props} dragHandleProps={{ ...attributes, ...listeners }} />
+    </div>
+  );
+}
+
+function VariationForm({ variation, defaultImageUrl, onUpdate, onDelete, onSaveTranslation, dragHandleProps }: VariationFormProps) {
   const hasTranslations = variation.translations && variation.translations.length > 0;
   const [showTranslations, setShowTranslations] = useState(hasTranslations);
 
@@ -500,7 +570,6 @@ function VariationForm({ variation, defaultImageUrl, onUpdate, onDelete, onSaveT
       name: variation.name,
       price: variation.price || "",
       imageUrl: variation.imageUrl || "",
-      order: variation.order,
       isActive: variation.isActive,
     },
   });
@@ -514,6 +583,17 @@ function VariationForm({ variation, defaultImageUrl, onUpdate, onDelete, onSaveT
   return (
     <div className="border rounded-lg p-4 space-y-3">
       <div className="flex gap-4 items-center">
+        {/* Drag handle */}
+        {dragHandleProps && (
+          <button
+            type="button"
+            className="cursor-grab active:cursor-grabbing touch-none p-1 text-muted-foreground hover:text-foreground"
+            {...dragHandleProps}
+          >
+            <GripVertical className="h-5 w-5" />
+          </button>
+        )}
+
         {/* Image dropzone */}
         <div className="w-24 shrink-0">
           <ImageDropzone
@@ -525,26 +605,30 @@ function VariationForm({ variation, defaultImageUrl, onUpdate, onDelete, onSaveT
         </div>
 
         {/* Form fields */}
-        <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-3 items-center">
-          <Input placeholder="Name" {...form.register("name")} />
-          <div className="flex">
-            <span className="inline-flex items-center px-2 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground">$</span>
-            <Input placeholder="Price" type="number" step="0.01" className="rounded-l-none" {...form.register("price")} />
+        <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-3 items-center">
+          <div className="flex justify-center">
+            <Input placeholder="Name" {...form.register("name")} />
           </div>
-          <Input placeholder="Order" type="number" {...form.register("order", { valueAsNumber: true })} />
-          <div className="flex items-center gap-2">
+          <div className="flex justify-center">
+            <div className="flex max-w-32">
+              <span className="inline-flex items-center px-2 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground">$</span>
+              <Input placeholder="Price" type="number" step="0.01" className="rounded-l-none" {...form.register("price")} />
+            </div>
+          </div>
+          <div className="flex items-center justify-center gap-2">
             <input type="checkbox" {...form.register("isActive")} className="h-4 w-4" />
-            <span className="text-sm">Active</span>
             {form.formState.isDirty && (
-              <Button size="sm" onClick={form.handleSubmit(onUpdate)} className="ml-auto">
+              <Button size="sm" onClick={form.handleSubmit(onUpdate)}>
                 <Save className="h-3 w-3" />
               </Button>
             )}
-            <Button size="sm" variant="ghost" className="text-destructive ml-auto" onClick={onDelete}>
-              <Trash2 className="h-3 w-3" />
-            </Button>
           </div>
         </div>
+
+        {/* Delete button */}
+        <Button size="sm" variant="ghost" className="text-destructive shrink-0" onClick={onDelete}>
+          <Trash2 className="h-3 w-3" />
+        </Button>
       </div>
 
       <div className="flex justify-start">
