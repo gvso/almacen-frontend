@@ -1,8 +1,17 @@
 {
+  "nav": {
+    "products": "Productos",
+    "services": "Servicios"
+  },
   "product": {
     "title": "Productos",
     "loadError": "No se pudieron cargar los productos. Por favor, inténtalo de nuevo más tarde.",
     "searchPlaceholder": "Buscar productos..."
+  },
+  "service": {
+    "title": "Servicios",
+    "loadError": "No se pudieron cargar los servicios. Por favor, inténtalo de nuevo más tarde.",
+    "searchPlaceholder": "Buscar servicios..."
   },
   "payment": {
     "bannerTitle": "Pago a través de Airbnb",

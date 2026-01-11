@@ -1,8 +1,17 @@
 {
+  "nav": {
+    "products": "Products",
+    "services": "Services"
+  },
   "product": {
     "title": "Products",
     "loadError": "Failed to load products. Please try again later.",
     "searchPlaceholder": "Search products..."
+  },
+  "service": {
+    "title": "Services",
+    "loadError": "Failed to load services. Please try again later.",
+    "searchPlaceholder": "Search services..."
   },
   "payment": {
     "bannerTitle": "Payment via Airbnb",

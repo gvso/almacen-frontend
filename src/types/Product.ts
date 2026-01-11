@@ -1,3 +1,5 @@
+export type ProductType = "product" | "service";
+
 export interface ProductVariation {
   id: number;
   name: string;
@@ -13,6 +15,7 @@ export interface Product {
   price: string;
   imageUrl: string | null;
   isActive: boolean;
+  type: ProductType;
   createdAt: string;
   updatedAt: string;
   variations: ProductVariation[];

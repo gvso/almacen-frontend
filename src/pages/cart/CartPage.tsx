@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Minus, Package, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
-import PageTitle from "@/components/PageTitle";
 import { InfoAlert } from "@/components/Alert";
 import { Button } from "@/components/ui/button";
 import { OrderSuccessDialog } from "@/features/orders";
@@ -50,8 +49,6 @@ export default function CartPage() {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <PageTitle>{t("cart.title")}</PageTitle>
-
         <InfoAlert
           title={t("payment.bannerTitle")}
           message={t("payment.bannerMessage")}

@@ -36,7 +36,7 @@ function App() {
           {/* Language-prefixed routes */}
           <Route path="/:lang" element={<LanguageLayout />}>
             <Route index element={<Navigate to="products" replace />} />
-            <Route path="products" element={<ProductPage />} />
+            <Route path=":itemType" element={<ProductPage />} />
             <Route path="cart" element={<CartPage />} />
             <Route path="orders/:orderId" element={<OrderPage />} />
 

@@ -1,14 +1,21 @@
-import { Product } from "@/types/Product";
+import { Product, ProductType } from "@/types/Product";
 import { fetchApi } from "./api";
 
 interface ProductsResponse {
   data: Product[];
 }
 
-export async function getProducts(language?: string, search?: string): Promise<ProductsResponse> {
+export interface GetProductsOptions {
+  language?: string;
+  search?: string;
+  type?: ProductType;
+}
+
+export async function getProducts(options: GetProductsOptions = {}): Promise<ProductsResponse> {
   const params = new URLSearchParams();
-  if (language) params.set("language", language);
-  if (search) params.set("search", search);
+  if (options.language) params.set("language", options.language);
+  if (options.search) params.set("search", options.search);
+  if (options.type) params.set("type", options.type);
   const queryString = params.toString();
   return fetchApi<ProductsResponse>(`/api/v1/products${queryString ? `?${queryString}` : ""}`);
 }
