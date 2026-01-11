@@ -1,7 +1,8 @@
 {
   "product": {
     "title": "Products",
-    "loadError": "Failed to load products. Please try again later."
+    "loadError": "Failed to load products. Please try again later.",
+    "searchPlaceholder": "Search products..."
   },
   "common": {
     "close": "Close",

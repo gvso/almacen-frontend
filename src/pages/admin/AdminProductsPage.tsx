@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Check, X, Package, Plus, Trash2, GripVertical } from "lucide-react";
+import { ArrowLeft, Check, X, Package, Plus, Search, Trash2, GripVertical } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -20,8 +20,10 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { fetchAdminProducts, deleteProduct, reorderProducts, verifyAdminToken } from "@/services/admin";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useDebounce } from "@/hooks/useDebounce";
 import type { AdminProduct } from "@/types/AdminProduct";
 
 interface SortableProductCardProps {
@@ -81,8 +83,8 @@ function SortableProductCard({ product, onNavigate, onDelete }: SortableProductC
             </div>
 
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <h3 className="font-medium truncate">{product.name}</h3>
+              <h3 className="font-medium truncate">{product.name}</h3>
+              <div className="mt-1">
                 {product.isActive ? (
                   <span className="inline-flex items-center gap-1 text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded-full">
                     <Check className="h-3 w-3" /> Active
@@ -93,7 +95,7 @@ function SortableProductCard({ product, onNavigate, onDelete }: SortableProductC
                   </span>
                 )}
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="mt-1 text-sm text-muted-foreground">
                 ${Number(product.price).toFixed(2)} · {product.variations.length} variations · {product.translations.length} translations
               </p>
             </div>
@@ -122,6 +124,8 @@ export default function AdminProductsPage() {
   const [products, setProducts] = useState<AdminProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [searchInput, setSearchInput] = useState("");
+  const debouncedSearch = useDebounce(searchInput, 300);
   const navigate = useNavigate();
   const language = useLanguage();
 
@@ -145,11 +149,12 @@ export default function AdminProductsPage() {
     if (!isCheckingAuth) {
       loadProducts();
     }
-  }, [isCheckingAuth]);
+  }, [isCheckingAuth, debouncedSearch]);
 
   const loadProducts = async () => {
+    setIsLoading(true);
     try {
-      const response = await fetchAdminProducts();
+      const response = await fetchAdminProducts(debouncedSearch || undefined);
       setProducts(response.data);
     } catch (error) {
       console.error("Failed to load products:", error);
@@ -222,6 +227,17 @@ export default function AdminProductsPage() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        <div className="relative mb-6">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Search products..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+
         {isLoading ? (
           <div className="flex justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>

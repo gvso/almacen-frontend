@@ -1,7 +1,8 @@
 {
   "product": {
     "title": "Productos",
-    "loadError": "No se pudieron cargar los productos. Por favor, inténtalo de nuevo más tarde."
+    "loadError": "No se pudieron cargar los productos. Por favor, inténtalo de nuevo más tarde.",
+    "searchPlaceholder": "Buscar productos..."
   },
   "common": {
     "close": "Cerrar",

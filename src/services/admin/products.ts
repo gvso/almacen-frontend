@@ -11,8 +11,9 @@ import { fetchAdminApi } from "./api";
 
 // ============ Product API ============
 
-export async function fetchAdminProducts(): Promise<{ data: AdminProduct[] }> {
-  return fetchAdminApi("/api/v1/admin/products");
+export async function fetchAdminProducts(search?: string): Promise<{ data: AdminProduct[] }> {
+  const params = search ? `?search=${encodeURIComponent(search)}` : "";
+  return fetchAdminApi(`/api/v1/admin/products${params}`);
 }
 
 export async function createProduct(data: ProductCreateData): Promise<AdminProduct> {
