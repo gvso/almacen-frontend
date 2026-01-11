@@ -8,6 +8,7 @@ import CartPage from "@/pages/cart/CartPage";
 import OrderPage from "@/pages/order/OrderPage";
 import AdminLoginPage from "@/pages/admin/AdminLoginPage";
 import AdminDashboardPage from "@/pages/admin/AdminDashboardPage";
+import AdminOrdersPage from "@/pages/admin/AdminOrdersPage";
 import AdminProductsPage from "@/pages/admin/AdminProductsPage";
 import AdminProductEditPage from "@/pages/admin/AdminProductEditPage";
 import LanguageLayout from "@/layouts/LanguageLayout";
@@ -42,6 +43,7 @@ function App() {
             {/* Admin routes */}
             <Route path="admin" element={<AdminLoginPage />} />
             <Route path="admin/dashboard" element={<AdminDashboardPage />} />
+            <Route path="admin/orders" element={<AdminOrdersPage />} />
             <Route path="admin/products" element={<AdminProductsPage />} />
             <Route path="admin/products/:productId" element={<AdminProductEditPage />} />
           </Route>

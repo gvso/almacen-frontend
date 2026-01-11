@@ -11,9 +11,11 @@ export interface OrderItem {
 
 export interface Order {
   id: string;
+  label: string;
   status: "confirmed" | "processed" | "cancelled";
   total: string;
   notes: string | null;
   items: OrderItem[];
   insertedAt: string | null;
+  updatedAt: string | null;
 }

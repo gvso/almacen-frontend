@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogOut, LayoutDashboard, Package, ChevronRight } from "lucide-react";
+import { LogOut, LayoutDashboard, Package, ShoppingCart, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { clearAdminToken, verifyAdminToken } from "@/services/admin";
@@ -50,6 +50,24 @@ export default function AdminDashboardPage() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <Card
+            className="cursor-pointer hover:bg-muted/50 transition-colors"
+            onClick={() => navigate(`/${language}/admin/orders`)}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Orders</CardTitle>
+              <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <p className="text-xs text-muted-foreground">
+                View and manage customer orders
+              </p>
+              <div className="flex items-center text-sm text-primary mt-2">
+                View all <ChevronRight className="h-4 w-4 ml-1" />
+              </div>
+            </CardContent>
+          </Card>
+
           <Card
             className="cursor-pointer hover:bg-muted/50 transition-colors"
             onClick={() => navigate(`/${language}/admin/products`)}
