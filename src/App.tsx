@@ -8,6 +8,8 @@ import CartPage from "@/pages/cart/CartPage";
 import OrderPage from "@/pages/order/OrderPage";
 import AdminLoginPage from "@/pages/admin/AdminLoginPage";
 import AdminDashboardPage from "@/pages/admin/AdminDashboardPage";
+import AdminProductsPage from "@/pages/admin/AdminProductsPage";
+import AdminProductEditPage from "@/pages/admin/AdminProductEditPage";
 import LanguageLayout from "@/layouts/LanguageLayout";
 import { DEFAULT_LANGUAGE } from "@/contexts/LanguageContext";
 import { toCamelCase } from "./utils/casing";
@@ -36,10 +38,12 @@ function App() {
             <Route path="products" element={<ProductPage />} />
             <Route path="cart" element={<CartPage />} />
             <Route path="orders/:orderId" element={<OrderPage />} />
-            
+
             {/* Admin routes */}
             <Route path="admin" element={<AdminLoginPage />} />
             <Route path="admin/dashboard" element={<AdminDashboardPage />} />
+            <Route path="admin/products" element={<AdminProductsPage />} />
+            <Route path="admin/products/:productId" element={<AdminProductEditPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
