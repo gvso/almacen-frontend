@@ -14,7 +14,9 @@
   "cart": {
     "title": "Cart",
     "loading": "Loading cart...",
-    "empty": "Your cart is empty.",
+    "empty": "Your cart is empty",
+    "emptyDescription": "Looks like you haven't added any products yet.",
+    "browseProducts": "Browse Products",
     "quantity": "Quantity",
     "increase": "Increase quantity",
     "decrease": "Decrease quantity",

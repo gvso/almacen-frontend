@@ -14,7 +14,9 @@
   "cart": {
     "title": "Carrito",
     "loading": "Cargando carrito...",
-    "empty": "Tu carrito está vacío.",
+    "empty": "Tu carrito está vacío",
+    "emptyDescription": "Parece que aún no has agregado ningún producto.",
+    "browseProducts": "Ver Productos",
     "quantity": "Cantidad",
     "increase": "Aumentar cantidad",
     "decrease": "Disminuir cantidad",

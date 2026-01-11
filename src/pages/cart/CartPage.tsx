@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Minus, Package, Plus, Trash2 } from "lucide-react";
+import { Minus, Package, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import PageTitle from "@/components/PageTitle";
 import { Button } from "@/components/ui/button";
@@ -54,7 +54,16 @@ export default function CartPage() {
         {isLoading && <p>{t("cart.loading")}</p>}
 
         {!isLoading && itemCount === 0 && (
-          <p className="text-muted-foreground">{t("cart.empty")}</p>
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="rounded-full bg-muted p-6 mb-6">
+              <ShoppingCart className="h-12 w-12 text-muted-foreground" />
+            </div>
+            <h2 className="text-xl font-semibold mb-2">{t("cart.empty")}</h2>
+            <p className="text-muted-foreground mb-6">{t("cart.emptyDescription")}</p>
+            <Button onClick={() => navigate(`/${language}/products`)}>
+              {t("cart.browseProducts")}
+            </Button>
+          </div>
         )}
 
         {!isLoading && cart?.items && cart.items.length > 0 && (
