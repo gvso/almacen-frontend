@@ -4,13 +4,14 @@
     "loadError": "Failed to load products. Please try again later.",
     "searchPlaceholder": "Search products..."
   },
+  "payment": {
+    "bannerTitle": "Payment via Airbnb",
+    "bannerMessage": "All payments are processed through Airbnb. No payment information will be requested on this site. After checkout, a link with your order details will be generated for you to share with your host."
+  },
   "common": {
     "close": "Close",
     "loading": "Loading...",
     "total": "Total"
-  },
-  "navbar": {
-    "catalog": "Catalog"
   },
   "cart": {
     "title": "Cart",

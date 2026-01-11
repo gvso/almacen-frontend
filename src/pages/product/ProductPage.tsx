@@ -5,7 +5,7 @@ import { ProductGrid, useProducts } from "@/features/products";
 import Navbar from "@/components/Navbar";
 import PageTitle from "@/components/PageTitle";
 import Spinner from "@/components/Spinner";
-import { ErrorAlert } from "@/components/Alert";
+import { ErrorAlert, InfoAlert } from "@/components/Alert";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/useDebounce";
 
@@ -21,14 +21,20 @@ export default function ProductPage() {
       <main className="container mx-auto px-4 py-8">
         <PageTitle>{t("product.title")}</PageTitle>
 
-        <div className="relative mb-6">
+        <InfoAlert
+          title={t("payment.bannerTitle")}
+          message={t("payment.bannerMessage")}
+          className="mb-6"
+        />
+
+        <div className="relative mb-10">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="text"
             placeholder={t("product.searchPlaceholder")}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="pl-10"
+            className="h-14 pl-10 sm:h-10"
           />
         </div>
 

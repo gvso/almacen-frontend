@@ -70,7 +70,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Card className="group flex h-full flex-col overflow-hidden transition-all hover:shadow-lg">
-      <div className="aspect-3/2 overflow-hidden bg-muted sm:aspect-square">
+      <div className="aspect-3/2 overflow-hidden bg-muted">
         {displayImage ? (
           <img
             src={displayImage}

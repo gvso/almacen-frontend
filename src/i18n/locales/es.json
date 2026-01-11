@@ -4,13 +4,14 @@
     "loadError": "No se pudieron cargar los productos. Por favor, inténtalo de nuevo más tarde.",
     "searchPlaceholder": "Buscar productos..."
   },
+  "payment": {
+    "bannerTitle": "Pago a través de Airbnb",
+    "bannerMessage": "Todos los pagos se procesan a través de Airbnb. No se solicitará información de pago en este sitio. Al finalizar la compra, se generará un enlace con los detalles de tu pedido para compartir con tu anfitrión."
+  },
   "common": {
     "close": "Cerrar",
     "loading": "Cargando...",
     "total": "Total"
-  },
-  "navbar": {
-    "catalog": "Catálogo"
   },
   "cart": {
     "title": "Carrito",
