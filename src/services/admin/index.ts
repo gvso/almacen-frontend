@@ -9,6 +9,7 @@ export {
   fetchAdminProducts,
   createProduct,
   updateProduct,
+  deleteProduct,
   createOrUpdateTranslation,
   deleteTranslation,
   createVariation,

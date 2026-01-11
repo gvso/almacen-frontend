@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Check, X, Edit, Package, Plus } from "lucide-react";
+import { ArrowLeft, Check, X, Edit, Package, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { fetchAdminProducts, createProduct, verifyAdminToken } from "@/services/admin";
+import { fetchAdminProducts, deleteProduct, verifyAdminToken } from "@/services/admin";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { AdminProduct } from "@/types/AdminProduct";
 
@@ -40,15 +40,19 @@ export default function AdminProductsPage() {
     }
   };
 
-  const handleAddProduct = async () => {
+  const handleAddProduct = () => {
+    navigate(`/${language}/admin/products/new`);
+  };
+
+  const handleDeleteProduct = async (productId: number, productName: string) => {
+    if (!window.confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) {
+      return;
+    }
     try {
-      const newProduct = await createProduct({
-        name: "New Product",
-        price: "0.00",
-      });
-      navigate(`/${language}/admin/products/${newProduct.id}`);
+      await deleteProduct(productId);
+      setProducts(products.filter((p) => p.id !== productId));
     } catch (error) {
-      console.error("Failed to create product:", error);
+      console.error("Failed to delete product:", error);
     }
   };
 
@@ -126,14 +130,24 @@ export default function AdminProductsPage() {
                       </p>
                     </div>
 
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate(`/${language}/admin/products/${product.id}`)}
-                    >
-                      <Edit className="h-4 w-4 mr-2" />
-                      Edit
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate(`/${language}/admin/products/${product.id}`)}
+                      >
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                        onClick={() => handleDeleteProduct(product.id, product.name)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

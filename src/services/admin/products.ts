@@ -29,6 +29,12 @@ export async function updateProduct(productId: number, data: ProductUpdateData):
   });
 }
 
+export async function deleteProduct(productId: number): Promise<void> {
+  return fetchAdminApi(`/api/v1/admin/products/${productId}`, {
+    method: "DELETE",
+  });
+}
+
 // ============ Translation API ============
 
 export async function createOrUpdateTranslation(productId: number, data: TranslationData): Promise<AdminProduct> {

@@ -9,7 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   fetchAdminProducts,
+  createProduct,
   updateProduct,
+  deleteProduct,
   createOrUpdateTranslation,
   deleteTranslation,
   createVariation,
@@ -57,8 +59,9 @@ type VariationTranslationFormData = z.infer<typeof variationTranslationSchema>;
 
 export default function AdminProductEditPage() {
   const { productId } = useParams<{ productId: string }>();
+  const isNewProduct = productId === "new";
   const [product, setProduct] = useState<AdminProduct | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!isNewProduct);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const navigate = useNavigate();
   const language = useLanguage();
@@ -107,26 +110,37 @@ export default function AdminProductEditPage() {
   }, [productId, form]);
 
   useEffect(() => {
-    if (!isCheckingAuth && productId) {
+    if (!isCheckingAuth && productId && !isNewProduct) {
       loadProduct();
     }
-  }, [isCheckingAuth, productId, loadProduct]);
+  }, [isCheckingAuth, productId, isNewProduct, loadProduct]);
 
   const handleSaveProduct = async (data: ProductFormData) => {
-    if (!product) return;
     try {
-      const updated = await updateProduct(product.id, {
-        name: data.name,
-        description: data.description || null,
-        price: data.price,
-        image_url: data.imageUrl || null,
-        order: data.order,
-        is_active: data.isActive,
-      });
-      setProduct(updated);
-      form.reset(data);
+      if (isNewProduct) {
+        const created = await createProduct({
+          name: data.name,
+          description: data.description || null,
+          price: data.price,
+          image_url: data.imageUrl || null,
+          order: data.order,
+          is_active: data.isActive,
+        });
+        navigate(`/${language}/admin/products/${created.id}`, { replace: true });
+      } else if (product) {
+        const updated = await updateProduct(product.id, {
+          name: data.name,
+          description: data.description || null,
+          price: data.price,
+          image_url: data.imageUrl || null,
+          order: data.order,
+          is_active: data.isActive,
+        });
+        setProduct(updated);
+        form.reset(data);
+      }
     } catch (error) {
-      console.error("Failed to update product:", error);
+      console.error("Failed to save product:", error);
     }
   };
 
@@ -206,6 +220,19 @@ export default function AdminProductEditPage() {
     }
   };
 
+  const handleDeleteProduct = async () => {
+    if (!product) return;
+    if (!window.confirm("Are you sure you want to delete this product? This action cannot be undone.")) {
+      return;
+    }
+    try {
+      await deleteProduct(product.id);
+      navigate(`/${language}/admin/products`);
+    } catch (error) {
+      console.error("Failed to delete product:", error);
+    }
+  };
+
   if (isCheckingAuth || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -214,7 +241,7 @@ export default function AdminProductEditPage() {
     );
   }
 
-  if (!product) {
+  if (!product && !isNewProduct) {
     return (
       <div className="min-h-screen bg-background">
         <header className="border-b bg-card">
@@ -232,11 +259,19 @@ export default function AdminProductEditPage() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate(`/${language}/admin/products`)}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-xl font-bold">Edit Product</h1>
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => navigate(`/${language}/admin/products`)}>
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <h1 className="text-xl font-bold">{isNewProduct ? "New Product" : "Edit Product"}</h1>
+          </div>
+          {!isNewProduct && (
+            <Button variant="destructive" size="sm" onClick={handleDeleteProduct}>
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete Product
+            </Button>
+          )}
         </div>
       </header>
 
@@ -294,9 +329,9 @@ export default function AdminProductEditPage() {
                 </div>
               </div>
               <div className="flex justify-end">
-                <Button type="submit" disabled={form.formState.isSubmitting || !form.formState.isDirty}>
+                <Button type="submit" disabled={form.formState.isSubmitting || (!isNewProduct && !form.formState.isDirty)}>
                   <Save className="h-4 w-4 mr-2" />
-                  {form.formState.isSubmitting ? "Saving..." : "Save Product"}
+                  {form.formState.isSubmitting ? "Saving..." : isNewProduct ? "Create Product" : "Save Product"}
                 </Button>
               </div>
             </form>
@@ -304,7 +339,7 @@ export default function AdminProductEditPage() {
         </Card>
 
         {/* Translations */}
-        <Card>
+        <Card className={isNewProduct ? "opacity-60" : undefined}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Languages className="h-5 w-5" />
@@ -312,36 +347,46 @@ export default function AdminProductEditPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {SUPPORTED_LANGUAGES.map((lang) => {
-              const existing = product.translations.find((t) => t.language === lang);
-              return (
-                <TranslationForm
-                  key={`${lang}-${existing?.name || ""}-${existing?.description || ""}`}
-                  language={lang}
-                  initialName={existing?.name || ""}
-                  initialDescription={existing?.description || ""}
-                  onSave={(data) => handleSaveTranslation(lang, data)}
-                  onDelete={existing ? () => handleDeleteTranslation(lang) : undefined}
-                />
-              );
-            })}
+            {isNewProduct ? (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                Save the product first to add translations.
+              </p>
+            ) : (
+              SUPPORTED_LANGUAGES.map((lang) => {
+                const existing = product!.translations.find((t) => t.language === lang);
+                return (
+                  <TranslationForm
+                    key={`${lang}-${existing?.name || ""}-${existing?.description || ""}`}
+                    language={lang}
+                    initialName={existing?.name || ""}
+                    initialDescription={existing?.description || ""}
+                    onSave={(data) => handleSaveTranslation(lang, data)}
+                    onDelete={existing ? () => handleDeleteTranslation(lang) : undefined}
+                  />
+                );
+              })
+            )}
           </CardContent>
         </Card>
 
         {/* Variations */}
-        <Card>
+        <Card className={isNewProduct ? "opacity-60" : undefined}>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <Layers className="h-5 w-5" />
               Variations
             </CardTitle>
-            <Button size="sm" onClick={handleAddVariation}>
+            <Button size="sm" onClick={handleAddVariation} disabled={isNewProduct}>
               <Plus className="h-4 w-4 mr-2" />
               Add Variation
             </Button>
           </CardHeader>
           <CardContent className="space-y-4">
-            {product.variations.length === 0 ? (
+            {isNewProduct ? (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                Save the product first to add variations.
+              </p>
+            ) : product!.variations.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-4">No variations yet.</p>
             ) : (
               <>
@@ -352,7 +397,7 @@ export default function AdminProductEditPage() {
                   <span>Order</span>
                   <span>Status</span>
                 </div>
-                {product.variations.map((variation) => (
+                {product!.variations.map((variation) => (
                   <VariationForm
                     key={`${variation.id}-${JSON.stringify(variation)}`}
                     variation={variation}
