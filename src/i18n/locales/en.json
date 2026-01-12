@@ -7,17 +7,17 @@
     "title": "Products",
     "loadError": "Failed to load products. Please try again later.",
     "searchPlaceholder": "Search products...",
-    "advanceNotice": "Products must be requested at least 24 hours before checkout."
+    "advanceNotice": "Orders must be placed at least 24 hours before check-in."
   },
   "service": {
     "title": "Services",
     "loadError": "Failed to load services. Please try again later.",
     "searchPlaceholder": "Search services...",
-    "advanceNotice": "Services must be requested at least 48 hours before checkout."
+    "advanceNotice": "Orders must be placed at least 48 hours before check-in."
   },
   "payment": {
     "bannerTitle": "Payment via Airbnb",
-    "bannerMessage": "All payments are processed through Airbnb. No payment information will be requested on this site. After checkout, a link with your order details will be generated for you to share with your host."
+    "bannerMessage": "All payments will be requested by your host through Airbnb. No payment information will be requested on this site. After checkout, a link with your order details will be generated for you to share with your host."
   },
   "common": {
     "close": "Close",
