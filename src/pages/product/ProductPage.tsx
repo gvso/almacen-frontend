@@ -5,7 +5,7 @@ import { Search } from "lucide-react";
 import { ProductGrid, ServiceGrid, useProducts } from "@/features/products";
 import Navbar from "@/components/Navbar";
 import Spinner from "@/components/Spinner";
-import { ErrorAlert, InfoAlert } from "@/components/Alert";
+import { ErrorAlert, InfoAlert, WarningAlert } from "@/components/Alert";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/useDebounce";
 import type { ProductType } from "@/types/Product";
@@ -31,6 +31,10 @@ export default function ProductPage() {
         <InfoAlert
           title={t("payment.bannerTitle")}
           message={t("payment.bannerMessage")}
+          className="mb-4"
+        />
+        <WarningAlert
+          message={t(`${translationKey}.advanceNotice`)}
           className="mb-6"
         />
 

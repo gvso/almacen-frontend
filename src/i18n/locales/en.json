@@ -6,12 +6,14 @@
   "product": {
     "title": "Products",
     "loadError": "Failed to load products. Please try again later.",
-    "searchPlaceholder": "Search products..."
+    "searchPlaceholder": "Search products...",
+    "advanceNotice": "Products must be requested at least 24 hours before checkout."
   },
   "service": {
     "title": "Services",
     "loadError": "Failed to load services. Please try again later.",
-    "searchPlaceholder": "Search services..."
+    "searchPlaceholder": "Search services...",
+    "advanceNotice": "Services must be requested at least 48 hours before checkout."
   },
   "payment": {
     "bannerTitle": "Payment via Airbnb",

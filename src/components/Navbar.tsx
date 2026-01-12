@@ -25,6 +25,7 @@ function Navbar() {
             <Button
               variant={isActive("/products") ? "default" : "ghost"}
               size="sm"
+              className="text-sm"
               asChild
             >
               <Link to={`/${language}/products`}>{t("nav.products")}</Link>
@@ -32,6 +33,7 @@ function Navbar() {
             <Button
               variant={isActive("/services") ? "default" : "ghost"}
               size="sm"
+              className="text-sm"
               asChild
             >
               <Link to={`/${language}/services`}>{t("nav.services")}</Link>

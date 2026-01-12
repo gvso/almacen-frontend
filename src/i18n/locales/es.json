@@ -6,12 +6,14 @@
   "product": {
     "title": "Productos",
     "loadError": "No se pudieron cargar los productos. Por favor, inténtalo de nuevo más tarde.",
-    "searchPlaceholder": "Buscar productos..."
+    "searchPlaceholder": "Buscar productos...",
+    "advanceNotice": "Los productos deben solicitarse con al menos 24 horas de anticipación."
   },
   "service": {
     "title": "Servicios",
     "loadError": "No se pudieron cargar los servicios. Por favor, inténtalo de nuevo más tarde.",
-    "searchPlaceholder": "Buscar servicios..."
+    "searchPlaceholder": "Buscar servicios...",
+    "advanceNotice": "Los servicios deben solicitarse con al menos 48 horas de anticipación."
   },
   "payment": {
     "bannerTitle": "Pago a través de Airbnb",
