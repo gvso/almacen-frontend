@@ -1,4 +1,4 @@
-export type ProductType = "product" | "service";
+export type ProductType = "product" | "service" | "housekeeping";
 
 export interface ProductTranslation {
   language: string;

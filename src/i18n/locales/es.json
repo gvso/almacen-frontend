@@ -1,19 +1,47 @@
 {
   "nav": {
-    "products": "Productos",
-    "services": "Servicios"
+    "fridgeStocking": "Heladera",
+    "celebration": "Celebración",
+    "housekeeping": "Limpieza"
   },
-  "product": {
-    "title": "Productos",
+  "home": {
+    "badge": "Servicios para Huéspedes",
+    "title": "Meet Asunción",
+    "welcome": "¡Bienvenido a tu hogar en Asunción! Estamos muy agradecidos de que hayas elegido quedarte con nosotros. Nuestro objetivo es hacer que tu tiempo en Paraguay sea lo más cómodo y sin estrés posible desde el momento en que cruces la puerta.",
+    "description": "Ya sea que llegues tarde y necesites una heladera abastecida, estés celebrando una ocasión especial, o simplemente quieras darte un gusto, siéntete libre de explorar nuestros servicios para huéspedes:",
+    "fridgeStocking": {
+      "title": "Heladera Abastecida",
+      "subtitle": "Llega a una cocina llena de tus snacks y productos esenciales locales favoritos"
+    },
+    "celebration": {
+      "title": "Celebración y Decoración",
+      "subtitle": "¿Planeas un cumpleaños o aniversario? Nos encargamos de los globos, flores y la decoración"
+    },
+    "housekeeping": {
+      "title": "Limpieza y Orden",
+      "subtitle": "Refresca tu espacio con un servicio de limpieza durante tu estadía"
+    }
+  },
+  "fridgeStocking": {
+    "title": "Heladera Abastecida",
+    "subtitle": "Abastécete de snacks, bebidas y productos esenciales locales",
     "loadError": "No se pudieron cargar los productos. Por favor, inténtalo de nuevo más tarde.",
     "searchPlaceholder": "Buscar productos...",
     "advanceNotice": "Los pedidos deben realizarse al menos 24 horas antes del check-in."
   },
-  "service": {
-    "title": "Servicios",
+  "celebration": {
+    "title": "Celebración y Decoración",
+    "subtitle": "Haz que tu ocasión especial sea inolvidable",
     "loadError": "No se pudieron cargar los servicios. Por favor, inténtalo de nuevo más tarde.",
-    "searchPlaceholder": "Buscar servicios...",
+    "searchPlaceholder": "Buscar servicios de celebración...",
     "advanceNotice": "Los pedidos deben realizarse al menos 48 horas antes del check-in."
+  },
+  "housekeeping": {
+    "title": "Limpieza y Orden",
+    "subtitle": "Mantén tu espacio fresco y limpio durante tu estadía",
+    "loadError": "No se pudieron cargar los servicios. Por favor, inténtalo de nuevo más tarde.",
+    "searchPlaceholder": "Buscar servicios de limpieza...",
+    "advanceNotice": "Los pedidos deben realizarse al menos 24 horas antes."
   },
   "payment": {
     "bannerTitle": "Pago a través de Airbnb",
@@ -28,8 +56,8 @@
     "title": "Carrito",
     "loading": "Cargando carrito...",
     "empty": "Tu carrito está vacío",
-    "emptyDescription": "Parece que aún no has agregado ningún producto.",
-    "browseProducts": "Ver Productos",
+    "emptyDescription": "Parece que aún no has agregado ningún artículo.",
+    "browseProducts": "Ver Servicios",
     "quantity": "Cantidad",
     "increase": "Aumentar cantidad",
     "decrease": "Disminuir cantidad",

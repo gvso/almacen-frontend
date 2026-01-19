@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Search } from "lucide-react";
 import { ProductGrid, ServiceGrid, useProducts } from "@/features/products";
@@ -10,11 +10,28 @@ import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/useDebounce";
 import type { ProductType } from "@/types/Product";
 
+// Map routes to product types for API calls
+const routeToProductType: Record<string, ProductType> = {
+  "fridge-stocking": "product",
+  "celebration": "service",
+  "housekeeping": "housekeeping",
+};
+
+// Map routes to translation keys
+const routeToTranslationKey: Record<string, string> = {
+  "fridge-stocking": "fridgeStocking",
+  "celebration": "celebration",
+  "housekeeping": "housekeeping",
+};
+
 export default function ProductPage() {
-  const { itemType } = useParams<{ itemType: string }>();
-  const productType: ProductType = itemType === "services" ? "service" : "product";
-  const isService = productType === "service";
-  const translationKey = isService ? "service" : "product";
+  const location = useLocation();
+  const pathSegments = location.pathname.split("/").filter(Boolean);
+  const currentRoute = pathSegments[pathSegments.length - 1] || "fridge-stocking";
+
+  const productType = routeToProductType[currentRoute] || "product";
+  const translationKey = routeToTranslationKey[currentRoute] || "fridgeStocking";
+  const isService = productType === "service" || productType === "housekeeping";
 
   const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState("");
@@ -25,9 +42,19 @@ export default function ProductPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-linear-to-b from-stone-50 to-amber-50/30">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
+        {/* Page header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-stone-800 md:text-3xl">
+            {t(`${translationKey}.title`)}
+          </h1>
+          <p className="mt-2 text-stone-600">
+            {t(`${translationKey}.subtitle`)}
+          </p>
+        </div>
+
         <InfoAlert
           title={t("payment.bannerTitle")}
           message={t("payment.bannerMessage")}
@@ -45,7 +72,7 @@ export default function ProductPage() {
             placeholder={t(`${translationKey}.searchPlaceholder`)}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="h-14 pl-10 sm:h-10"
+            className="h-14 pl-10 sm:h-10 bg-white"
           />
         </div>
 

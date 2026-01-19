@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Refrigerator, PartyPopper, Sparkles } from "lucide-react";
 import { Button } from "./ui/button";
 import { useCart } from "@/features/cart";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -13,35 +13,56 @@ function Navbar() {
 
   const isActive = (path: string) => location.pathname.includes(path);
 
+  const navItems = [
+    { path: "fridge-stocking", labelKey: "nav.fridgeStocking", icon: Refrigerator },
+    { path: "celebration", labelKey: "nav.celebration", icon: PartyPopper },
+    { path: "housekeeping", labelKey: "nav.housekeeping", icon: Sparkles },
+  ];
+
   return (
-    <nav className="sticky top-0 z-50 border-b bg-white shadow-sm">
+    <nav className="sticky top-0 z-50 border-b bg-white/95 backdrop-blur-sm shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-6">
-          <Link to={`/${language}/products`} className="text-xl font-bold text-foreground">
+          <Link to={`/${language}`} className="font-serif text-xl font-medium text-stone-800 hover:text-stone-600 transition-colors">
             Meet Asunción
           </Link>
 
-          <div className="flex items-center gap-1">
-            <Button
-              variant={isActive("/products") ? "default" : "ghost"}
-              size="sm"
-              className="text-sm"
-              asChild
-            >
-              <Link to={`/${language}/products`}>{t("nav.products")}</Link>
-            </Button>
-            <Button
-              variant={isActive("/services") ? "default" : "ghost"}
-              size="sm"
-              className="text-sm"
-              asChild
-            >
-              <Link to={`/${language}/services`}>{t("nav.services")}</Link>
-            </Button>
+          <div className="hidden md:flex items-center gap-1">
+            {navItems.map(({ path, labelKey, icon: Icon }) => (
+              <Button
+                key={path}
+                variant={isActive(`/${path}`) ? "default" : "ghost"}
+                size="sm"
+                className="text-sm gap-2"
+                asChild
+              >
+                <Link to={`/${language}/${path}`}>
+                  <Icon className="h-4 w-4" />
+                  <span className="hidden lg:inline">{t(labelKey)}</span>
+                </Link>
+              </Button>
+            ))}
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          {/* Mobile nav icons */}
+          <div className="flex md:hidden items-center gap-1">
+            {navItems.map(({ path, icon: Icon }) => (
+              <Button
+                key={path}
+                variant={isActive(`/${path}`) ? "default" : "ghost"}
+                size="sm"
+                className="h-9 w-9 p-0"
+                asChild
+              >
+                <Link to={`/${language}/${path}`}>
+                  <Icon className="h-5 w-5" />
+                </Link>
+              </Button>
+            ))}
+          </div>
+
           <Button
             variant={isActive("/cart") ? "default" : "ghost"}
             className="relative h-10 w-10 p-0 sm:h-9 sm:w-9"

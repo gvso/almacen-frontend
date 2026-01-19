@@ -42,11 +42,11 @@ export default function CartPage() {
     resetCart();
     setOrderUrl(null);
     setIsCheckingOut(false);
-    navigate(`/${language}/products`);
+    navigate(`/${language}`);
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-amber-50/30">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
         <InfoAlert

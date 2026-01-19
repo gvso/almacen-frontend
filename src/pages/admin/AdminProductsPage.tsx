@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Check, X, Package, Wrench, Plus, Search, Trash2, GripVertical } from "lucide-react";
+import { ArrowLeft, Check, X, Package, Wrench, Plus, Search, Trash2, GripVertical, Sparkles } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -120,13 +120,27 @@ function SortableProductCard({ product, onNavigate, onDelete }: SortableProductC
   );
 }
 
+// Map route to product type for API
+const routeToProductType: Record<string, ProductType> = {
+  products: "product",
+  services: "service",
+  housekeeping: "housekeeping",
+};
+
+// Map route to display info
+const routeConfig: Record<string, { title: string; label: string; icon: typeof Package }> = {
+  products: { title: "Fridge Stocking", label: "Product", icon: Package },
+  services: { title: "Celebration & Decor", label: "Service", icon: Wrench },
+  housekeeping: { title: "Housekeeping", label: "Service", icon: Sparkles },
+};
+
 export default function AdminProductsPage() {
   const { itemType } = useParams<{ itemType: string }>();
-  const productType: ProductType = itemType === "services" ? "service" : "product";
-  const isService = productType === "service";
-  const pageTitle = isService ? "Services" : "Products";
-  const itemLabel = isService ? "Service" : "Product";
-  const ItemIcon = isService ? Wrench : Package;
+  const productType: ProductType = routeToProductType[itemType || "products"] || "product";
+  const config = routeConfig[itemType || "products"] || routeConfig.products;
+  const pageTitle = config.title;
+  const itemLabel = config.label;
+  const ItemIcon = config.icon;
 
   const [products, setProducts] = useState<AdminProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);

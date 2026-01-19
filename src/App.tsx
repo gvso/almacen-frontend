@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "@/components/ui/toaster";
 
+import HomePage from "@/pages/home/HomePage";
 import ProductPage from "@/pages/product/ProductPage";
 import CartPage from "@/pages/cart/CartPage";
 import OrderPage from "@/pages/order/OrderPage";
@@ -31,14 +32,20 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* Redirect root to default language */}
-          <Route path="/" element={<Navigate to={`/${DEFAULT_LANGUAGE}/products`} replace />} />
+          <Route path="/" element={<Navigate to={`/${DEFAULT_LANGUAGE}`} replace />} />
           
           {/* Language-prefixed routes */}
           <Route path="/:lang" element={<LanguageLayout />}>
-            <Route index element={<Navigate to="products" replace />} />
-            <Route path=":itemType" element={<ProductPage />} />
+            <Route index element={<HomePage />} />
+            <Route path="fridge-stocking" element={<ProductPage />} />
+            <Route path="celebration" element={<ProductPage />} />
+            <Route path="housekeeping" element={<ProductPage />} />
             <Route path="cart" element={<CartPage />} />
             <Route path="orders/:orderId" element={<OrderPage />} />
+
+            {/* Legacy routes - redirect to new structure */}
+            <Route path="products" element={<Navigate to="../fridge-stocking" replace />} />
+            <Route path="services" element={<Navigate to="../celebration" replace />} />
 
             {/* Admin routes */}
             <Route path="admin" element={<AdminLoginPage />} />

@@ -1,19 +1,47 @@
 {
   "nav": {
-    "products": "Products",
-    "services": "Services"
+    "fridgeStocking": "Fridge Stocking",
+    "celebration": "Celebration",
+    "housekeeping": "Housekeeping"
   },
-  "product": {
-    "title": "Products",
+  "home": {
+    "badge": "Guest Services",
+    "title": "Meet Asunción",
+    "welcome": "Welcome to your home in Asunción! We're truly grateful you chose to stay with us. Our goal is to make your time in Paraguay as comfortable and stress-free as possible from the moment you step through the doors.",
+    "description": "Whether you're arriving late and need a stocked fridge, are celebrating a special occasion, or simply want to treat yourself, please feel free to explore our guest services below:",
+    "fridgeStocking": {
+      "title": "Fridge Stocking",
+      "subtitle": "Arrive to a kitchen full of your favorite local snacks and essentials"
+    },
+    "celebration": {
+      "title": "Celebration & Decor",
+      "subtitle": "Planning a birthday or anniversary? We'll handle the balloons, flowers, and setup"
+    },
+    "housekeeping": {
+      "title": "Refresh & Housekeeping",
+      "subtitle": "Refresh your space with a cleaning service during your stay"
+    }
+  },
+  "fridgeStocking": {
+    "title": "Fridge Stocking",
+    "subtitle": "Stock up on local snacks, drinks, and essentials",
     "loadError": "Failed to load products. Please try again later.",
     "searchPlaceholder": "Search products...",
     "advanceNotice": "Orders must be placed at least 24 hours before check-in."
   },
-  "service": {
-    "title": "Services",
+  "celebration": {
+    "title": "Celebration & Decor",
+    "subtitle": "Make your special occasion unforgettable",
     "loadError": "Failed to load services. Please try again later.",
-    "searchPlaceholder": "Search services...",
+    "searchPlaceholder": "Search celebration services...",
     "advanceNotice": "Orders must be placed at least 48 hours before check-in."
+  },
+  "housekeeping": {
+    "title": "Refresh & Housekeeping",
+    "subtitle": "Keep your space fresh and clean during your stay",
+    "loadError": "Failed to load services. Please try again later.",
+    "searchPlaceholder": "Search housekeeping services...",
+    "advanceNotice": "Orders must be placed at least 24 hours in advance."
   },
   "payment": {
     "bannerTitle": "Payment via Airbnb",
@@ -28,8 +56,8 @@
     "title": "Cart",
     "loading": "Loading cart...",
     "empty": "Your cart is empty",
-    "emptyDescription": "Looks like you haven't added any products yet.",
-    "browseProducts": "Browse Products",
+    "emptyDescription": "Looks like you haven't added any items yet.",
+    "browseProducts": "Browse Services",
     "quantity": "Quantity",
     "increase": "Increase quantity",
     "decrease": "Decrease quantity",
