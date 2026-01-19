@@ -36,6 +36,7 @@ import {
   updateVariation,
   deleteVariation,
   createOrUpdateVariationTranslation,
+  deleteVariationTranslation,
   reorderVariations,
   verifyAdminToken,
 } from "@/services/admin";
@@ -66,7 +67,7 @@ const variationSchema = z.object({
 });
 
 const variationTranslationSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  name: z.string(),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -255,14 +256,21 @@ export default function AdminProductEditPage() {
     }
   };
 
-  const handleSaveVariationTranslation = async (variationId: number, lang: string, data: VariationTranslationFormData) => {
+  const handleSaveVariationTranslation = async (variationId: number, lang: string, data: VariationTranslationFormData, hasExisting: boolean) => {
     if (!product) return;
     try {
-      const updated = await createOrUpdateVariationTranslation(product.id, variationId, {
-        language: lang,
-        name: data.name,
-      });
-      setProduct(updated);
+      // If name is empty and there's an existing translation, delete it
+      if (!data.name.trim() && hasExisting) {
+        const updated = await deleteVariationTranslation(product.id, variationId, lang);
+        setProduct(updated);
+      } else if (data.name.trim()) {
+        // Only create/update if name is not empty
+        const updated = await createOrUpdateVariationTranslation(product.id, variationId, {
+          language: lang,
+          name: data.name,
+        });
+        setProduct(updated);
+      }
     } catch (error) {
       console.error("Failed to save variation translation:", error);
     }
@@ -478,7 +486,7 @@ export default function AdminProductEditPage() {
                         defaultImageUrl={product!.imageUrl || ""}
                         onUpdate={(data) => handleUpdateVariation(variation.id, data)}
                         onDelete={() => handleDeleteVariation(variation.id)}
-                        onSaveTranslation={(lang, data) => handleSaveVariationTranslation(variation.id, lang, data)}
+                        onSaveTranslation={(lang, data, hasExisting) => handleSaveVariationTranslation(variation.id, lang, data, hasExisting)}
                       />
                     ))}
                   </div>
@@ -541,7 +549,7 @@ interface VariationFormProps {
   defaultImageUrl: string;
   onUpdate: (data: VariationFormData) => void;
   onDelete: () => void;
-  onSaveTranslation: (language: string, data: VariationTranslationFormData) => void;
+  onSaveTranslation: (language: string, data: VariationTranslationFormData, hasExisting: boolean) => void;
   dragHandleProps?: React.HTMLAttributes<HTMLButtonElement> & { ref?: React.Ref<HTMLButtonElement> };
 }
 
@@ -658,7 +666,8 @@ function VariationForm({ variation, defaultImageUrl, onUpdate, onDelete, onSaveT
                 key={`${variation.id}-${lang}-${existing?.name || ""}`}
                 language={lang}
                 initialName={existing?.name || ""}
-                onSave={(data) => onSaveTranslation(lang, data)}
+                hasExisting={!!existing}
+                onSave={(data, hasExisting) => onSaveTranslation(lang, data, hasExisting)}
               />
             );
           })}
@@ -671,10 +680,11 @@ function VariationForm({ variation, defaultImageUrl, onUpdate, onDelete, onSaveT
 interface VariationTranslationFormProps {
   language: string;
   initialName: string;
-  onSave: (data: VariationTranslationFormData) => void;
+  hasExisting: boolean;
+  onSave: (data: VariationTranslationFormData, hasExisting: boolean) => void;
 }
 
-function VariationTranslationForm({ language, initialName, onSave }: VariationTranslationFormProps) {
+function VariationTranslationForm({ language, initialName, hasExisting, onSave }: VariationTranslationFormProps) {
   const form = useForm<VariationTranslationFormData>({
     resolver: zodResolver(variationTranslationSchema),
     defaultValues: {
@@ -682,12 +692,16 @@ function VariationTranslationForm({ language, initialName, onSave }: VariationTr
     },
   });
 
+  const handleSave = (data: VariationTranslationFormData) => {
+    onSave(data, hasExisting);
+  };
+
   return (
     <div className="flex items-center gap-2">
       <span className="text-xs font-medium uppercase w-8">{language}</span>
       <Input placeholder="Translated name" {...form.register("name")} className="flex-1" />
       {form.formState.isDirty && (
-        <Button size="sm" variant="outline" onClick={form.handleSubmit(onSave)}>
+        <Button size="sm" variant="outline" onClick={form.handleSubmit(handleSave)}>
           <Save className="h-3 w-3" />
         </Button>
       )}

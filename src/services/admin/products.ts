@@ -99,6 +99,16 @@ export async function createOrUpdateVariationTranslation(
   });
 }
 
+export async function deleteVariationTranslation(
+  productId: number,
+  variationId: number,
+  language: string
+): Promise<AdminProduct> {
+  return fetchAdminApi(`/api/v1/admin/products/${productId}/variations/${variationId}/translations/${language}`, {
+    method: "DELETE",
+  });
+}
+
 // ============ Reorder API ============
 
 export interface ReorderItem {

@@ -22,6 +22,7 @@ export {
   updateVariation,
   deleteVariation,
   createOrUpdateVariationTranslation,
+  deleteVariationTranslation,
   reorderProducts,
   reorderVariations,
 } from "./products";
