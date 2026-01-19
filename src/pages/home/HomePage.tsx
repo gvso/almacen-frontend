@@ -102,26 +102,37 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        {/* Background pattern */}
-        <div className="absolute inset-0 opacity-[0.03]">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }} />
-        </div>
+        {/* Background image */}
+        <div
+          className="absolute inset-0 bg-cover bg-top-left bg-no-repeat"
+          style={{
+            backgroundImage: `url("https://upload.wikimedia.org/wikipedia/commons/3/37/Bah%C3%ADa_De_Asunci%C3%B3n_%2843639068%29.jpeg")`,
+          }}
+        />
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-black/50" />
 
-        <div className="container mx-auto px-4 py-16 md:py-24">
+        {/* Photo credit */}
+        <a
+          href="https://commons.wikimedia.org/wiki/File:Bah%C3%ADa_De_Asunci%C3%B3n_(43639068).jpeg"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute bottom-2 right-4 text-[8px] md:text-xs text-white/60 hover:text-white/90 transition-colors"
+        >
+          Photo: Anibal Ovelar
+        </a>
+
+        <div className="relative container mx-auto px-4 py-20 md:py-32">
           <div className="mx-auto max-w-3xl text-center">
-            {/* Welcome badge */}
-
-            <h1 className="mb-8 text-4xl font-bold tracking-tight text-stone-800 md:text-5xl lg:text-6xl animate-fade-in-up">
+            <h1 className="mb-8 text-4xl font-bold tracking-tight text-white md:text-5xl lg:text-6xl animate-fade-in-up drop-shadow-lg">
               {t("home.title")}
             </h1>
 
-            <p className="text-lg leading-relaxed text-stone-600 md:text-xl animate-fade-in-up" style={{ animationDelay: "100ms" }}>
+            <p className="text-lg leading-relaxed text-white/90 md:text-xl animate-fade-in-up drop-shadow" style={{ animationDelay: "100ms" }}>
               {t("home.welcome")}
             </p>
 
-            <p className="mt-6 text-lg leading-relaxed text-stone-600 md:text-xl animate-fade-in-up" style={{ animationDelay: "200ms" }}>
+            <p className="mt-6 text-lg leading-relaxed text-white/90 md:text-xl animate-fade-in-up drop-shadow" style={{ animationDelay: "200ms" }}>
               {t("home.description")}
             </p>
           </div>
@@ -129,7 +140,7 @@ export default function HomePage() {
       </section>
 
       {/* Services Section */}
-      <section className="container mx-auto px-4 pb-20">
+      <section className="container mx-auto mt-10 px-4 pb-20">
         <div className="grid gap-6 md:grid-cols-3">
           {services.map((service, index) => (
             <ServiceCard
