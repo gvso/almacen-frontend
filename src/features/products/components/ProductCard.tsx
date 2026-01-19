@@ -99,9 +99,9 @@ export function ProductCard({ product }: ProductCardProps) {
               {product.variations.map((variation) => (
                 <Button
                   key={variation.id}
-                  variant={selectedVariation?.id === variation.id ? "default" : "outline"}
+                  variant="outline"
                   size="sm"
-                  className="h-10 text-sm sm:h-7 sm:text-xs"
+                  className={`h-10 text-sm sm:h-7 sm:text-xs ${selectedVariation?.id === variation.id ? "border-3 border-primary shadow-md" : ""}`}
                   onClick={(e) => handleVariationClick(e, variation)}
                 >
                   {variation.name}
@@ -111,7 +111,7 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
 
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-2 sm:items-center sm:justify-between">
-            <p className="text-lg font-semibold text-primary">{priceDisplay}</p>
+            <p className="text-lg font-semibold text-black">{priceDisplay}</p>
             {quantityInCart > 0 ? (
               <div className="flex w-full items-center justify-center gap-1 sm:w-auto">
                 <Button
@@ -136,7 +136,7 @@ export function ProductCard({ product }: ProductCardProps) {
               </div>
             ) : (
               <Button
-                className="h-10 w-full sm:h-9 sm:w-auto"
+                className="h-10 w-full sm:h-9 sm:w-auto bg-tertiary text-tertiary-foreground hover:bg-tertiary/90"
                 onClick={handleAddToCart}
                 disabled={isAddingItem || (hasVariations && !selectedVariation)}
               >

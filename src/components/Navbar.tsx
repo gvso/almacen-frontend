@@ -18,7 +18,7 @@ function Navbar() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-6">
           <Link to={`/${language}/products`} className="text-xl font-bold text-foreground">
-            Concierge
+            Meet Asunción
           </Link>
 
           <div className="flex items-center gap-1">

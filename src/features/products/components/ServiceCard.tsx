@@ -102,9 +102,9 @@ export function ServiceCard({ service }: ServiceCardProps) {
               {service.variations.map((variation) => (
                 <Button
                   key={variation.id}
-                  variant={selectedVariation?.id === variation.id ? "default" : "outline"}
+                  variant="outline"
                   size="sm"
-                  className="h-10 text-sm"
+                  className={`h-10 text-sm ${selectedVariation?.id === variation.id ? "border-3 border-primary shadow-md" : ""}`}
                   onClick={(e) => handleVariationClick(e, variation)}
                 >
                   {variation.name}
@@ -114,7 +114,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
           )}
 
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-2xl font-bold text-primary">{priceDisplay}</p>
+            <p className="text-2xl font-bold text-black">{priceDisplay}</p>
             {quantityInCart > 0 ? (
               <div className="flex w-full items-center justify-center gap-2 sm:w-auto">
                 <Button
@@ -139,7 +139,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
               </div>
             ) : (
               <Button
-                className="h-12 w-full text-base sm:h-11 sm:w-auto sm:px-6"
+                className="h-12 w-full text-base sm:h-11 sm:w-auto sm:px-6 bg-tertiary text-tertiary-foreground hover:bg-tertiary/90"
                 onClick={handleAddToCart}
                 disabled={isAddingItem || (hasVariations && !selectedVariation)}
               >
