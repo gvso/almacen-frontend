@@ -1,6 +1,4 @@
-import { useState } from "react";
-import { Product, ProductVariation } from "@/types/Product";
-import { Card, CardContent } from "@/components/ui/card";
+import { Product } from "@/types/Product";
 import { Button } from "@/components/ui/button";
 import { Minus, Wrench, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/features/cart";
@@ -16,41 +14,25 @@ function formatCurrency(value: string | number): string {
   }).format(Number(value));
 }
 
-function getDefaultVariation(product: Product): ProductVariation | null {
-  if (product.variations && product.variations.length > 0) {
-    return product.variations[0];
-  }
-  return null;
-}
-
 export function ServiceCard({ service }: ServiceCardProps) {
   const { cart, addItem, updateItem, isAddingItem } = useCart();
-  const [selectedVariation, setSelectedVariation] = useState<ProductVariation | null>(() =>
-    getDefaultVariation(service)
-  );
 
-  const hasVariations = service.variations && service.variations.length > 0;
+  const priceDisplay = formatCurrency(service.price);
 
-  // Show price of selected variation if it has one, otherwise service base price
-  const displayPrice = selectedVariation?.price ?? service.price;
-  const priceDisplay = formatCurrency(displayPrice);
-
-  // Find cart item matching service and selected variation
+  // Find cart item matching service (no variations for services)
   const cartItem = cart?.items?.find(
-    (item) =>
-      item.productId === service.id &&
-      item.variationId === (selectedVariation?.id ?? null)
+    (item) => item.productId === service.id && item.variationId === null
   );
   const quantityInCart = cartItem?.quantity ?? 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    addItem({ productId: service.id, variationId: selectedVariation?.id ?? null });
+    addItem({ productId: service.id, variationId: null });
   };
 
   const handleIncrement = (e: React.MouseEvent) => {
     e.stopPropagation();
-    addItem({ productId: service.id, variationId: selectedVariation?.id ?? null });
+    addItem({ productId: service.id, variationId: null });
   };
 
   const handleDecrement = (e: React.MouseEvent) => {
@@ -60,96 +42,73 @@ export function ServiceCard({ service }: ServiceCardProps) {
     }
   };
 
-  const handleVariationClick = (e: React.MouseEvent, variation: ProductVariation | null) => {
-    e.stopPropagation();
-    setSelectedVariation(variation);
-  };
-
-  // Display image: variation image if selected and has one, otherwise service image
-  const displayImage = selectedVariation?.imageUrl ?? service.imageUrl;
-
   return (
-    <Card className="group flex h-full flex-col overflow-hidden transition-all hover:shadow-lg md:flex-row">
-      {/* Image on the left */}
-      <div className="aspect-video w-full overflow-hidden bg-muted md:aspect-square md:w-64 md:shrink-0">
-        {displayImage ? (
+    <div className="group flex flex-col gap-6 md:flex-row md:gap-10 md:min-h-110">
+      {/* Tall image on the left */}
+      <div className="aspect-3/4 w-full overflow-hidden md:w-52 md:shrink-0 lg:w-56">
+        {service.imageUrl ? (
           <img
-            src={displayImage}
+            src={service.imageUrl}
             alt={service.name}
-            className="h-full w-full object-cover transition-transform group-hover:scale-105"
+            className="h-full w-full object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <Wrench className="h-20 w-20 text-muted-foreground" />
+          <div className="flex h-full w-full items-center justify-center bg-stone-100">
+            <Wrench className="h-16 w-16 text-stone-300" />
           </div>
         )}
       </div>
 
       {/* Content on the right */}
-      <CardContent className="flex flex-1 flex-col p-5">
-        <h3 className="text-xl font-semibold text-foreground">{service.name}</h3>
+      <div className="flex flex-1 flex-col py-2">
+        <h3 className="text-xl font-semibold tracking-wide text-stone-800">
+          {service.name}
+        </h3>
+
         {service.description && (
-          <p className="mt-2 text-base text-muted-foreground leading-relaxed">
+          <p className="mt-6 text-sm tracking-wide text-stone-600 leading-relaxed">
             {service.description}
           </p>
         )}
 
-        {/* Bottom section: variations first, then price/button always at bottom */}
-        <div className="mt-auto pt-4">
-          {/* Variation options */}
-          {hasVariations && (
-            <div className="mb-4 flex flex-wrap gap-2">
-              {service.variations.map((variation) => (
-                <Button
-                  key={variation.id}
-                  variant="outline"
-                  size="sm"
-                  className={`h-10 text-sm ${selectedVariation?.id === variation.id ? "border-3 border-primary shadow-md" : ""}`}
-                  onClick={(e) => handleVariationClick(e, variation)}
-                >
-                  {variation.name}
-                </Button>
-              ))}
-            </div>
-          )}
+        {/* Price and action */}
+        <div className="mt-auto pt-8 flex items-center justify-between gap-4">
+          <p className="text-lg font-semibold text-stone-800">{priceDisplay}</p>
 
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-2xl font-bold text-black">{priceDisplay}</p>
-            {quantityInCart > 0 ? (
-              <div className="flex w-full items-center justify-center gap-2 sm:w-auto">
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="h-10 w-10"
-                  onClick={handleDecrement}
-                  disabled={isAddingItem}
-                >
-                  <Minus className="h-5 w-5" />
-                </Button>
-                <span className="w-10 text-center text-lg font-medium">{quantityInCart}</span>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="h-10 w-10"
-                  onClick={handleIncrement}
-                  disabled={isAddingItem}
-                >
-                  <Plus className="h-5 w-5" />
-                </Button>
-              </div>
-            ) : (
+          {quantityInCart > 0 ? (
+            <div className="flex items-center gap-2">
               <Button
-                className="h-12 w-full text-base sm:h-11 sm:w-auto sm:px-6 bg-tertiary text-tertiary-foreground hover:bg-tertiary/90"
-                onClick={handleAddToCart}
-                disabled={isAddingItem || (hasVariations && !selectedVariation)}
+                size="icon"
+                variant="outline"
+                className="h-10 w-10 border-stone-300"
+                onClick={handleDecrement}
+                disabled={isAddingItem}
               >
-                <ShoppingCart className="h-5 w-5 mr-2" />
-                Add to Cart
+                <Minus className="h-4 w-4" />
               </Button>
-            )}
-          </div>
+              <span className="w-10 text-center font-medium">{quantityInCart}</span>
+              <Button
+                size="icon"
+                variant="outline"
+                className="h-10 w-10 border-stone-300"
+                onClick={handleIncrement}
+                disabled={isAddingItem}
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+          ) : (
+            <Button
+              className="h-10 bg-tertiary text-tertiary-foreground hover:bg-tertiary/90"
+              onClick={handleAddToCart}
+              disabled={isAddingItem}
+            >
+              <ShoppingCart className="h-5 w-5" />
+              Add
+            </Button>
+          )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

@@ -10,15 +10,15 @@
    ============================================================================= */
 :root {
   /* Primary - Main brand color (buttons, links, accents) */
-  --primary: 28 60% 45%;
-  /* Warm terracotta */
-  --primary-foreground: 0 0% 98%;
+  --primary: 0 94% 67%;
+  /* #FA5C5C - Coral red */
+  --primary-foreground: 0 0% 100%;
   /* Text on primary */
 
   /* Secondary - Supporting color (secondary buttons, tags) */
-  --secondary: 38 40% 90%;
-  /* Warm cream */
-  --secondary-foreground: 28 30% 25%;
+  --secondary: 45 85% 84%;
+  /* #F9E7B2 - Soft yellow */
+  --secondary-foreground: 35 50% 25%;
 
   /* Tertiary - Third accent color (highlights, badges) */
   --tertiary: 160 35% 40%;
@@ -47,7 +47,7 @@
   --muted-foreground: 28 10% 45%;
   --border: 38 20% 88%;
   --input: 38 20% 88%;
-  --ring: 28 60% 45%;
+  --ring: 0 94% 67%;
   --chart-1: 28 76% 61%;
   --chart-2: 160 58% 39%;
   --chart-3: 197 37% 24%;

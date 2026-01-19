@@ -77,8 +77,9 @@ type VariationTranslationFormData = z.infer<typeof variationTranslationSchema>;
 
 export default function AdminProductEditPage() {
   const { productId, itemType } = useParams<{ productId: string; itemType: string }>();
-  const productType: ProductType = itemType === "services" ? "service" : "product";
-  const isService = productType === "service";
+  const productType: ProductType = itemType === "services" ? "service" : itemType === "housekeeping" ? "housekeeping" : "product";
+  const isService = productType === "service" || productType === "housekeeping";
+  const showVariations = productType === "product"; // Only show variations for products (fridge stocking)
   const itemLabel = isService ? "Service" : "Product";
   const ItemIcon = isService ? Wrench : Package;
 
@@ -439,62 +440,64 @@ export default function AdminProductEditPage() {
           </CardContent>
         </Card>
 
-        {/* Variations */}
-        <Card className={isNewProduct ? "opacity-60" : undefined}>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <Layers className="h-5 w-5" />
-              Variations
-            </CardTitle>
-            <Button size="sm" onClick={handleAddVariation} disabled={isNewProduct}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Variation
-            </Button>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {isNewProduct ? (
-              <p className="text-sm text-muted-foreground text-center py-4">
-                Save the {itemLabel.toLowerCase()} first to add variations.
-              </p>
-            ) : product!.variations.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-4">No variations yet.</p>
-            ) : (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleVariationDragEnd}
-              >
-                <SortableContext
-                  items={product!.variations.map((v) => v.id)}
-                  strategy={verticalListSortingStrategy}
+        {/* Variations - only for products (fridge stocking) */}
+        {showVariations && (
+          <Card className={isNewProduct ? "opacity-60" : undefined}>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <Layers className="h-5 w-5" />
+                Variations
+              </CardTitle>
+              <Button size="sm" onClick={handleAddVariation} disabled={isNewProduct}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Variation
+              </Button>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {isNewProduct ? (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Save the {itemLabel.toLowerCase()} first to add variations.
+                </p>
+              ) : product!.variations.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">No variations yet.</p>
+              ) : (
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleVariationDragEnd}
                 >
-                  <div className="hidden md:flex gap-4 px-4 text-xs font-medium text-muted-foreground uppercase items-center">
-                    <span className="w-6 shrink-0"></span>
-                    <span className="w-24 shrink-0 text-center">Image</span>
-                    <div className="flex-1 grid grid-cols-3 gap-3 text-center">
-                      <span>Name</span>
-                      <span>Price</span>
-                      <span>Active</span>
+                  <SortableContext
+                    items={product!.variations.map((v) => v.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="hidden md:flex gap-4 px-4 text-xs font-medium text-muted-foreground uppercase items-center">
+                      <span className="w-6 shrink-0"></span>
+                      <span className="w-24 shrink-0 text-center">Image</span>
+                      <div className="flex-1 grid grid-cols-3 gap-3 text-center">
+                        <span>Name</span>
+                        <span>Price</span>
+                        <span>Active</span>
+                      </div>
+                      <span className="w-8 shrink-0"></span>
                     </div>
-                    <span className="w-8 shrink-0"></span>
-                  </div>
-                  <div className="space-y-4">
-                    {product!.variations.map((variation) => (
-                      <SortableVariationForm
-                        key={variation.id}
-                        variation={variation}
-                        defaultImageUrl={product!.imageUrl || ""}
-                        onUpdate={(data) => handleUpdateVariation(variation.id, data)}
-                        onDelete={() => handleDeleteVariation(variation.id)}
-                        onSaveTranslation={(lang, data, hasExisting) => handleSaveVariationTranslation(variation.id, lang, data, hasExisting)}
-                      />
-                    ))}
-                  </div>
-                </SortableContext>
-              </DndContext>
-            )}
-          </CardContent>
-        </Card>
+                    <div className="space-y-4">
+                      {product!.variations.map((variation) => (
+                        <SortableVariationForm
+                          key={variation.id}
+                          variation={variation}
+                          defaultImageUrl={product!.imageUrl || ""}
+                          onUpdate={(data) => handleUpdateVariation(variation.id, data)}
+                          onDelete={() => handleDeleteVariation(variation.id)}
+                          onSaveTranslation={(lang, data, hasExisting) => handleSaveVariationTranslation(variation.id, lang, data, hasExisting)}
+                        />
+                      ))}
+                    </div>
+                  </SortableContext>
+                </DndContext>
+              )}
+            </CardContent>
+          </Card>
+        )}
       </main>
     </div>
   );

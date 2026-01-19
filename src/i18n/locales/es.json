@@ -10,8 +10,8 @@
     "welcome": "¡Bienvenido a tu hogar en Asunción! Estamos muy agradecidos de que hayas elegido quedarte con nosotros. Nuestro objetivo es hacer que tu tiempo en Paraguay sea lo más cómodo y sin estrés posible desde el momento en que cruces la puerta.",
     "description": "Ya sea que llegues tarde y necesites una heladera abastecida, estés celebrando una ocasión especial, o simplemente quieras darte un gusto, siéntete libre de explorar nuestros servicios para huéspedes:",
     "fridgeStocking": {
-      "title": "Heladera Abastecida",
-      "subtitle": "Llega a una cocina llena de tus snacks y productos esenciales locales favoritos"
+      "title": "Llená tu Heladera",
+      "subtitle": "Llega a una cocina llena de tus snacks y productos esenciales favoritos"
     },
     "celebration": {
       "title": "Celebración y Decoración",
@@ -23,22 +23,22 @@
     }
   },
   "fridgeStocking": {
-    "title": "Heladera Abastecida",
-    "subtitle": "Abastécete de snacks, bebidas y productos esenciales locales",
+    "title": "Llená tu Heladera",
+    "description": "Déjanos hacer las compras. Pedí tus productos favoritos y estarán listos dentro del apartamento cuando llegues.",
     "loadError": "No se pudieron cargar los productos. Por favor, inténtalo de nuevo más tarde.",
     "searchPlaceholder": "Buscar productos...",
     "advanceNotice": "Los pedidos deben realizarse al menos 24 horas antes del check-in."
   },
   "celebration": {
-    "title": "Celebración y Decoración",
-    "subtitle": "Haz que tu ocasión especial sea inolvidable",
+    "title": "Celebraciones y Decoración",
+    "description": "Estamos aquí para ayudarte a celebrar. Evita el estrés de buscar proveedores locales, decorar o recoger regalos. Nosotros nos encargamos de las flores, globos y decoración. Nos aseguraremos de que tu celebración esté esperándote en el momento en que cruces la puerta.",
     "loadError": "No se pudieron cargar los servicios. Por favor, inténtalo de nuevo más tarde.",
     "searchPlaceholder": "Buscar servicios de celebración...",
     "advanceNotice": "Los pedidos deben realizarse al menos 48 horas antes del check-in."
   },
   "housekeeping": {
     "title": "Limpieza y Orden",
-    "subtitle": "Mantén tu espacio fresco y limpio durante tu estadía",
+    "description": "Queremos que estés lo más cómodo posible durante tu estadía. Si te quedas un tiempo o simplemente necesitas refrescar el espacio, estamos felices de ayudar. Usa este servicio para solicitar juegos extra de toallas limpias, sábanas frescas o un servicio de limpieza del apartamento.",
     "loadError": "No se pudieron cargar los servicios. Por favor, inténtalo de nuevo más tarde.",
     "searchPlaceholder": "Buscar servicios de limpieza...",
     "advanceNotice": "Los pedidos deben realizarse al menos 24 horas antes."

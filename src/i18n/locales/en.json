@@ -11,7 +11,7 @@
     "description": "Whether you're arriving late and need a stocked fridge, are celebrating a special occasion, or simply want to treat yourself, please feel free to explore our guest services below:",
     "fridgeStocking": {
       "title": "Fridge Stocking",
-      "subtitle": "Arrive to a kitchen full of your favorite local snacks and essentials"
+      "subtitle": "Arrive to a kitchen full of your favorite snacks and essentials"
     },
     "celebration": {
       "title": "Celebration & Decor",
@@ -24,21 +24,21 @@
   },
   "fridgeStocking": {
     "title": "Fridge Stocking",
-    "subtitle": "Stock up on local snacks, drinks, and essentials",
+    "description": "Let us do the shopping. Order your favorite products and they'll be ready for you inside the apartment when you arrive.",
     "loadError": "Failed to load products. Please try again later.",
     "searchPlaceholder": "Search products...",
     "advanceNotice": "Orders must be placed at least 24 hours before check-in."
   },
   "celebration": {
-    "title": "Celebration & Decor",
-    "subtitle": "Make your special occasion unforgettable",
+    "title": "Celebrations and Decor",
+    "description": "We're here to help you celebrate. Skip the stress of finding local vendors, decorating or picking up gifts—let us handle the flowers, balloons, and decor. We will ensure your celebration is waiting for you the moment you walk through the door.",
     "loadError": "Failed to load services. Please try again later.",
     "searchPlaceholder": "Search celebration services...",
     "advanceNotice": "Orders must be placed at least 48 hours before check-in."
   },
   "housekeeping": {
-    "title": "Refresh & Housekeeping",
-    "subtitle": "Keep your space fresh and clean during your stay",
+    "title": "Refresh and Housekeeping",
+    "description": "We want you to be as comfortable as possible during your stay. If you're staying for a while or simply need a quick refresh, we're happy to help. Use this service to request extra sets of clean towels, fresh bed sheets, or a cleaning service of the apartment.",
     "loadError": "Failed to load services. Please try again later.",
     "searchPlaceholder": "Search housekeeping services...",
     "advanceNotice": "Orders must be placed at least 24 hours in advance."
