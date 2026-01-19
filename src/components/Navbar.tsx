@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ShoppingCart, Refrigerator, PartyPopper, Sparkles } from "lucide-react";
+import { ShoppingCart, Refrigerator, PartyPopper, Sparkles, Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { useCart } from "@/features/cart";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -10,6 +11,7 @@ function Navbar() {
   const { itemCount } = useCart();
   const language = useLanguage();
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => location.pathname.includes(path);
 
@@ -19,14 +21,37 @@ function Navbar() {
     { path: "housekeeping", labelKey: "nav.housekeeping", icon: Sparkles },
   ];
 
+  const handleNavClick = () => {
+    setMobileMenuOpen(false);
+  };
+
   return (
     <nav className="sticky top-0 z-50 border-b bg-white/95 backdrop-blur-sm shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <div className="flex items-center gap-6">
-          <Link to={`/${language}`} className="font-serif text-xl font-medium text-stone-800 hover:text-stone-600 transition-colors">
+        <div className="flex items-center gap-2 md:gap-6">
+          {/* Mobile hamburger menu button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="md:hidden h-10 w-10 p-0"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </Button>
+
+          <Link
+            to={`/${language}`}
+            className="text-xl font-bold text-stone-800 hover:text-stone-600 transition-colors"
+          >
             Meet Asunción
           </Link>
 
+          {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-1">
             {navItems.map(({ path, labelKey, icon: Icon }) => (
               <Button
@@ -45,40 +70,45 @@ function Navbar() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Mobile nav icons */}
-          <div className="flex md:hidden items-center gap-1">
-            {navItems.map(({ path, icon: Icon }) => (
-              <Button
+        {/* Cart button */}
+        <Button
+          variant={isActive("/cart") ? "default" : "ghost"}
+          className="relative h-10 w-10 p-0 sm:h-9 sm:w-9"
+          asChild
+        >
+          <Link to={`/${language}/cart`}>
+            <ShoppingCart className="h-6 w-6" />
+            {itemCount > 0 && !isActive("/cart") && (
+              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
+                {itemCount > 99 ? "99+" : itemCount}
+              </span>
+            )}
+          </Link>
+        </Button>
+      </div>
+
+      {/* Mobile menu dropdown */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t bg-white">
+          <div className="container mx-auto px-4 py-4 space-y-2">
+            {navItems.map(({ path, labelKey, icon: Icon }) => (
+              <Link
                 key={path}
-                variant={isActive(`/${path}`) ? "default" : "ghost"}
-                size="sm"
-                className="h-9 w-9 p-0"
-                asChild
+                to={`/${language}/${path}`}
+                onClick={handleNavClick}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                  isActive(`/${path}`)
+                    ? "bg-primary text-primary-foreground"
+                    : "text-stone-700 hover:bg-stone-100"
+                }`}
               >
-                <Link to={`/${language}/${path}`}>
-                  <Icon className="h-5 w-5" />
-                </Link>
-              </Button>
+                <Icon className="h-5 w-5" />
+                <span className="font-medium">{t(labelKey)}</span>
+              </Link>
             ))}
           </div>
-
-          <Button
-            variant={isActive("/cart") ? "default" : "ghost"}
-            className="relative h-10 w-10 p-0 sm:h-9 sm:w-9"
-            asChild
-          >
-            <Link to={`/${language}/cart`}>
-              <ShoppingCart className="h-6 w-6" />
-              {itemCount > 0 && !isActive("/cart") && (
-                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
-                  {itemCount > 99 ? "99+" : itemCount}
-                </span>
-              )}
-            </Link>
-          </Button>
         </div>
-      </div>
+      )}
     </nav>
   );
 }
