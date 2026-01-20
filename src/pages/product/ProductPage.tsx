@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Search } from "lucide-react";
-import { ProductGrid, ServiceGrid, HousekeepingGrid, useProducts } from "@/features/products";
+import { ProductGrid, ServiceGrid, HousekeepingGrid, useProducts, useTags } from "@/features/products";
 import Navbar from "@/components/Navbar";
 import Spinner from "@/components/Spinner";
 import { ErrorAlert, InfoAlert, WarningAlert } from "@/components/Alert";
@@ -32,13 +32,22 @@ export default function ProductPage() {
   const productType = routeToProductType[currentRoute] || "product";
   const translationKey = routeToTranslationKey[currentRoute] || "fridgeStocking";
   const showSearch = currentRoute === "fridge-stocking";
+  const showTagTabs = currentRoute === "celebration";
 
   const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState("");
+  const [selectedTagId, setSelectedTagId] = useState<number | null>(null);
   const debouncedSearch = useDebounce(searchInput, 300);
+
+  // Fetch tags for celebration page
+  const { data: tagsData } = useTags({
+    type: showTagTabs ? productType : undefined,
+  });
+
   const { data, isLoading, isError } = useProducts({
     search: debouncedSearch || undefined,
     type: productType,
+    tagIds: selectedTagId ? [selectedTagId] : undefined,
   });
 
   return (
@@ -70,6 +79,32 @@ export default function ProductPage() {
           message={t(`${translationKey}.advanceNotice`)}
           className="mb-8"
         />
+
+        {showTagTabs && tagsData?.data && tagsData.data.length > 0 && (
+          <div className="mb-8 flex flex-wrap gap-2">
+            <button
+              onClick={() => setSelectedTagId(null)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedTagId === null
+                ? "bg-secondary text-secondary-foreground"
+                : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+                }`}
+            >
+              {t("celebration.allServices", "All")}
+            </button>
+            {tagsData.data.map((tag) => (
+              <button
+                key={tag.id}
+                onClick={() => setSelectedTagId(tag.id)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedTagId === tag.id
+                  ? "bg-secondary text-secondary-foreground"
+                  : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+                  }`}
+              >
+                {tag.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {showSearch && (
           <div className="relative mb-10">

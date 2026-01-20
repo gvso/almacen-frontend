@@ -9,6 +9,7 @@ export interface GetProductsOptions {
   language?: string;
   search?: string;
   type?: ProductType;
+  tagIds?: number[];
 }
 
 export async function getProducts(options: GetProductsOptions = {}): Promise<ProductsResponse> {
@@ -16,6 +17,9 @@ export async function getProducts(options: GetProductsOptions = {}): Promise<Pro
   if (options.language) params.set("language", options.language);
   if (options.search) params.set("search", options.search);
   if (options.type) params.set("type", options.type);
+  if (options.tagIds && options.tagIds.length > 0) {
+    params.set("tag_ids", options.tagIds.join(","));
+  }
   const queryString = params.toString();
   return fetchApi<ProductsResponse>(`/api/v1/products${queryString ? `?${queryString}` : ""}`);
 }

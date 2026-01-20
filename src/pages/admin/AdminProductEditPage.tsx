@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useForm, useWatch, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowLeft, Save, Plus, Trash2, Languages, Layers, GripVertical, Package, Wrench } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, Languages, Layers, GripVertical, Package, Wrench, Tags, Check } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -23,6 +23,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { RichTextEditor } from "@/components/RichTextEditor";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ImageDropzone } from "@/components/ImageDropzone";
 import {
@@ -39,7 +40,10 @@ import {
   deleteVariationTranslation,
   reorderVariations,
   verifyAdminToken,
+  fetchAdminTags,
+  updateProductTags,
 } from "@/services/admin";
+import type { AdminTag } from "@/types/Tag";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { AdminProduct, AdminVariation, ProductType } from "@/types/AdminProduct";
 
@@ -85,8 +89,10 @@ export default function AdminProductEditPage() {
 
   const isNewProduct = productId === "new";
   const [product, setProduct] = useState<AdminProduct | null>(null);
+  const [allTags, setAllTags] = useState<AdminTag[]>([]);
   const [isLoading, setIsLoading] = useState(!isNewProduct);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [isSavingTags, setIsSavingTags] = useState(false);
   const navigate = useNavigate();
   const language = useLanguage();
 
@@ -119,8 +125,12 @@ export default function AdminProductEditPage() {
 
   const loadProduct = useCallback(async () => {
     try {
-      const response = await fetchAdminProducts({ type: productType });
-      const found = response.data.find((p) => p.id === Number(productId));
+      const [productsResponse, tagsResponse] = await Promise.all([
+        fetchAdminProducts({ type: productType }),
+        fetchAdminTags(),
+      ]);
+      setAllTags(tagsResponse.data);
+      const found = productsResponse.data.find((p) => p.id === Number(productId));
       if (found) {
         setProduct(found);
         form.reset({
@@ -138,11 +148,22 @@ export default function AdminProductEditPage() {
     }
   }, [productId, productType, form]);
 
+  const loadTags = useCallback(async () => {
+    try {
+      const tagsResponse = await fetchAdminTags();
+      setAllTags(tagsResponse.data);
+    } catch (error) {
+      console.error("Failed to load tags:", error);
+    }
+  }, []);
+
   useEffect(() => {
     if (!isCheckingAuth && productId && !isNewProduct) {
       loadProduct();
+    } else if (!isCheckingAuth && isNewProduct) {
+      loadTags();
     }
-  }, [isCheckingAuth, productId, isNewProduct, loadProduct]);
+  }, [isCheckingAuth, productId, isNewProduct, loadProduct, loadTags]);
 
   const handleSaveProduct = async (data: ProductFormData) => {
     try {
@@ -290,6 +311,27 @@ export default function AdminProductEditPage() {
     }
   };
 
+  const handleToggleTag = async (tagId: number) => {
+    if (!product) return;
+    setIsSavingTags(true);
+    try {
+      const currentTagIds = product.tags?.map((t) => t.id) || [];
+      const isSelected = currentTagIds.includes(tagId);
+      const newTagIds = isSelected
+        ? currentTagIds.filter((id) => id !== tagId)
+        : [...currentTagIds, tagId];
+
+      await updateProductTags(product.id, { tag_ids: newTagIds });
+      // Update local state
+      const newTags = allTags.filter((t) => newTagIds.includes(t.id));
+      setProduct({ ...product, tags: newTags });
+    } catch (error) {
+      console.error("Failed to update tags:", error);
+    } finally {
+      setIsSavingTags(false);
+    }
+  };
+
   if (isCheckingAuth || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -380,10 +422,24 @@ export default function AdminProductEditPage() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Description (Default)</label>
-                    <textarea
-                      className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                      {...form.register("description")}
-                    />
+                    {isService ? (
+                      <Controller
+                        name="description"
+                        control={form.control}
+                        render={({ field }) => (
+                          <RichTextEditor
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder="Enter description with formatting..."
+                          />
+                        )}
+                      />
+                    ) : (
+                      <textarea
+                        className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        {...form.register("description")}
+                      />
+                    )}
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Status</label>
@@ -406,6 +462,42 @@ export default function AdminProductEditPage() {
                 </Button>
               </div>
             </form>
+
+            {/* Tags section inside details card */}
+            {!isNewProduct && (
+              <div className="border-t pt-6 mt-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Tags className="h-5 w-5" />
+                  <h3 className="font-semibold">Tags</h3>
+                </div>
+                {allTags.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    No tags available. <a href={`/${language}/admin/tags`} className="text-primary underline">Create tags</a> first.
+                  </p>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {allTags.map((tag) => {
+                      const isSelected = product?.tags?.some((t) => t.id === tag.id) || false;
+                      return (
+                        <button
+                          key={tag.id}
+                          type="button"
+                          disabled={isSavingTags}
+                          onClick={() => handleToggleTag(tag.id)}
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${isSelected
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted text-muted-foreground hover:bg-muted/80"
+                            } ${isSavingTags ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                        >
+                          {isSelected && <Check className="h-3 w-3" />}
+                          {tag.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -433,6 +525,7 @@ export default function AdminProductEditPage() {
                     initialDescription={existing?.description || ""}
                     onSave={(data) => handleSaveTranslation(lang, data)}
                     onDelete={existing ? () => handleDeleteTranslation(lang) : undefined}
+                    useRichText={isService}
                   />
                 );
               })
@@ -511,9 +604,10 @@ interface TranslationFormProps {
   initialDescription: string;
   onSave: (data: TranslationFormData) => void;
   onDelete?: () => void;
+  useRichText?: boolean;
 }
 
-function TranslationForm({ language, initialName, initialDescription, onSave, onDelete }: TranslationFormProps) {
+function TranslationForm({ language, initialName, initialDescription, onSave, onDelete, useRichText }: TranslationFormProps) {
   const form = useForm<TranslationFormData>({
     resolver: zodResolver(translationSchema),
     defaultValues: {
@@ -539,9 +633,23 @@ function TranslationForm({ language, initialName, initialDescription, onSave, on
           )}
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className={useRichText ? "space-y-3" : "grid grid-cols-1 md:grid-cols-2 gap-3"}>
         <Input placeholder="Translated name" {...form.register("name")} />
-        <Input placeholder="Translated description" {...form.register("description")} />
+        {useRichText ? (
+          <Controller
+            name="description"
+            control={form.control}
+            render={({ field }) => (
+              <RichTextEditor
+                value={field.value}
+                onChange={field.onChange}
+                placeholder="Translated description..."
+              />
+            )}
+          />
+        ) : (
+          <Input placeholder="Translated description" {...form.register("description")} />
+        )}
       </div>
     </div>
   );

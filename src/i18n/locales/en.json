@@ -14,7 +14,7 @@
       "subtitle": "Arrive to a kitchen full of your favorite snacks and essentials"
     },
     "celebration": {
-      "title": "Celebration & Decor",
+      "title": "Celebrations & Decor",
       "subtitle": "Planning a birthday or anniversary? We'll handle the balloons, flowers, and setup"
     },
     "housekeeping": {
@@ -30,18 +30,19 @@
     "advanceNotice": "Orders must be placed at least 24 hours before check-in."
   },
   "celebration": {
-    "title": "Celebrations and Decor",
+    "title": "Celebrations & Decor",
     "description": "We're here to help you celebrate. Skip the stress of finding local vendors, decorating or picking up gifts—let us handle the flowers, balloons, and decor. We will ensure your celebration is waiting for you the moment you walk through the door.",
     "loadError": "Failed to load services. Please try again later.",
     "searchPlaceholder": "Search celebration services...",
-    "advanceNotice": "Orders must be placed at least 48 hours before check-in."
+    "advanceNotice": "Orders must be placed at least 48 hours before check-in.",
+    "allServices": "All"
   },
   "housekeeping": {
-    "title": "Refresh and Housekeeping",
+    "title": "Refresh & Housekeeping",
     "description": "We want you to be as comfortable as possible during your stay. If you're staying for a while or simply need a quick refresh, we're happy to help. Use this service to request extra sets of clean towels, fresh bed sheets, or a cleaning service of the apartment.",
     "loadError": "Failed to load services. Please try again later.",
     "searchPlaceholder": "Search housekeeping services...",
-    "advanceNotice": "Orders must be placed at least 24 hours in advance."
+    "advanceNotice": "Orders must be placed at least 24 hours before check-in."
   },
   "payment": {
     "bannerTitle": "Payment via Airbnb",

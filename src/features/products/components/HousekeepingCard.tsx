@@ -64,9 +64,10 @@ export function HousekeepingCard({ service }: HousekeepingCardProps) {
       <CardContent className="flex flex-1 flex-col p-5">
         <h3 className="text-xl font-semibold text-foreground">{service.name}</h3>
         {service.description && (
-          <p className="mt-2 text-base text-muted-foreground leading-relaxed">
-            {service.description}
-          </p>
+          <div
+            className="mt-2 text-base text-muted-foreground leading-relaxed prose prose-sm max-w-none [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0 [&_li_p]:my-0 [&_li]:marker:text-current"
+            dangerouslySetInnerHTML={{ __html: service.description }}
+          />
         )}
 
         {/* Bottom section: price/button */}

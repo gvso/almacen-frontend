@@ -1,3 +1,5 @@
+import type { Tag } from "./Tag";
+
 export type ProductType = "product" | "service" | "housekeeping";
 
 export interface ProductVariation {
@@ -19,4 +21,5 @@ export interface Product {
   createdAt: string;
   updatedAt: string;
   variations: ProductVariation[];
+  tags: Tag[];
 }

@@ -26,3 +26,17 @@ export {
   reorderProducts,
   reorderVariations,
 } from "./products";
+
+// Tags
+export {
+  fetchAdminTags,
+  createTag,
+  getTag,
+  updateTag,
+  deleteTag,
+  createOrUpdateTagTranslation,
+  deleteTagTranslation,
+  reorderTags,
+  getProductTags,
+  updateProductTags,
+} from "./tags";

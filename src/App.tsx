@@ -12,6 +12,7 @@ import AdminDashboardPage from "@/pages/admin/AdminDashboardPage";
 import AdminOrdersPage from "@/pages/admin/AdminOrdersPage";
 import AdminProductsPage from "@/pages/admin/AdminProductsPage";
 import AdminProductEditPage from "@/pages/admin/AdminProductEditPage";
+import AdminTagsPage from "@/pages/admin/AdminTagsPage";
 import LanguageLayout from "@/layouts/LanguageLayout";
 import { DEFAULT_LANGUAGE } from "@/contexts/LanguageContext";
 import { toCamelCase } from "./utils/casing";
@@ -33,7 +34,7 @@ function App() {
         <Routes>
           {/* Redirect root to default language */}
           <Route path="/" element={<Navigate to={`/${DEFAULT_LANGUAGE}`} replace />} />
-          
+
           {/* Language-prefixed routes */}
           <Route path="/:lang" element={<LanguageLayout />}>
             <Route index element={<HomePage />} />
@@ -51,6 +52,7 @@ function App() {
             <Route path="admin" element={<AdminLoginPage />} />
             <Route path="admin/dashboard" element={<AdminDashboardPage />} />
             <Route path="admin/orders" element={<AdminOrdersPage />} />
+            <Route path="admin/tags" element={<AdminTagsPage />} />
             <Route path="admin/:itemType" element={<AdminProductsPage />} />
             <Route path="admin/:itemType/:productId" element={<AdminProductEditPage />} />
           </Route>

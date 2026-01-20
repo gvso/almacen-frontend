@@ -34,14 +34,15 @@
     "description": "Estamos aquí para ayudarte a celebrar. Evita el estrés de buscar proveedores locales, decorar o recoger regalos. Nosotros nos encargamos de las flores, globos y decoración. Nos aseguraremos de que tu celebración esté esperándote en el momento en que cruces la puerta.",
     "loadError": "No se pudieron cargar los servicios. Por favor, inténtalo de nuevo más tarde.",
     "searchPlaceholder": "Buscar servicios de celebración...",
-    "advanceNotice": "Los pedidos deben realizarse al menos 48 horas antes del check-in."
+    "advanceNotice": "Los pedidos deben realizarse al menos 48 horas antes del check-in.",
+    "allServices": "Todos"
   },
   "housekeeping": {
     "title": "Limpieza y Orden",
     "description": "Queremos que estés lo más cómodo posible durante tu estadía. Si te quedas un tiempo o simplemente necesitas refrescar el espacio, estamos felices de ayudar. Usa este servicio para solicitar juegos extra de toallas limpias, sábanas frescas o un servicio de limpieza del apartamento.",
     "loadError": "No se pudieron cargar los servicios. Por favor, inténtalo de nuevo más tarde.",
     "searchPlaceholder": "Buscar servicios de limpieza...",
-    "advanceNotice": "Los pedidos deben realizarse al menos 24 horas antes."
+    "advanceNotice": "Los pedidos deben realizarse al menos 24 horas antes del check-in."
   },
   "payment": {
     "bannerTitle": "Pago a través de Airbnb",

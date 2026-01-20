@@ -1,3 +1,5 @@
+import type { AdminTag } from "./Tag";
+
 export type ProductType = "product" | "service" | "housekeeping";
 
 export interface ProductTranslation {
@@ -37,6 +39,7 @@ export interface AdminProduct {
   updatedAt: string;
   translations: ProductTranslation[];
   variations: AdminVariation[];
+  tags: AdminTag[];
 }
 
 // Request types

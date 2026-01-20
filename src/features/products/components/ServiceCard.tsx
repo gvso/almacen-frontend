@@ -66,9 +66,10 @@ export function ServiceCard({ service }: ServiceCardProps) {
         </h3>
 
         {service.description && (
-          <p className="mt-6 text-sm tracking-wide text-stone-600 leading-relaxed">
-            {service.description}
-          </p>
+          <div
+            className="mt-6 text-sm tracking-wide text-stone-600 leading-relaxed prose prose-sm prose-stone max-w-none [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0 [&_li_p]:my-0 [&_li]:marker:text-stone-600"
+            dangerouslySetInnerHTML={{ __html: service.description }}
+          />
         )}
 
         {/* Price and action */}
