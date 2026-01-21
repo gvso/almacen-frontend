@@ -177,7 +177,7 @@ export function RichTextEditor({
                     title="Font Size"
                 >
                     <option value="0.85rem">Small</option>
-                    <option>Medium</option>
+                    <option value="1rem">Medium</option>
                     <option value="1.125rem">Large</option>
                 </select>
                 <div className="mx-1 h-5 w-px bg-border" />
