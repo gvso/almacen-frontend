@@ -1,6 +1,6 @@
 import { Product } from "@/types/Product";
 import { Button } from "@/components/ui/button";
-import { Minus, Wrench, Plus, ShoppingCart } from "lucide-react";
+import { Minus, PartyPopper, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/features/cart";
 
 interface ServiceCardProps {
@@ -54,7 +54,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-stone-100">
-            <Wrench className="h-16 w-16 text-stone-300" />
+            <PartyPopper className="h-16 w-16 text-stone-300" />
           </div>
         )}
       </div>

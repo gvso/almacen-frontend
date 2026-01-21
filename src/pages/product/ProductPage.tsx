@@ -62,7 +62,13 @@ export default function ProductPage() {
 
       {/* Hero Section - matching home page style */}
       <section className="relative overflow-hidden">
-        <div className="container mx-auto px-4 py-12 md:py-16">
+        <div className="container mx-auto px-4 pt-12 pb-4 md:pt-16">
+          <InfoAlert
+            title={t("payment.bannerTitle")}
+            message={t("payment.bannerMessage")}
+            className="mb-8"
+          />
+
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-3xl font-bold tracking-tight text-stone-800 md:text-4xl lg:text-5xl">
               {t(`${translationKey}.title`)}
@@ -71,30 +77,25 @@ export default function ProductPage() {
             <p className="mt-6 text-lg leading-relaxed text-stone-600">
               {t(`${translationKey}.description`)}
             </p>
+
+            <WarningAlert
+              message={t(`${translationKey}.advanceNotice`)}
+              className="mt-3"
+            />
           </div>
         </div>
       </section>
 
       <main className="container mx-auto px-4 pb-16">
-        <InfoAlert
-          title={t("payment.bannerTitle")}
-          message={t("payment.bannerMessage")}
-          className="mb-4"
-        />
-        <WarningAlert
-          message={t(`${translationKey}.advanceNotice`)}
-          className="mb-8"
-        />
 
         {tagsData?.data && tagsData.data.length > 0 && (
           <div className="mb-8 flex flex-wrap gap-2">
             <button
               onClick={() => setSelectedTagId(null)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                selectedTagId === null
-                  ? "bg-secondary text-secondary-foreground"
-                  : "bg-stone-100 text-stone-600 hover:bg-stone-200"
-              }`}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedTagId === null
+                ? "bg-secondary text-secondary-foreground"
+                : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+                }`}
             >
               {t("common.all", "All")}
             </button>
@@ -102,11 +103,10 @@ export default function ProductPage() {
               <button
                 key={tag.id}
                 onClick={() => setSelectedTagId(tag.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  selectedTagId === tag.id
-                    ? "bg-secondary text-secondary-foreground"
-                    : "bg-stone-100 text-stone-600 hover:bg-stone-200"
-                }`}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedTagId === tag.id
+                  ? "bg-secondary text-secondary-foreground"
+                  : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+                  }`}
               >
                 {tag.label}
               </button>
