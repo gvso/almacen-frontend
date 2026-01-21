@@ -1,6 +1,7 @@
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, Extension } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
+import { TextStyle } from "@tiptap/extension-text-style";
 import { useEffect } from "react";
 import {
     Bold,
@@ -11,6 +12,66 @@ import {
     Unlink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// Custom FontSize extension
+declare module "@tiptap/core" {
+    interface Commands<ReturnType> {
+        fontSize: {
+            setFontSize: (size: string) => ReturnType;
+            unsetFontSize: () => ReturnType;
+        };
+    }
+}
+
+const FontSize = Extension.create({
+    name: "fontSize",
+
+    addOptions() {
+        return {
+            types: ["textStyle"],
+        };
+    },
+
+    addGlobalAttributes() {
+        return [
+            {
+                types: this.options.types,
+                attributes: {
+                    fontSize: {
+                        default: null,
+                        parseHTML: (element) => element.style.fontSize || null,
+                        renderHTML: (attributes) => {
+                            if (!attributes.fontSize) {
+                                return {};
+                            }
+                            return {
+                                style: `font-size: ${attributes.fontSize}`,
+                            };
+                        },
+                    },
+                },
+            },
+        ];
+    },
+
+    addCommands() {
+        return {
+            setFontSize:
+                (fontSize: string) =>
+                    ({ chain }) => {
+                        return chain().setMark("textStyle", { fontSize }).run();
+                    },
+            unsetFontSize:
+                () =>
+                    ({ chain }) => {
+                        return chain()
+                            .setMark("textStyle", { fontSize: null })
+                            .unsetMark("textStyle")
+                            .run();
+                    },
+        };
+    },
+});
 
 interface RichTextEditorProps {
     value: string;
@@ -33,6 +94,8 @@ export function RichTextEditor({
                 blockquote: false,
                 horizontalRule: false,
             }),
+            TextStyle,
+            FontSize,
             Link.configure({
                 openOnClick: false,
                 HTMLAttributes: {
@@ -103,6 +166,25 @@ export function RichTextEditor({
                 >
                     <Italic className="h-4 w-4" />
                 </ToolbarButton>
+                <div className="mx-1 h-5 w-px bg-border" />
+                {/* Font Size Selector */}
+                <select
+                    value={editor.getAttributes("textStyle").fontSize || ""}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        if (value === "") {
+                            editor.chain().focus().unsetFontSize().run();
+                        } else {
+                            editor.chain().focus().setFontSize(value).run();
+                        }
+                    }}
+                    className="h-7 rounded border border-input bg-transparent px-2 text-sm hover:bg-muted focus:outline-none focus:ring-1 focus:ring-ring"
+                    title="Font Size"
+                >
+                    <option value="0.875rem">Small</option>
+                    <option value="">Medium</option>
+                    <option value="1.25rem">Large</option>
+                </select>
                 <div className="mx-1 h-5 w-px bg-border" />
                 <ToolbarButton
                     onClick={() => editor.chain().focus().toggleBulletList().run()}
