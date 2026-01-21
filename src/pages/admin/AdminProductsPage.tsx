@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Check, X, Package, Wrench, Plus, Search, Trash2, GripVertical, Sparkles } from "lucide-react";
+import { ArrowLeft, Check, X, Package, Wrench, Plus, Search, Trash2, GripVertical, Sparkles, Copy } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -21,7 +21,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { fetchAdminProducts, deleteProduct, reorderProducts, verifyAdminToken } from "@/services/admin";
+import { fetchAdminProducts, deleteProduct, cloneProduct, reorderProducts, verifyAdminToken } from "@/services/admin";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDebounce } from "@/hooks/useDebounce";
 import type { AdminProduct, ProductType } from "@/types/AdminProduct";
@@ -30,9 +30,10 @@ interface SortableProductCardProps {
   product: AdminProduct;
   onNavigate: () => void;
   onDelete: () => void;
+  onClone: () => void;
 }
 
-function SortableProductCard({ product, onNavigate, onDelete }: SortableProductCardProps) {
+function SortableProductCard({ product, onNavigate, onDelete, onClone }: SortableProductCardProps) {
   const {
     attributes,
     listeners,
@@ -105,6 +106,18 @@ function SortableProductCard({ product, onNavigate, onDelete }: SortableProductC
             <Button
               variant="outline"
               size="icon"
+              title="Clone"
+              onClick={(e) => {
+                e.stopPropagation();
+                onClone();
+              }}
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              title="Delete"
               className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
               onClick={(e) => {
                 e.stopPropagation();
@@ -203,6 +216,17 @@ export default function AdminProductsPage() {
     }
   };
 
+  const handleCloneProduct = async (productId: number) => {
+    try {
+      const clonedProduct = await cloneProduct(productId);
+      // Add the cloned product to the list and navigate to edit it
+      setProducts([...products, clonedProduct]);
+      navigate(`/${language}/admin/${itemType}/${clonedProduct.id}`);
+    } catch (error) {
+      console.error("Failed to clone product:", error);
+    }
+  };
+
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -290,6 +314,7 @@ export default function AdminProductsPage() {
                     product={product}
                     onNavigate={() => navigate(`/${language}/admin/${itemType}/${product.id}`)}
                     onDelete={() => handleDeleteProduct(product.id, product.name)}
+                    onClone={() => handleCloneProduct(product.id)}
                   />
                 ))}
               </div>

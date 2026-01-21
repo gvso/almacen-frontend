@@ -16,6 +16,7 @@ export {
   createProduct,
   updateProduct,
   deleteProduct,
+  cloneProduct,
   createOrUpdateTranslation,
   deleteTranslation,
   createVariation,

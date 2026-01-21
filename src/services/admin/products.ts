@@ -45,6 +45,12 @@ export async function deleteProduct(productId: number): Promise<void> {
   });
 }
 
+export async function cloneProduct(productId: number): Promise<AdminProduct> {
+  return fetchAdminApi(`/api/v1/admin/products/${productId}/clone`, {
+    method: "POST",
+  });
+}
+
 // ============ Translation API ============
 
 export async function createOrUpdateTranslation(productId: number, data: TranslationData): Promise<AdminProduct> {
