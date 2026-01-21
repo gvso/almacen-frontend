@@ -39,13 +39,13 @@ const FontSize = Extension.create({
                 attributes: {
                     fontSize: {
                         default: null,
-                        parseHTML: (element) => element.style.fontSize || null,
+                        parseHTML: (element) => element.style.fontSize?.replace(" !important", "") || null,
                         renderHTML: (attributes) => {
                             if (!attributes.fontSize) {
                                 return {};
                             }
                             return {
-                                style: `font-size: ${attributes.fontSize}`,
+                                style: `font-size: ${attributes.fontSize} !important`,
                             };
                         },
                     },
@@ -107,7 +107,7 @@ export function RichTextEditor({
         editorProps: {
             attributes: {
                 class:
-                    "prose prose-sm prose-stone max-w-none min-h-[120px] px-3 py-2 focus:outline-none [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0 [&_li_p]:my-0 [&_li]:marker:text-stone-800",
+                    "prose prose-sm prose-stone max-w-none min-h-[120px] px-3 py-2 focus:outline-none [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0 [&_li_p]:my-0 [&_li]:marker:text-stone-800 [&_span]:text-[length:inherit]",
             },
         },
         onUpdate: ({ editor }) => {
@@ -169,21 +169,16 @@ export function RichTextEditor({
                 <div className="mx-1 h-5 w-px bg-border" />
                 {/* Font Size Selector */}
                 <select
-                    value={editor.getAttributes("textStyle").fontSize || ""}
+                    value={editor.getAttributes("textStyle").fontSize || "1rem"}
                     onChange={(e) => {
-                        const value = e.target.value;
-                        if (value === "") {
-                            editor.chain().focus().unsetFontSize().run();
-                        } else {
-                            editor.chain().focus().setFontSize(value).run();
-                        }
+                        editor.chain().focus().setFontSize(e.target.value).run();
                     }}
                     className="h-7 rounded border border-input bg-transparent px-2 text-sm hover:bg-muted focus:outline-none focus:ring-1 focus:ring-ring"
                     title="Font Size"
                 >
-                    <option value="0.875rem">Small</option>
-                    <option value="">Medium</option>
-                    <option value="1.25rem">Large</option>
+                    <option value="0.85rem">Small</option>
+                    <option>Medium</option>
+                    <option value="1.125rem">Large</option>
                 </select>
                 <div className="mx-1 h-5 w-px bg-border" />
                 <ToolbarButton

@@ -67,7 +67,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
 
         {service.description && (
           <div
-            className="mt-6 text-sm tracking-wide text-stone-600 leading-relaxed prose prose-sm prose-stone max-w-none [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0 [&_li_p]:my-0 [&_li]:marker:text-stone-600"
+            className="mt-6 text-sm tracking-wide text-stone-600 leading-relaxed prose prose-sm prose-stone max-w-none [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0 [&_li_p]:my-0 [&_li]:marker:text-stone-600 [&_span]:text-[length:inherit]"
             dangerouslySetInnerHTML={{ __html: service.description }}
           />
         )}
