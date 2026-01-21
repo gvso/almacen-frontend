@@ -7,7 +7,7 @@
   "home": {
     "badge": "Guest Services",
     "title": "Meet Asunción",
-    "welcome": "Welcome to your home in Asunción! We're truly grateful you chose to stay with us. Our goal is to make your time in Paraguay as comfortable and stress-free as possible from the moment you step through the doors.",
+    "welcome": "Welcome to your home in Asunción! We're truly grateful you chose to stay with us. Our goal is to make your time in Asunción as comfortable and stress-free as possible from the moment you step through the doors.",
     "description": "Whether you're arriving late and need a stocked fridge, are celebrating a special occasion, or simply want to treat yourself, please feel free to explore our guest services below:",
     "fridgeStocking": {
       "title": "Fridge Stocking",
@@ -34,8 +34,7 @@
     "description": "We're here to help you celebrate. Skip the stress of finding local vendors, decorating or picking up gifts—let us handle the flowers, balloons, and decor. We will ensure your celebration is waiting for you the moment you walk through the door.",
     "loadError": "Failed to load services. Please try again later.",
     "searchPlaceholder": "Search celebration services...",
-    "advanceNotice": "Orders must be placed at least 48 hours before check-in.",
-    "allServices": "All"
+    "advanceNotice": "Orders must be placed at least 48 hours before check-in."
   },
   "housekeeping": {
     "title": "Refresh & Housekeeping",
@@ -49,6 +48,7 @@
     "bannerMessage": "All payments will be requested by your host through Airbnb. No payment information will be requested on this site. After checkout, a link with your order details will be generated for you to share with your host."
   },
   "common": {
+    "all": "All",
     "close": "Close",
     "loading": "Loading...",
     "total": "Total"

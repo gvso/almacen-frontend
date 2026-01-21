@@ -32,17 +32,23 @@ export default function ProductPage() {
   const productType = routeToProductType[currentRoute] || "product";
   const translationKey = routeToTranslationKey[currentRoute] || "fridgeStocking";
   const showSearch = currentRoute === "fridge-stocking";
-  const showTagTabs = currentRoute === "celebration";
 
   const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState("");
   const [selectedTagId, setSelectedTagId] = useState<number | null>(null);
   const debouncedSearch = useDebounce(searchInput, 300);
 
-  // Fetch tags for celebration page
+  // Fetch tags for current product type
   const { data: tagsData } = useTags({
-    type: showTagTabs ? productType : undefined,
+    type: productType,
   });
+
+  // Reset selected tag when route changes
+  const [prevRoute, setPrevRoute] = useState(currentRoute);
+  if (currentRoute !== prevRoute) {
+    setPrevRoute(currentRoute);
+    setSelectedTagId(null);
+  }
 
   const { data, isLoading, isError } = useProducts({
     search: debouncedSearch || undefined,
@@ -80,25 +86,27 @@ export default function ProductPage() {
           className="mb-8"
         />
 
-        {showTagTabs && tagsData?.data && tagsData.data.length > 0 && (
+        {tagsData?.data && tagsData.data.length > 0 && (
           <div className="mb-8 flex flex-wrap gap-2">
             <button
               onClick={() => setSelectedTagId(null)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedTagId === null
-                ? "bg-secondary text-secondary-foreground"
-                : "bg-stone-100 text-stone-600 hover:bg-stone-200"
-                }`}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                selectedTagId === null
+                  ? "bg-secondary text-secondary-foreground"
+                  : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+              }`}
             >
-              {t("celebration.allServices", "All")}
+              {t("common.all", "All")}
             </button>
             {tagsData.data.map((tag) => (
               <button
                 key={tag.id}
                 onClick={() => setSelectedTagId(tag.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedTagId === tag.id
-                  ? "bg-secondary text-secondary-foreground"
-                  : "bg-stone-100 text-stone-600 hover:bg-stone-200"
-                  }`}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  selectedTagId === tag.id
+                    ? "bg-secondary text-secondary-foreground"
+                    : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+                }`}
               >
                 {tag.label}
               </button>

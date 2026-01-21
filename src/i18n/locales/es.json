@@ -7,7 +7,7 @@
   "home": {
     "badge": "Servicios para Huéspedes",
     "title": "Meet Asunción",
-    "welcome": "¡Bienvenido a tu hogar en Asunción! Estamos muy agradecidos de que hayas elegido quedarte con nosotros. Nuestro objetivo es hacer que tu tiempo en Paraguay sea lo más cómodo y sin estrés posible desde el momento en que cruces la puerta.",
+    "welcome": "¡Bienvenido a tu hogar en Asunción! Estamos muy agradecidos de que hayas elegido quedarte con nosotros. Nuestro objetivo es hacer que tu tiempo en Asunción sea lo más cómodo y sin estrés posible desde el momento en que cruces la puerta.",
     "description": "Ya sea que llegues tarde y necesites una heladera abastecida, estés celebrando una ocasión especial, o simplemente quieras darte un gusto, siéntete libre de explorar nuestros servicios para huéspedes:",
     "fridgeStocking": {
       "title": "Llená tu Heladera",
@@ -34,8 +34,7 @@
     "description": "Estamos aquí para ayudarte a celebrar. Evita el estrés de buscar proveedores locales, decorar o recoger regalos. Nosotros nos encargamos de las flores, globos y decoración. Nos aseguraremos de que tu celebración esté esperándote en el momento en que cruces la puerta.",
     "loadError": "No se pudieron cargar los servicios. Por favor, inténtalo de nuevo más tarde.",
     "searchPlaceholder": "Buscar servicios de celebración...",
-    "advanceNotice": "Los pedidos deben realizarse al menos 48 horas antes del check-in.",
-    "allServices": "Todos"
+    "advanceNotice": "Los pedidos deben realizarse al menos 48 horas antes del check-in."
   },
   "housekeeping": {
     "title": "Limpieza y Orden",
@@ -49,6 +48,7 @@
     "bannerMessage": "Todos los pagos serán solicitados por tu anfitrión a través de Airbnb. No se solicitará información de pago en este sitio. Al finalizar la compra, se generará un enlace con los detalles de tu pedido para compartir con tu anfitrión."
   },
   "common": {
+    "all": "Todos",
     "close": "Cerrar",
     "loading": "Cargando...",
     "total": "Total"
