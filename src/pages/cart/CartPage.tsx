@@ -30,6 +30,8 @@ export default function CartPage() {
     try {
       const order = await checkout(cart.token, { language });
       const url = `${window.location.origin}/${language}/orders/${order.id}`;
+      clearCartToken();
+      resetCart();
       setOrderUrl(url);
     } catch (error) {
       console.error("Checkout failed:", error);
@@ -38,8 +40,6 @@ export default function CartPage() {
   };
 
   const handleCloseDialog = () => {
-    clearCartToken();
-    resetCart();
     setOrderUrl(null);
     setIsCheckingOut(false);
     navigate(`/${language}`);
