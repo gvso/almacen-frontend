@@ -91,7 +91,7 @@ export default function OrderSuccessDialog({
             <Button variant="outline" onClick={onClose}>
               {t("common.close")}
             </Button>
-            <Button asChild>
+            <Button asChild className="bg-action text-action-foreground hover:bg-action/90">
               <Link to={orderUrl?.replace(window.location.origin, "") || "#"}>
                 {t("orderSuccess.viewOrder")}
               </Link>

@@ -98,7 +98,7 @@ export function HousekeepingCard({ service }: HousekeepingCardProps) {
               </div>
             ) : (
               <Button
-                className="h-10 w-full sm:h-9 sm:w-auto bg-tertiary text-tertiary-foreground hover:bg-tertiary/90"
+                className="h-10 w-full sm:h-9 sm:w-auto bg-action text-action-foreground hover:bg-action/90"
                 onClick={handleAddToCart}
                 disabled={isAddingItem}
               >

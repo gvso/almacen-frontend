@@ -78,7 +78,7 @@ export default function AdminLoginPage() {
               </div>
             )}
 
-            <Button type="submit" className="w-full" disabled={isLoading || !password}>
+            <Button type="submit" className="w-full bg-action text-action-foreground hover:bg-action/90" disabled={isLoading || !password}>
               {isLoading ? "Authenticating..." : "Login"}
             </Button>
           </form>

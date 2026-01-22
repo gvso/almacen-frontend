@@ -456,7 +456,7 @@ export default function AdminProductEditPage() {
                 </div>
               </div>
               <div className="flex justify-end">
-                <Button type="submit" disabled={form.formState.isSubmitting || (!isNewProduct && !form.formState.isDirty)}>
+                <Button type="submit" disabled={form.formState.isSubmitting || (!isNewProduct && !form.formState.isDirty)} className="bg-action text-action-foreground hover:bg-action/90">
                   <Save className="h-4 w-4 mr-2" />
                   {form.formState.isSubmitting ? "Saving..." : isNewProduct ? `Create ${itemLabel}` : `Save ${itemLabel}`}
                 </Button>
@@ -485,7 +485,7 @@ export default function AdminProductEditPage() {
                           disabled={isSavingTags}
                           onClick={() => handleToggleTag(tag.id)}
                           className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${isSelected
-                            ? "bg-primary text-primary-foreground"
+                            ? "bg-action text-action-foreground"
                             : "bg-muted text-muted-foreground hover:bg-muted/80"
                             } ${isSavingTags ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                         >
@@ -541,7 +541,7 @@ export default function AdminProductEditPage() {
                 <Layers className="h-5 w-5" />
                 Variations
               </CardTitle>
-              <Button size="sm" onClick={handleAddVariation} disabled={isNewProduct}>
+              <Button size="sm" onClick={handleAddVariation} disabled={isNewProduct} className="bg-action text-action-foreground hover:bg-action/90">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Variation
               </Button>
@@ -743,11 +743,11 @@ function VariationForm({ variation, defaultImageUrl, onUpdate, onDelete, onSaveT
           </div>
           <div className="flex items-center justify-center gap-2">
             <input type="checkbox" {...form.register("isActive")} className="h-4 w-4" />
-            {form.formState.isDirty && (
-              <Button size="sm" onClick={form.handleSubmit(onUpdate)}>
-                <Save className="h-3 w-3" />
-              </Button>
-            )}
+{form.formState.isDirty && (
+                              <Button size="sm" onClick={form.handleSubmit(onUpdate)} className="bg-action text-action-foreground hover:bg-action/90">
+                                <Save className="h-3 w-3" />
+                              </Button>
+                            )}
           </div>
         </div>
 

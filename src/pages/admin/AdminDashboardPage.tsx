@@ -62,7 +62,7 @@ export default function AdminDashboardPage() {
               <p className="text-sm text-muted-foreground">
                 View and manage customer orders
               </p>
-              <div className="flex items-center text-base text-primary mt-3 font-medium">
+              <div className="flex items-center text-base text-action mt-3 font-medium">
                 View all <ChevronRight className="h-5 w-5 ml-1" />
               </div>
             </CardContent>
@@ -80,7 +80,7 @@ export default function AdminDashboardPage() {
               <p className="text-sm text-muted-foreground">
                 Manage tags for categorizing products and services
               </p>
-              <div className="flex items-center text-base text-primary mt-3 font-medium">
+              <div className="flex items-center text-base text-action mt-3 font-medium">
                 View all <ChevronRight className="h-5 w-5 ml-1" />
               </div>
             </CardContent>
@@ -98,7 +98,7 @@ export default function AdminDashboardPage() {
               <p className="text-sm text-muted-foreground">
                 Manage fridge stocking products, translations, and variations
               </p>
-              <div className="flex items-center text-base text-primary mt-3 font-medium">
+              <div className="flex items-center text-base text-action mt-3 font-medium">
                 View all <ChevronRight className="h-5 w-5 ml-1" />
               </div>
             </CardContent>
@@ -116,7 +116,7 @@ export default function AdminDashboardPage() {
               <p className="text-sm text-muted-foreground">
                 Manage celebration services, translations, and variations
               </p>
-              <div className="flex items-center text-base text-primary mt-3 font-medium">
+              <div className="flex items-center text-base text-action mt-3 font-medium">
                 View all <ChevronRight className="h-5 w-5 ml-1" />
               </div>
             </CardContent>
@@ -134,7 +134,7 @@ export default function AdminDashboardPage() {
               <p className="text-sm text-muted-foreground">
                 Manage housekeeping services, translations, and variations
               </p>
-              <div className="flex items-center text-base text-primary mt-3 font-medium">
+              <div className="flex items-center text-base text-action mt-3 font-medium">
                 View all <ChevronRight className="h-5 w-5 ml-1" />
               </div>
             </CardContent>

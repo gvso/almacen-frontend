@@ -46,7 +46,7 @@ export default function CartPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-amber-50/30">
+    <div className="min-h-screen bg-linear-to-b from-stone-50 to-amber-50/30">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
         <InfoAlert
@@ -64,7 +64,7 @@ export default function CartPage() {
             </div>
             <h2 className="text-xl font-semibold mb-2">{t("cart.empty")}</h2>
             <p className="text-muted-foreground mb-6">{t("cart.emptyDescription")}</p>
-            <Button onClick={() => navigate(`/${language}/products`)}>
+            <Button onClick={() => navigate(`/${language}/products`)} className="bg-action text-action-foreground hover:bg-action/90">
               {t("cart.browseProducts")}
             </Button>
           </div>
@@ -137,7 +137,7 @@ export default function CartPage() {
                 <p className="text-xl font-bold text-right">{t("common.total")}: ${formatPrice(cart.total)}</p>
                 <Button
                   size="lg"
-                  className="w-full mt-8 sm:w-auto sm:ml-auto"
+                  className="w-full mt-8 sm:w-auto sm:ml-auto bg-action text-action-foreground hover:bg-action/90"
                   onClick={handleCheckout}
                   disabled={isCheckingOut}
                 >

@@ -99,7 +99,7 @@ export default function OrderPage() {
   const statusLabel = order ? t(`order.status.${order.status}`) : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-amber-50/30">
+    <div className="min-h-screen bg-linear-to-b from-stone-50 to-amber-50/30">
       {fromAdmin ? (
         <header className="border-b bg-card">
           <div className="container mx-auto px-4 py-4 flex items-center gap-4">
@@ -254,7 +254,7 @@ export default function OrderPage() {
                 <Button
                   onClick={handleMarkAsProcessed}
                   disabled={isUpdating}
-                  className="w-full sm:w-auto"
+                  className="w-full sm:w-auto bg-action text-action-foreground hover:bg-action/90"
                 >
                   {isUpdating ? (
                     <>

@@ -268,7 +268,7 @@ export default function AdminProductsPage() {
             <ItemIcon className="h-5 w-5" />
             <h1 className="text-xl font-bold">{pageTitle}</h1>
           </div>
-          <Button onClick={handleAddProduct}>
+          <Button onClick={handleAddProduct} className="bg-action text-action-foreground hover:bg-action/90">
             <Plus className="h-4 w-4 mr-2" />
             Add {itemLabel}
           </Button>

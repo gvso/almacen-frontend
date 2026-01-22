@@ -246,7 +246,7 @@ function ToolbarButton({
             title={title}
             className={cn(
                 "rounded p-1.5 hover:bg-muted transition-colors",
-                isActive && "bg-muted text-primary"
+                isActive && "bg-action/15 text-action"
             )}
         >
             {children}

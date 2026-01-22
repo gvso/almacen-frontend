@@ -214,7 +214,7 @@ function OrderCard({
               size="sm"
               onClick={handleMarkProcessed}
               disabled={isMarkingProcessed}
-              className="shrink-0"
+              className="shrink-0 bg-action text-action-foreground hover:bg-action/90"
             >
               {isMarkingProcessed ? (
                 <span className="animate-spin">⏳</span>

@@ -26,6 +26,11 @@
   /* Muted teal */
   --tertiary-foreground: 0 0% 98%;
 
+  /* Action - For action buttons (add to cart, toolbar actions, etc.) */
+  --action: 160 35% 40%;
+  /* Same as tertiary - muted teal */
+  --action-foreground: 0 0% 98%;
+
   /* Accent - For hover states, highlights */
   --accent: 38 30% 94%;
   --accent-foreground: 28 30% 20%;
@@ -83,6 +88,9 @@
   --color-tertiary: hsl(var(--tertiary));
   --color-tertiary-foreground: hsl(var(--tertiary-foreground));
 
+  --color-action: hsl(var(--action));
+  --color-action-foreground: hsl(var(--action-foreground));
+
   --color-muted: hsl(var(--muted));
   --color-muted-foreground: hsl(var(--muted-foreground));
 
@@ -124,6 +132,8 @@
   --secondary-foreground: 0 0% 98%;
   --tertiary: 160 50% 50%;
   --tertiary-foreground: 0 0% 98%;
+  --action: 160 50% 50%;
+  --action-foreground: 0 0% 98%;
   --accent: 240 3.7% 15.9%;
   --accent-foreground: 0 0% 98%;
   --destructive: 0 62.8% 30.6%;
@@ -164,6 +174,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -174,6 +185,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -185,6 +197,7 @@
     opacity: 0;
     transform: translateX(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);

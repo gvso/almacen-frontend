@@ -187,7 +187,7 @@ export default function AdminTagsPage() {
             <Tags className="h-5 w-5" />
             <h1 className="text-xl font-bold">Tags</h1>
           </div>
-          <Button onClick={() => setShowNewTagForm(true)} disabled={showNewTagForm}>
+          <Button onClick={() => setShowNewTagForm(true)} disabled={showNewTagForm} className="bg-action text-action-foreground hover:bg-action/90">
             <Plus className="h-4 w-4 mr-2" />
             Add Tag
           </Button>
@@ -274,7 +274,7 @@ function NewTagForm({ onSave, onCancel }: NewTagFormProps) {
           <p className="text-xs text-destructive">{form.formState.errors.label.message}</p>
         )}
       </div>
-      <Button type="submit" disabled={form.formState.isSubmitting}>
+      <Button type="submit" disabled={form.formState.isSubmitting} className="bg-action text-action-foreground hover:bg-action/90">
         <Save className="h-4 w-4 mr-2" />
         Create
       </Button>
@@ -348,7 +348,7 @@ function TagCard({
         {isEditing ? (
           <form onSubmit={form.handleSubmit(handleSubmit)} className="flex gap-4 items-center">
             <Input {...form.register("label")} className="flex-1" autoFocus />
-            <Button type="submit" size="sm">
+            <Button type="submit" size="sm" className="bg-action text-action-foreground hover:bg-action/90">
               <Save className="h-4 w-4 mr-2" />
               Save
             </Button>

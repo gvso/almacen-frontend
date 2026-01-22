@@ -100,7 +100,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
             </div>
           ) : (
             <Button
-              className="h-10 bg-tertiary text-tertiary-foreground hover:bg-tertiary/90"
+              className="h-10 bg-action text-action-foreground hover:bg-action/90"
               onClick={handleAddToCart}
               disabled={isAddingItem}
             >
