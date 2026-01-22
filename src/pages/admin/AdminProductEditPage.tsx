@@ -46,6 +46,7 @@ import {
 import type { AdminTag } from "@/types/Tag";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { AdminProduct, AdminVariation, ProductType } from "@/types/AdminProduct";
+import { useToast } from "@/hooks/use-toast";
 
 const SUPPORTED_LANGUAGES = ["en", "es"];
 
@@ -83,7 +84,7 @@ export default function AdminProductEditPage() {
   const { productId, itemType } = useParams<{ productId: string; itemType: string }>();
   const productType: ProductType = itemType === "services" ? "service" : itemType === "housekeeping" ? "housekeeping" : "product";
   const isService = productType === "service" || productType === "housekeeping";
-  const showVariations = productType === "product"; // Only show variations for products (fridge stocking)
+  const showVariations = productType === "product" || productType === "service";
   const itemLabel = isService ? "Service" : "Product";
   const ItemIcon = isService ? Wrench : Package;
 
@@ -96,6 +97,7 @@ export default function AdminProductEditPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const language = useLanguage();
+  const { toast } = useToast();
 
   // Check if we came from the marketplace
   const fromMarketplace = (location.state as { fromMarketplace?: string })?.fromMarketplace;
@@ -214,8 +216,10 @@ export default function AdminProductEditPage() {
         description: data.description || null,
       });
       setProduct(updated);
+      toast({ description: "Translation saved" });
     } catch (error) {
       console.error("Failed to save translation:", error);
+      toast({ description: "Failed to save translation", variant: "destructive" });
     }
   };
 
@@ -224,8 +228,10 @@ export default function AdminProductEditPage() {
     try {
       const updated = await deleteTranslation(product.id, lang);
       setProduct(updated);
+      toast({ description: "Translation deleted" });
     } catch (error) {
       console.error("Failed to delete translation:", error);
+      toast({ description: "Failed to delete translation", variant: "destructive" });
     }
   };
 
@@ -237,8 +243,10 @@ export default function AdminProductEditPage() {
         order: product.variations.length,
       });
       setProduct(updated);
+      toast({ description: "Variation added" });
     } catch (error) {
       console.error("Failed to add variation:", error);
+      toast({ description: "Failed to add variation", variant: "destructive" });
     }
   };
 
@@ -252,8 +260,10 @@ export default function AdminProductEditPage() {
         is_active: data.isActive,
       });
       setProduct(updated);
+      toast({ description: "Variation saved" });
     } catch (error) {
       console.error("Failed to update variation:", error);
+      toast({ description: "Failed to save variation", variant: "destructive" });
     }
   };
 
@@ -262,8 +272,10 @@ export default function AdminProductEditPage() {
     try {
       const updated = await deleteVariation(product.id, variationId);
       setProduct(updated);
+      toast({ description: "Variation deleted" });
     } catch (error) {
       console.error("Failed to delete variation:", error);
+      toast({ description: "Failed to delete variation", variant: "destructive" });
     }
   };
 
@@ -282,8 +294,10 @@ export default function AdminProductEditPage() {
       try {
         const items = newVariations.map((v, index) => ({ id: v.id, order: index }));
         await reorderVariations(product.id, items);
+        toast({ description: "Order saved" });
       } catch (error) {
         console.error("Failed to save variation order:", error);
+        toast({ description: "Failed to save order", variant: "destructive" });
         // Reload to revert on error
         loadProduct();
       }
@@ -297,6 +311,7 @@ export default function AdminProductEditPage() {
       if (!data.name.trim() && hasExisting) {
         const updated = await deleteVariationTranslation(product.id, variationId, lang);
         setProduct(updated);
+        toast({ description: "Translation removed" });
       } else if (data.name.trim()) {
         // Only create/update if name is not empty
         const updated = await createOrUpdateVariationTranslation(product.id, variationId, {
@@ -304,9 +319,11 @@ export default function AdminProductEditPage() {
           name: data.name,
         });
         setProduct(updated);
+        toast({ description: "Translation saved" });
       }
     } catch (error) {
       console.error("Failed to save variation translation:", error);
+      toast({ description: "Failed to save translation", variant: "destructive" });
     }
   };
 
@@ -614,7 +631,7 @@ interface TranslationFormProps {
   language: string;
   initialName: string;
   initialDescription: string;
-  onSave: (data: TranslationFormData) => void;
+  onSave: (data: TranslationFormData) => Promise<void>;
   onDelete?: () => void;
   useRichText?: boolean;
 }
@@ -628,13 +645,18 @@ function TranslationForm({ language, initialName, initialDescription, onSave, on
     },
   });
 
+  const handleSave = async (data: TranslationFormData) => {
+    await onSave(data);
+    form.reset(data);
+  };
+
   return (
     <div className="border rounded-lg p-4 space-y-3">
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium uppercase">{language}</span>
         <div className="flex gap-2">
           {form.formState.isDirty && (
-            <Button size="sm" variant="outline" onClick={form.handleSubmit(onSave)}>
+            <Button size="sm" variant="outline" onClick={form.handleSubmit(handleSave)}>
               <Save className="h-3 w-3 mr-1" /> Save
             </Button>
           )}
@@ -670,9 +692,9 @@ function TranslationForm({ language, initialName, initialDescription, onSave, on
 interface VariationFormProps {
   variation: AdminVariation;
   defaultImageUrl: string;
-  onUpdate: (data: VariationFormData) => void;
+  onUpdate: (data: VariationFormData) => Promise<void>;
   onDelete: () => void;
-  onSaveTranslation: (language: string, data: VariationTranslationFormData, hasExisting: boolean) => void;
+  onSaveTranslation: (language: string, data: VariationTranslationFormData, hasExisting: boolean) => Promise<void>;
   dragHandleProps?: React.HTMLAttributes<HTMLButtonElement> & { ref?: React.Ref<HTMLButtonElement> };
 }
 
@@ -718,6 +740,11 @@ function VariationForm({ variation, defaultImageUrl, onUpdate, onDelete, onSaveT
     form.setValue("imageUrl", url, { shouldDirty: true });
   };
 
+  const handleSave = async (data: VariationFormData) => {
+    await onUpdate(data);
+    form.reset(data);
+  };
+
   return (
     <div className="border rounded-lg p-4 space-y-3">
       <div className="flex gap-4 items-center">
@@ -755,11 +782,11 @@ function VariationForm({ variation, defaultImageUrl, onUpdate, onDelete, onSaveT
           </div>
           <div className="flex items-center justify-center gap-2">
             <input type="checkbox" {...form.register("isActive")} className="h-4 w-4" />
-{form.formState.isDirty && (
-                              <Button size="sm" onClick={form.handleSubmit(onUpdate)} className="bg-action text-action-foreground hover:bg-action/90">
-                                <Save className="h-3 w-3" />
-                              </Button>
-                            )}
+            {form.formState.isDirty && (
+              <Button size="sm" onClick={form.handleSubmit(handleSave)} className="bg-action text-action-foreground hover:bg-action/90">
+                <Save className="h-3 w-3" />
+              </Button>
+            )}
           </div>
         </div>
 
@@ -790,7 +817,7 @@ function VariationForm({ variation, defaultImageUrl, onUpdate, onDelete, onSaveT
                 language={lang}
                 initialName={existing?.name || ""}
                 hasExisting={!!existing}
-                onSave={(data, hasExisting) => onSaveTranslation(lang, data, hasExisting)}
+                onSave={async (data, hasExisting) => onSaveTranslation(lang, data, hasExisting)}
               />
             );
           })}
@@ -804,7 +831,7 @@ interface VariationTranslationFormProps {
   language: string;
   initialName: string;
   hasExisting: boolean;
-  onSave: (data: VariationTranslationFormData, hasExisting: boolean) => void;
+  onSave: (data: VariationTranslationFormData, hasExisting: boolean) => Promise<void>;
 }
 
 function VariationTranslationForm({ language, initialName, hasExisting, onSave }: VariationTranslationFormProps) {
@@ -815,8 +842,9 @@ function VariationTranslationForm({ language, initialName, hasExisting, onSave }
     },
   });
 
-  const handleSave = (data: VariationTranslationFormData) => {
-    onSave(data, hasExisting);
+  const handleSave = async (data: VariationTranslationFormData) => {
+    await onSave(data, hasExisting);
+    form.reset(data);
   };
 
   return (

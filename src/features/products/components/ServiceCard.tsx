@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Product } from "@/types/Product";
+import { Product, ProductVariation } from "@/types/Product";
 import { Button } from "@/components/ui/button";
 import { Minus, PartyPopper, Pencil, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/features/cart";
@@ -17,13 +18,27 @@ function formatCurrency(value: string | number): string {
   }).format(Number(value));
 }
 
+function getDefaultVariation(service: Product): ProductVariation | null {
+  if (service.variations && service.variations.length > 0) {
+    return service.variations[0];
+  }
+  return null;
+}
+
 export function ServiceCard({ service }: ServiceCardProps) {
   const { cart, addItem, updateItem, isAddingItem } = useCart();
   const { isAdmin } = useAdmin({ skipVerification: true });
   const navigate = useNavigate();
   const { i18n } = useTranslation();
+  const [selectedVariation, setSelectedVariation] = useState<ProductVariation | null>(() =>
+    getDefaultVariation(service)
+  );
 
-  const priceDisplay = formatCurrency(service.price);
+  const hasVariations = service.variations && service.variations.length > 0;
+
+  // Show price of selected variation if it has one, otherwise service base price
+  const displayPrice = selectedVariation?.price ?? service.price;
+  const priceDisplay = formatCurrency(displayPrice);
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -33,20 +48,22 @@ export function ServiceCard({ service }: ServiceCardProps) {
     });
   };
 
-  // Find cart item matching service (no variations for services)
+  // Find cart item matching service and selected variation
   const cartItem = cart?.items?.find(
-    (item) => item.productId === service.id && item.variationId === null
+    (item) =>
+      item.productId === service.id &&
+      item.variationId === (selectedVariation?.id ?? null)
   );
   const quantityInCart = cartItem?.quantity ?? 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    addItem({ productId: service.id, variationId: null });
+    addItem({ productId: service.id, variationId: selectedVariation?.id ?? null });
   };
 
   const handleIncrement = (e: React.MouseEvent) => {
     e.stopPropagation();
-    addItem({ productId: service.id, variationId: null });
+    addItem({ productId: service.id, variationId: selectedVariation?.id ?? null });
   };
 
   const handleDecrement = (e: React.MouseEvent) => {
@@ -54,6 +71,11 @@ export function ServiceCard({ service }: ServiceCardProps) {
     if (cartItem && quantityInCart > 0) {
       updateItem({ itemId: cartItem.id, quantity: quantityInCart - 1 });
     }
+  };
+
+  const handleVariationClick = (e: React.MouseEvent, variation: ProductVariation) => {
+    e.stopPropagation();
+    setSelectedVariation(variation);
   };
 
   return (
@@ -95,42 +117,62 @@ export function ServiceCard({ service }: ServiceCardProps) {
           />
         )}
 
-        {/* Price and action */}
-        <div className="mt-auto pt-8 flex items-center justify-between gap-4">
-          <p className="text-lg font-semibold text-stone-800">{priceDisplay}</p>
-
-          {quantityInCart > 0 ? (
-            <div className="flex items-center gap-2">
-              <Button
-                size="icon"
-                variant="outline"
-                className="h-10 w-10 border-stone-300"
-                onClick={handleDecrement}
-                disabled={isAddingItem}
-              >
-                <Minus className="h-4 w-4" />
-              </Button>
-              <span className="w-10 text-center font-medium">{quantityInCart}</span>
-              <Button
-                size="icon"
-                variant="outline"
-                className="h-10 w-10 border-stone-300"
-                onClick={handleIncrement}
-                disabled={isAddingItem}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
+        {/* Bottom section: variations and price/action */}
+        <div className="mt-auto pt-6">
+          {/* Variation options */}
+          {hasVariations && (
+            <div className="mb-4 flex flex-wrap gap-2">
+              {service.variations.map((variation) => (
+                <Button
+                  key={variation.id}
+                  variant="outline"
+                  size="sm"
+                  className={`h-9 text-sm ${selectedVariation?.id === variation.id ? "border-2 border-primary shadow-md" : ""}`}
+                  onClick={(e) => handleVariationClick(e, variation)}
+                >
+                  {variation.name}
+                </Button>
+              ))}
             </div>
-          ) : (
-            <Button
-              className="h-10 bg-action text-action-foreground hover:bg-action/90"
-              onClick={handleAddToCart}
-              disabled={isAddingItem}
-            >
-              <ShoppingCart className="h-5 w-5" />
-              Add
-            </Button>
           )}
+
+          {/* Price and action */}
+          <div className="flex items-center justify-between gap-4">
+            <p className="text-lg font-semibold text-stone-800">{priceDisplay}</p>
+
+            {quantityInCart > 0 ? (
+              <div className="flex items-center gap-2">
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="h-10 w-10 border-stone-300"
+                  onClick={handleDecrement}
+                  disabled={isAddingItem}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <span className="w-10 text-center font-medium">{quantityInCart}</span>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="h-10 w-10 border-stone-300"
+                  onClick={handleIncrement}
+                  disabled={isAddingItem}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <Button
+                className="h-10 bg-action text-action-foreground hover:bg-action/90"
+                onClick={handleAddToCart}
+                disabled={isAddingItem || (hasVariations && !selectedVariation)}
+              >
+                <ShoppingCart className="h-5 w-5" />
+                Add
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>
