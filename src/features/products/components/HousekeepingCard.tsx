@@ -1,8 +1,11 @@
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Product } from "@/types/Product";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Minus, Sparkles, Plus, ShoppingCart } from "lucide-react";
+import { Minus, Pencil, Sparkles, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/features/cart";
+import { useAdmin } from "@/hooks/useAdmin";
 
 interface HousekeepingCardProps {
   service: Product;
@@ -17,8 +20,19 @@ function formatCurrency(value: string | number): string {
 
 export function HousekeepingCard({ service }: HousekeepingCardProps) {
   const { cart, addItem, updateItem, isAddingItem } = useCart();
+  const { isAdmin } = useAdmin({ skipVerification: true });
+  const navigate = useNavigate();
+  const { i18n } = useTranslation();
 
   const priceDisplay = formatCurrency(service.price);
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const language = i18n.language;
+    navigate(`/${language}/admin/housekeeping/${service.id}`, {
+      state: { fromMarketplace: window.location.pathname },
+    });
+  };
 
   // Find cart item matching service (no variations for housekeeping)
   const cartItem = cart?.items?.find(
@@ -44,7 +58,16 @@ export function HousekeepingCard({ service }: HousekeepingCardProps) {
   };
 
   return (
-    <Card className="group flex h-full flex-col overflow-hidden transition-all hover:shadow-lg md:flex-row">
+    <Card className="group relative flex h-full flex-col overflow-hidden transition-all hover:shadow-lg md:flex-row">
+      {isAdmin && (
+        <Button
+          size="icon"
+          className="absolute top-2 right-2 z-10 h-8 w-8 bg-action text-action-foreground hover:bg-action/90 opacity-70 hover:opacity-100"
+          onClick={handleEdit}
+        >
+          <Pencil className="h-4 w-4" />
+        </Button>
+      )}
       {/* Image on the left */}
       <div className="aspect-video w-full overflow-hidden bg-muted md:aspect-square md:w-64 md:shrink-0">
         {service.imageUrl ? (

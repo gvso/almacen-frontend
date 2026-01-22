@@ -1,7 +1,10 @@
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Product } from "@/types/Product";
 import { Button } from "@/components/ui/button";
-import { Minus, PartyPopper, Plus, ShoppingCart } from "lucide-react";
+import { Minus, PartyPopper, Pencil, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/features/cart";
+import { useAdmin } from "@/hooks/useAdmin";
 
 interface ServiceCardProps {
   service: Product;
@@ -16,8 +19,19 @@ function formatCurrency(value: string | number): string {
 
 export function ServiceCard({ service }: ServiceCardProps) {
   const { cart, addItem, updateItem, isAddingItem } = useCart();
+  const { isAdmin } = useAdmin({ skipVerification: true });
+  const navigate = useNavigate();
+  const { i18n } = useTranslation();
 
   const priceDisplay = formatCurrency(service.price);
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const language = i18n.language;
+    navigate(`/${language}/admin/services/${service.id}`, {
+      state: { fromMarketplace: window.location.pathname },
+    });
+  };
 
   // Find cart item matching service (no variations for services)
   const cartItem = cart?.items?.find(
@@ -43,7 +57,16 @@ export function ServiceCard({ service }: ServiceCardProps) {
   };
 
   return (
-    <div className="group flex flex-col gap-6 md:flex-row md:gap-10 md:min-h-110">
+    <div className="group relative flex flex-col gap-6 md:flex-row md:gap-10 md:min-h-110">
+      {isAdmin && (
+        <Button
+          size="icon"
+          className="absolute top-2 right-2 z-10 h-8 w-8 bg-action text-action-foreground hover:bg-action/90 opacity-70 hover:opacity-100"
+          onClick={handleEdit}
+        >
+          <Pencil className="h-4 w-4" />
+        </Button>
+      )}
       {/* Tall image on the left */}
       <div className="aspect-3/4 w-full overflow-hidden md:w-52 md:shrink-0 lg:w-56">
         {service.imageUrl ? (

@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Product, ProductVariation } from "@/types/Product";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Minus, Package, Plus, ShoppingCart } from "lucide-react";
+import { Minus, Package, Pencil, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/features/cart";
+import { useAdmin } from "@/hooks/useAdmin";
 
 interface ProductCardProps {
   product: Product;
@@ -25,9 +28,20 @@ function getDefaultVariation(product: Product): ProductVariation | null {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { cart, addItem, updateItem, isAddingItem } = useCart();
+  const { isAdmin } = useAdmin({ skipVerification: true });
+  const navigate = useNavigate();
+  const { i18n } = useTranslation();
   const [selectedVariation, setSelectedVariation] = useState<ProductVariation | null>(() =>
     getDefaultVariation(product)
   );
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const language = i18n.language;
+    navigate(`/${language}/admin/products/${product.id}`, {
+      state: { fromMarketplace: window.location.pathname },
+    });
+  };
 
   const hasVariations = product.variations && product.variations.length > 0;
 
@@ -69,7 +83,16 @@ export function ProductCard({ product }: ProductCardProps) {
   const displayImage = selectedVariation?.imageUrl ?? product.imageUrl;
 
   return (
-    <Card className="group flex h-full flex-col overflow-hidden transition-all hover:shadow-lg">
+    <Card className="group relative flex h-full flex-col overflow-hidden transition-all hover:shadow-lg">
+      {isAdmin && (
+        <Button
+          size="icon"
+          className="absolute top-2 right-2 z-10 h-8 w-8 bg-action text-action-foreground hover:bg-action/90 opacity-70 hover:opacity-100"
+          onClick={handleEdit}
+        >
+          <Pencil className="h-4 w-4" />
+        </Button>
+      )}
       <div className="aspect-3/2 overflow-hidden bg-muted">
         {displayImage ? (
           <img

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useForm, useWatch, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -94,7 +94,19 @@ export default function AdminProductEditPage() {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [isSavingTags, setIsSavingTags] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const language = useLanguage();
+
+  // Check if we came from the marketplace
+  const fromMarketplace = (location.state as { fromMarketplace?: string })?.fromMarketplace;
+
+  const handleGoBack = () => {
+    if (fromMarketplace) {
+      navigate(fromMarketplace);
+    } else {
+      navigate(`/${language}/admin/${itemType}`);
+    }
+  };
 
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
@@ -345,7 +357,7 @@ export default function AdminProductEditPage() {
       <div className="min-h-screen bg-background">
         <header className="border-b bg-card">
           <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate(`/${language}/admin/${itemType}`)}>
+            <Button variant="ghost" size="icon" onClick={handleGoBack}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <h1 className="text-xl font-bold">{itemLabel} Not Found</h1>
@@ -360,7 +372,7 @@ export default function AdminProductEditPage() {
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate(`/${language}/admin/${itemType}`)}>
+            <Button variant="ghost" size="icon" onClick={handleGoBack}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <ItemIcon className="h-5 w-5" />
