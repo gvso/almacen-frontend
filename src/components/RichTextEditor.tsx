@@ -169,7 +169,7 @@ export function RichTextEditor({
                 <div className="mx-1 h-5 w-px bg-border" />
                 {/* Font Size Selector */}
                 <select
-                    value={editor.getAttributes("textStyle").fontSize || "1rem"}
+                    value={editor.getAttributes("textStyle").fontSize || "0.85rem"}
                     onChange={(e) => {
                         editor.chain().focus().setFontSize(e.target.value).run();
                     }}
