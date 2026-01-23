@@ -1,19 +1,27 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ShoppingCart, Refrigerator, PartyPopper, Sparkles, Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { useCart } from "@/features/cart";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage, SUPPORTED_LANGUAGES, type Language } from "@/contexts/LanguageContext";
 
 function Navbar() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { itemCount } = useCart();
   const language = useLanguage();
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => location.pathname.includes(path);
+
+  const switchLanguage = (newLang: Language) => {
+    // Replace current language prefix with the new one
+    const newPath = location.pathname.replace(`/${language}`, `/${newLang}`);
+    i18n.changeLanguage(newLang);
+    navigate(newPath);
+  };
 
   const navItems = [
     { path: "fridge-stocking", labelKey: "nav.fridgeStocking", icon: Refrigerator },
@@ -70,21 +78,44 @@ function Navbar() {
           </div>
         </div>
 
-        {/* Cart button */}
-        <Button
-          variant={isActive("/cart") ? "default" : "ghost"}
-          className="relative h-10 w-10 p-0 sm:h-9 sm:w-9"
-          asChild
-        >
-          <Link to={`/${language}/cart`}>
-            <ShoppingCart className="h-6 w-6" />
-            {itemCount > 0 && !isActive("/cart") && (
-              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
-                {itemCount > 99 ? "99+" : itemCount}
+        <div className="flex items-center gap-1">
+          {/* Language switcher */}
+          <div className="flex items-center">
+            {SUPPORTED_LANGUAGES.map((lang, index) => (
+              <span key={lang} className="flex items-center">
+                <button
+                  onClick={() => switchLanguage(lang)}
+                  className={`px-1.5 py-1 text-sm font-medium uppercase transition-colors ${
+                    language === lang
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {lang}
+                </button>
+                {index < SUPPORTED_LANGUAGES.length - 1 && (
+                  <span className="text-muted-foreground">/</span>
+                )}
               </span>
-            )}
-          </Link>
-        </Button>
+            ))}
+          </div>
+
+          {/* Cart button */}
+          <Button
+            variant={isActive("/cart") ? "default" : "ghost"}
+            className="relative h-10 w-10 p-0 sm:h-9 sm:w-9"
+            asChild
+          >
+            <Link to={`/${language}/cart`}>
+              <ShoppingCart className="h-6 w-6" />
+              {itemCount > 0 && !isActive("/cart") && (
+                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
+                  {itemCount > 99 ? "99+" : itemCount}
+                </span>
+              )}
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Mobile menu dropdown */}

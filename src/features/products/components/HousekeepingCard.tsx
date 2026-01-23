@@ -58,7 +58,7 @@ export function HousekeepingCard({ service }: HousekeepingCardProps) {
   };
 
   return (
-    <Card className="group relative flex h-full flex-col overflow-hidden transition-all hover:shadow-lg md:flex-row">
+    <Card className="group relative flex h-full flex-col overflow-hidden transition-all hover:shadow-lg">
       {isAdmin && (
         <Button
           size="icon"
@@ -68,8 +68,8 @@ export function HousekeepingCard({ service }: HousekeepingCardProps) {
           <Pencil className="h-4 w-4" />
         </Button>
       )}
-      {/* Image on the left */}
-      <div className="aspect-video w-full overflow-hidden bg-muted md:aspect-square md:w-64 md:shrink-0">
+      {/* Image at the top */}
+      <div className="aspect-video w-full overflow-hidden bg-muted">
         {service.imageUrl ? (
           <img
             src={service.imageUrl}
@@ -78,54 +78,54 @@ export function HousekeepingCard({ service }: HousekeepingCardProps) {
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <Sparkles className="h-20 w-20 text-muted-foreground" />
+            <Sparkles className="h-16 w-16 text-muted-foreground" />
           </div>
         )}
       </div>
 
-      {/* Content on the right */}
+      {/* Content at the bottom */}
       <CardContent className="flex flex-1 flex-col p-5">
-        <h3 className="text-xl font-semibold text-foreground">{service.name}</h3>
+        <h3 className="text-lg font-semibold text-foreground">{service.name}</h3>
         {service.description && (
           <div
-            className="mt-2 text-base text-muted-foreground leading-relaxed prose prose-sm max-w-none [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0 [&_li_p]:my-0 [&_li]:marker:text-current [&_span]:text-[length:inherit]"
+            className="mt-2 text-sm text-muted-foreground leading-relaxed prose prose-sm max-w-none [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0 [&_li_p]:my-0 [&_li]:marker:text-current [&_span]:text-[length:inherit]"
             dangerouslySetInnerHTML={{ __html: service.description }}
           />
         )}
 
         {/* Bottom section: price/button */}
         <div className="mt-auto pt-4">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center justify-between gap-4">
             <p className="text-lg font-semibold text-black">{priceDisplay}</p>
             {quantityInCart > 0 ? (
-              <div className="flex w-full items-center justify-center gap-2 sm:w-auto">
+              <div className="flex items-center gap-2">
                 <Button
                   size="icon"
                   variant="outline"
-                  className="h-10 w-10"
+                  className="h-9 w-9"
                   onClick={handleDecrement}
                   disabled={isAddingItem}
                 >
-                  <Minus className="h-5 w-5" />
+                  <Minus className="h-4 w-4" />
                 </Button>
-                <span className="w-10 text-center text-lg font-medium">{quantityInCart}</span>
+                <span className="w-8 text-center font-medium">{quantityInCart}</span>
                 <Button
                   size="icon"
                   variant="outline"
-                  className="h-10 w-10"
+                  className="h-9 w-9"
                   onClick={handleIncrement}
                   disabled={isAddingItem}
                 >
-                  <Plus className="h-5 w-5" />
+                  <Plus className="h-4 w-4" />
                 </Button>
               </div>
             ) : (
               <Button
-                className="h-10 w-full sm:h-9 sm:w-auto bg-action text-action-foreground hover:bg-action/90"
+                className="h-9 bg-action text-action-foreground hover:bg-action/90"
                 onClick={handleAddToCart}
                 disabled={isAddingItem}
               >
-                <ShoppingCart className="h-5 w-5" />
+                <ShoppingCart className="h-4 w-4" />
                 Add
               </Button>
             )}

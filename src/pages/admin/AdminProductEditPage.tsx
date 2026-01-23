@@ -48,7 +48,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { AdminProduct, AdminVariation, ProductType } from "@/types/AdminProduct";
 import { useToast } from "@/hooks/use-toast";
 
-const SUPPORTED_LANGUAGES = ["en", "es"];
+const SUPPORTED_LANGUAGES = ["en"];
 
 // Zod Schemas
 const productSchema = z.object({
