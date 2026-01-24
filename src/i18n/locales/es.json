@@ -26,7 +26,7 @@
     },
     "celebration": {
       "title": "Celebración y Decoración",
-      "subtitle": "¿Planeas un cumpleaños o aniversario? Nos encargamos de los globos, flores y la decoración"
+      "subtitle": "¿Planeas sorprender a alguien por su cumpleaños o aniversario? Nos encargamos de los globos, flores y la decoración"
     },
     "housekeeping": {
       "title": "Limpieza y Orden",
@@ -35,21 +35,21 @@
   },
   "fridgeStocking": {
     "title": "Llená tu Heladera",
-    "description": "Déjanos hacer las compras. Pedí tus productos favoritos y estarán listos dentro del apartamento cuando llegues.",
+    "description": "Déjanos hacer las compras. Pedí tus productos favoritos y estarán listos dentro del departamento cuando llegues.",
     "loadError": "No se pudieron cargar los productos. Por favor, inténtalo de nuevo más tarde.",
     "searchPlaceholder": "Buscar productos...",
     "advanceNotice": "Los pedidos deben realizarse al menos 24 horas antes del check-in. Sujeto a disponibilidad."
   },
   "celebration": {
     "title": "Celebraciones y Decoración",
-    "description": "Estamos aquí para ayudarte a celebrar. Evita el estrés de buscar proveedores locales, decorar o recoger regalos. Nosotros nos encargamos de las flores, globos y decoración. Nos aseguraremos de que tu celebración esté esperándote en el momento en que cruces la puerta.",
+    "description": "Estamos aquí para ayudarte a celebrar o sorprender a alguien. Evita el estrés de buscar proveedores locales, decorar o recoger regalos. Nosotros nos encargamos de las flores, globos y decoración. Nos aseguraremos de que la celebración esté lista al momento en que cruces la puerta.",
     "loadError": "No se pudieron cargar los servicios. Por favor, inténtalo de nuevo más tarde.",
     "searchPlaceholder": "Buscar servicios de celebración...",
     "advanceNotice": "Los pedidos deben realizarse al menos 48 horas antes del check-in. Sujeto a disponibilidad."
   },
   "housekeeping": {
     "title": "Limpieza y Orden",
-    "description": "Queremos que estés lo más cómodo posible durante tu estadía. Si te quedas un tiempo o simplemente necesitas refrescar el espacio, estamos felices de ayudar. Usa este servicio para solicitar juegos extra de toallas limpias, sábanas frescas o un servicio de limpieza del apartamento.",
+    "description": "Queremos que estés lo más cómodo posible durante tu estadía. Si te quedas un tiempo o simplemente necesitas refrescar el espacio, estamos felices de ayudar.",
     "loadError": "No se pudieron cargar los servicios. Por favor, inténtalo de nuevo más tarde.",
     "searchPlaceholder": "Buscar servicios de limpieza...",
     "advanceNotice": "Los pedidos deben realizarse al menos 24 horas antes del check-in. Sujeto a disponibilidad."

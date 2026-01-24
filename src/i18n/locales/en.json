@@ -49,7 +49,7 @@
   },
   "housekeeping": {
     "title": "Refresh & Housekeeping",
-    "description": "We want you to be as comfortable as possible during your stay. If you're staying for a while or simply need a quick refresh, we're happy to help. Use this service to request extra sets of clean towels, fresh bed sheets, or a cleaning service of the apartment.",
+    "description": "We want you to be as comfortable as possible during your stay. If you're staying for a while or simply need a quick refresh, we're happy to help.",
     "loadError": "Failed to load services. Please try again later.",
     "searchPlaceholder": "Search housekeeping services...",
     "advanceNotice": "Orders must be placed at least 24 hours before check-in. Subject to availability."

@@ -114,7 +114,7 @@ export default function TipsPage() {
       </section>
 
       {/* Tips Grid */}
-      <section className="container mx-auto px-4 py-8 md:py-12">
+      <section className="container mx-auto px-4 md:py-12">
         {isLoading ? (
           <div className="flex justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -128,7 +128,7 @@ export default function TipsPage() {
             {t("tips.empty")}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 xl:gap-32">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-16">
             {tips.map((tip, index) => (
               <TipCard
                 key={tip.id}
