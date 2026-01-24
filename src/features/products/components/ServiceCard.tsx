@@ -79,7 +79,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
   };
 
   return (
-    <div className="group relative flex flex-col gap-6 md:flex-row md:gap-10 md:min-h-90">
+    <div className="group relative flex flex-col gap-6 lg:flex-row lg:gap-10 lg:min-h-90">
       {isAdmin && (
         <Button
           size="icon"
@@ -90,7 +90,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
         </Button>
       )}
       {/* Tall image on the left */}
-      <div className="aspect-3/4 w-full overflow-hidden max-h-90 md:w-52 md:shrink-0 lg:w-56">
+      <div className="aspect-3/4 w-full overflow-hidden max-h-90 lg:w-52 lg:shrink-0 xl:w-56">
         {service.imageUrl ? (
           <img
             src={service.imageUrl}
