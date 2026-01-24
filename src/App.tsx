@@ -15,6 +15,7 @@ import AdminProductsPage from "@/pages/admin/AdminProductsPage";
 import AdminProductEditPage from "@/pages/admin/AdminProductEditPage";
 import AdminTagsPage from "@/pages/admin/AdminTagsPage";
 import AdminTipsPage from "@/pages/admin/AdminTipsPage";
+import AdminTipEditPage from "@/pages/admin/AdminTipEditPage";
 import LanguageLayout from "@/layouts/LanguageLayout";
 import { DEFAULT_LANGUAGE } from "@/contexts/LanguageContext";
 import { toCamelCase } from "./utils/casing";
@@ -57,6 +58,7 @@ function App() {
             <Route path="admin/orders" element={<AdminOrdersPage />} />
             <Route path="admin/tags" element={<AdminTagsPage />} />
             <Route path="admin/tips" element={<AdminTipsPage />} />
+            <Route path="admin/tips/:tipId" element={<AdminTipEditPage />} />
             <Route path="admin/:itemType" element={<AdminProductsPage />} />
             <Route path="admin/:itemType/:productId" element={<AdminProductEditPage />} />
           </Route>

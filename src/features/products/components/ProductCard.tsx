@@ -5,7 +5,7 @@ import { Product, ProductVariation } from "@/types/Product";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Minus, Package, Pencil, Plus, ShoppingCart } from "lucide-react";
-import { useCart } from "@/features/cart";
+import { useCart } from "@/services/cart";
 import { useAdmin } from "@/hooks/useAdmin";
 
 interface ProductCardProps {

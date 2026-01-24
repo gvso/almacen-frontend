@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Product, ProductVariation } from "@/types/Product";
 import { Button } from "@/components/ui/button";
 import { Minus, PartyPopper, Pencil, Plus, ShoppingCart } from "lucide-react";
-import { useCart } from "@/features/cart";
+import { useCart } from "@/services/cart";
 import { useAdmin } from "@/hooks/useAdmin";
 
 interface ServiceCardProps {

@@ -1,5 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
 import { Product, ProductType } from "@/types/Product";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { fetchApi } from "./api";
+import { getTags } from "./tags";
 
 interface ProductsResponse {
   data: Product[];
@@ -27,4 +30,36 @@ export async function getProducts(options: GetProductsOptions = {}): Promise<Pro
 export async function getProduct(id: number, language?: string): Promise<Product> {
   const params = language ? `?language=${language}` : "";
   return fetchApi<Product>(`/api/v1/products/${id}${params}`);
+}
+
+// React Query hooks
+
+interface UseProductsOptions {
+  search?: string;
+  type?: ProductType;
+  tagIds?: number[];
+}
+
+export function useProducts(options: UseProductsOptions = {}) {
+  const language = useLanguage();
+  const { search, type, tagIds } = options;
+
+  return useQuery({
+    queryKey: ["products", language, search, type, tagIds],
+    queryFn: () => getProducts({ language, search, type, tagIds }),
+  });
+}
+
+interface UseTagsOptions {
+  type?: ProductType;
+}
+
+export function useTags(options: UseTagsOptions = {}) {
+  const language = useLanguage();
+  const { type } = options;
+
+  return useQuery({
+    queryKey: ["tags", language, type],
+    queryFn: () => getTags({ language, type }),
+  });
 }

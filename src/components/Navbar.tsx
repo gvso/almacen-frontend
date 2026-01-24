@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ShoppingCart, Refrigerator, PartyPopper, Sparkles, Menu, X, ChevronDown, MapPin } from "lucide-react";
 import { Button } from "./ui/button";
-import { useCart } from "@/features/cart";
+import { useCart } from "@/services/cart";
 import { useLanguage, SUPPORTED_LANGUAGES, type Language } from "@/contexts/LanguageContext";
 
 function Navbar() {

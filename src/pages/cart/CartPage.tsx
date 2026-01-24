@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import { InfoAlert } from "@/components/Alert";
 import { Button } from "@/components/ui/button";
 import { OrderSuccessDialog } from "@/features/orders";
-import { useCart } from "@/features/cart";
+import { useCart } from "@/services/cart";
 import { checkout } from "@/services/orders";
 import { clearCartToken } from "@/services/cart";
 import { useLanguage } from "@/contexts/LanguageContext";
