@@ -18,7 +18,7 @@ export function ServiceGrid({ services }: ServiceGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-x-12 gap-y-16 md:grid-cols-2 xl:grid-cols-3">
+    <div className="grid grid-cols-1 gap-x-12 gap-y-16 lg:grid-cols-2 xl:grid-cols-3">
       {services.map((service) => (
         <ServiceCard key={service.id} service={service} />
       ))}
