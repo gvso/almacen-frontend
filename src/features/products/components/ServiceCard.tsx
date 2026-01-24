@@ -90,7 +90,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
         </Button>
       )}
       {/* Tall image on the left */}
-      <div className="aspect-3/4 w-full overflow-hidden md:w-52 md:shrink-0 lg:w-56">
+      <div className="aspect-3/4 w-full overflow-hidden max-h-90 md:w-52 md:shrink-0 lg:w-56">
         {service.imageUrl ? (
           <img
             src={service.imageUrl}

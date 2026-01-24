@@ -133,14 +133,14 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:gap-2 sm:items-center sm:justify-between">
+          <div className="flex items-center justify-between gap-4">
             <p className="text-lg font-semibold text-black">{priceDisplay}</p>
             {quantityInCart > 0 ? (
-              <div className="flex w-full items-center justify-center gap-1 sm:w-auto">
+              <div className="flex items-center gap-2">
                 <Button
                   size="icon"
                   variant="outline"
-                  className="h-8 w-8"
+                  className="h-9 w-9"
                   onClick={handleDecrement}
                   disabled={isAddingItem}
                 >
@@ -150,7 +150,7 @@ export function ProductCard({ product }: ProductCardProps) {
                 <Button
                   size="icon"
                   variant="outline"
-                  className="h-8 w-8"
+                  className="h-9 w-9"
                   onClick={handleIncrement}
                   disabled={isAddingItem}
                 >
@@ -159,11 +159,11 @@ export function ProductCard({ product }: ProductCardProps) {
               </div>
             ) : (
               <Button
-                className="h-10 w-full sm:h-9 sm:w-auto bg-action text-action-foreground hover:bg-action/90"
+                className="h-9 bg-action text-action-foreground hover:bg-action/90"
                 onClick={handleAddToCart}
                 disabled={isAddingItem || (hasVariations && !selectedVariation)}
               >
-                <ShoppingCart className="h-5 w-5" />
+                <ShoppingCart className="h-4 w-4" />
                 Add
               </Button>
             )}
