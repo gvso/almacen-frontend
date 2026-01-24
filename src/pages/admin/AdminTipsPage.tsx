@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Lightbulb, Plus, Trash2, Languages, GripVertical, Eye, EyeOff, Pencil } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { ArrowLeft, Lightbulb, Plus, Trash2, Languages, GripVertical, Eye, EyeOff, Pencil, Building2 } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -28,14 +28,23 @@ import {
   verifyAdminToken,
 } from "@/services/admin";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { AdminTip } from "@/types/Tip";
+import type { AdminTip, TipType } from "@/types/Tip";
+
+const TIP_TYPES: { value: TipType; label: string; icon: React.ReactNode }[] = [
+  { value: "quick_tip", label: "Guide Tips", icon: <Lightbulb className="h-4 w-4" /> },
+  { value: "business", label: "Businesses", icon: <Building2 className="h-4 w-4" /> },
+];
 
 export default function AdminTipsPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tipType = (searchParams.get("type") as TipType) || "quick_tip";
   const [tips, setTips] = useState<AdminTip[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const navigate = useNavigate();
   const language = useLanguage();
+
+  const currentTypeConfig = TIP_TYPES.find((t) => t.value === tipType) || TIP_TYPES[0];
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -56,14 +65,14 @@ export default function AdminTipsPage() {
   const loadTips = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetchAdminTips();
+      const response = await fetchAdminTips(tipType);
       setTips(response.data);
     } catch (error) {
       console.error("Failed to load tips:", error);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [tipType]);
 
   useEffect(() => {
     if (!isCheckingAuth) {
@@ -128,15 +137,36 @@ export default function AdminTipsPage() {
             <Button variant="ghost" size="icon" onClick={() => navigate(`/${language}/admin/dashboard`)}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <Lightbulb className="h-5 w-5" />
-            <h1 className="text-xl font-bold">Guide Tips</h1>
+            {currentTypeConfig.icon}
+            <h1 className="text-xl font-bold">{currentTypeConfig.label}</h1>
           </div>
-          <Button onClick={() => navigate(`/${language}/admin/tips/new`)} className="bg-action text-action-foreground hover:bg-action/90">
+          <Button onClick={() => navigate(`/${language}/admin/tips/new?type=${tipType}`)} className="bg-action text-action-foreground hover:bg-action/90">
             <Plus className="h-4 w-4 mr-2" />
-            Add Tip
+            Add {tipType === "business" ? "Business" : "Tip"}
           </Button>
         </div>
       </header>
+
+      {/* Type Tabs */}
+      <div className="border-b bg-card">
+        <div className="container mx-auto px-4">
+          <div className="flex gap-4">
+            {TIP_TYPES.map((type) => (
+              <button
+                key={type.value}
+                onClick={() => setSearchParams({ type: type.value })}
+                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${tipType === type.value
+                    ? "border-primary text-primary"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
+              >
+                {type.icon}
+                {type.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
       <main className="container mx-auto px-4 py-8 space-y-4">
         {isLoading ? (

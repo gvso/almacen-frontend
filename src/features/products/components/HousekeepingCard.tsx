@@ -3,9 +3,10 @@ import { useTranslation } from "react-i18next";
 import { Product } from "@/types/Product";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Minus, Pencil, Sparkles, Plus, ShoppingCart } from "lucide-react";
+import { Minus, Sparkles, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/services/cart";
 import { useAdmin } from "@/hooks/useAdmin";
+import { AdminEditButton } from "@/components/AdminEditButton";
 
 interface HousekeepingCardProps {
   service: Product;
@@ -26,8 +27,7 @@ export function HousekeepingCard({ service }: HousekeepingCardProps) {
 
   const priceDisplay = formatCurrency(service.price);
 
-  const handleEdit = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleEdit = () => {
     const language = i18n.language;
     navigate(`/${language}/admin/housekeeping/${service.id}`, {
       state: { fromMarketplace: window.location.pathname },
@@ -59,15 +59,7 @@ export function HousekeepingCard({ service }: HousekeepingCardProps) {
 
   return (
     <Card className="group relative flex h-full flex-col overflow-hidden transition-all hover:shadow-lg">
-      {isAdmin && (
-        <Button
-          size="icon"
-          className="absolute top-2 left-2 z-10 h-8 w-8 bg-action text-action-foreground hover:bg-action/90 opacity-70 hover:opacity-100"
-          onClick={handleEdit}
-        >
-          <Pencil className="h-4 w-4" />
-        </Button>
-      )}
+      {isAdmin && <AdminEditButton onClick={handleEdit} absolute />}
       {/* Image at the top */}
       <div className="aspect-video w-full overflow-hidden bg-muted">
         {service.imageUrl ? (

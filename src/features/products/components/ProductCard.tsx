@@ -4,9 +4,10 @@ import { useTranslation } from "react-i18next";
 import { Product, ProductVariation } from "@/types/Product";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Minus, Package, Pencil, Plus, ShoppingCart } from "lucide-react";
+import { Minus, Package, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/services/cart";
 import { useAdmin } from "@/hooks/useAdmin";
+import { AdminEditButton } from "@/components/AdminEditButton";
 
 interface ProductCardProps {
   product: Product;
@@ -35,8 +36,7 @@ export function ProductCard({ product }: ProductCardProps) {
     getDefaultVariation(product)
   );
 
-  const handleEdit = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleEdit = () => {
     const language = i18n.language;
     navigate(`/${language}/admin/products/${product.id}`, {
       state: { fromMarketplace: window.location.pathname },
@@ -84,15 +84,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Card className="group relative flex h-full flex-col overflow-hidden transition-all hover:shadow-lg">
-      {isAdmin && (
-        <Button
-          size="icon"
-          className="absolute top-2 left-2 z-10 h-8 w-8 bg-action text-action-foreground hover:bg-action/90 opacity-70 hover:opacity-100"
-          onClick={handleEdit}
-        >
-          <Pencil className="h-4 w-4" />
-        </Button>
-      )}
+      {isAdmin && <AdminEditButton onClick={handleEdit} absolute />}
       <div className="aspect-3/2 overflow-hidden bg-muted">
         {displayImage ? (
           <img

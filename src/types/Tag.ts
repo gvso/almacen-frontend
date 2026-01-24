@@ -1,3 +1,5 @@
+export type TagCategory = "product" | "tip";
+
 export interface TagTranslation {
     language: string;
     label: string;
@@ -6,6 +8,8 @@ export interface TagTranslation {
 export interface Tag {
     id: number;
     label: string;
+    key: string;  // Original/base label for URL matching (language-independent)
+    category: TagCategory;
     order: number;
     insertedAt: string;
     updatedAt: string;
@@ -18,10 +22,12 @@ export interface AdminTag extends Tag {
 // Request types
 export interface TagCreateData {
     label: string;
+    category?: TagCategory;
 }
 
 export interface TagUpdateData {
     label?: string;
+    category?: TagCategory;
 }
 
 export interface TagTranslationData {

@@ -3,6 +3,7 @@ import type {
   TipCreateData,
   TipUpdateData,
   TipTranslationData,
+  TipType,
 } from "@/types/Tip";
 import { fetchAdminApi } from "./api";
 
@@ -15,44 +16,47 @@ export interface ReorderItem {
 
 // ============ Tip API ============
 
-export async function fetchAdminTips(): Promise<{ data: AdminTip[] }> {
-    return fetchAdminApi("/api/v1/admin/tips");
+export async function fetchAdminTips(tipType?: TipType): Promise<{ data: AdminTip[] }> {
+  const params = new URLSearchParams();
+  if (tipType) params.set("tip_type", tipType);
+  const queryString = params.toString();
+  return fetchAdminApi(`/api/v1/admin/tips${queryString ? `?${queryString}` : ""}`);
 }
 
 export async function createTip(data: TipCreateData): Promise<AdminTip> {
-    return fetchAdminApi("/api/v1/admin/tips", {
-        method: "POST",
-        body: JSON.stringify(data),
-    });
+  return fetchAdminApi("/api/v1/admin/tips", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 }
 
 export async function getTip(tipId: number): Promise<AdminTip> {
-    return fetchAdminApi(`/api/v1/admin/tips/${tipId}`);
+  return fetchAdminApi(`/api/v1/admin/tips/${tipId}`);
 }
 
 export async function updateTip(tipId: number, data: TipUpdateData): Promise<AdminTip> {
-    return fetchAdminApi(`/api/v1/admin/tips/${tipId}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-    });
+  return fetchAdminApi(`/api/v1/admin/tips/${tipId}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
 }
 
 export async function deleteTip(tipId: number): Promise<void> {
-    return fetchAdminApi(`/api/v1/admin/tips/${tipId}`, {
-        method: "DELETE",
-    });
+  return fetchAdminApi(`/api/v1/admin/tips/${tipId}`, {
+    method: "DELETE",
+  });
 }
 
 // ============ Tip Translation API ============
 
 export async function createOrUpdateTipTranslation(
-    tipId: number,
-    data: TipTranslationData
+  tipId: number,
+  data: TipTranslationData
 ): Promise<AdminTip> {
-    return fetchAdminApi(`/api/v1/admin/tips/${tipId}/translations`, {
-        method: "POST",
-        body: JSON.stringify(data),
-    });
+  return fetchAdminApi(`/api/v1/admin/tips/${tipId}/translations`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 }
 
 export async function deleteTipTranslation(

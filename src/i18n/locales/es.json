@@ -1,7 +1,10 @@
 {
   "nav": {
     "services": "Servicios",
-    "localGuide": "Tips Rápidos",
+    "localGuide": "Guía Local",
+    "quickTips": "Tips Rápidos",
+    "restaurants": "Restaurantes",
+    "carRental": "Alquiler de Autos",
     "fridgeStocking": "Heladera",
     "celebration": "Celebración",
     "housekeeping": "Limpieza",
@@ -19,6 +22,14 @@
     "localGuide": {
       "title": "Tips Rápidos",
       "subtitle": "Consejos para moverte por Asunción como un local - desde apps de delivery hasta transporte"
+    },
+    "restaurants": {
+      "title": "Restaurantes",
+      "subtitle": "Descubre los mejores restaurantes y experiencias gastronómicas en Asunción"
+    },
+    "carRental": {
+      "title": "Alquiler de Autos",
+      "subtitle": "Encuentra opciones confiables de alquiler de autos para explorar la ciudad"
     },
     "fridgeStocking": {
       "title": "Llená tu Heladera",
@@ -108,5 +119,12 @@
     "description": "Conoce los secretos para moverte por Asunción como un local. Desde apps de delivery hasta transporte, acá está todo lo que necesitás saber.",
     "loadError": "No se pudieron cargar los tips. Por favor, inténtalo de nuevo más tarde.",
     "empty": "Aún no hay tips disponibles."
+  },
+  "businesses": {
+    "badge": "Recomendaciones Locales",
+    "title": "Lugares que Amamos",
+    "description": "Descubrí nuestros lugares favoritos en Asunción. Desde restaurantes hasta cafés, estos son los lugares que recomendamos a todos nuestros huéspedes.",
+    "loadError": "No se pudieron cargar las recomendaciones. Por favor, inténtalo de nuevo más tarde.",
+    "empty": "Aún no hay recomendaciones disponibles."
   }
 }

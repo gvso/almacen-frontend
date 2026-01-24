@@ -8,6 +8,7 @@ import ProductPage from "@/pages/product/ProductPage";
 import CartPage from "@/pages/cart/CartPage";
 import OrderPage from "@/pages/order/OrderPage";
 import TipsPage from "@/pages/tips/TipsPage";
+import BusinessesPage from "@/pages/businesses/BusinessesPage";
 import AdminLoginPage from "@/pages/admin/AdminLoginPage";
 import AdminDashboardPage from "@/pages/admin/AdminDashboardPage";
 import AdminOrdersPage from "@/pages/admin/AdminOrdersPage";
@@ -45,6 +46,7 @@ function App() {
             <Route path="celebration" element={<ProductPage />} />
             <Route path="housekeeping" element={<ProductPage />} />
             <Route path="tips" element={<TipsPage />} />
+            <Route path="businesses" element={<BusinessesPage />} />
             <Route path="cart" element={<CartPage />} />
             <Route path="orders/:orderId" element={<OrderPage />} />
 

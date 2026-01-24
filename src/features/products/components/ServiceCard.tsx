@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Product, ProductVariation } from "@/types/Product";
 import { Button } from "@/components/ui/button";
-import { Minus, PartyPopper, Pencil, Plus, ShoppingCart } from "lucide-react";
+import { Minus, PartyPopper, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/services/cart";
 import { useAdmin } from "@/hooks/useAdmin";
+import { AdminEditButton } from "@/components/AdminEditButton";
 
 interface ServiceCardProps {
   service: Product;
@@ -40,8 +41,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
   const displayPrice = selectedVariation?.price ?? service.price;
   const priceDisplay = formatCurrency(displayPrice);
 
-  const handleEdit = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleEdit = () => {
     const language = i18n.language;
     navigate(`/${language}/admin/services/${service.id}`, {
       state: { fromMarketplace: window.location.pathname },
@@ -80,15 +80,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
 
   return (
     <div className="group relative flex flex-col gap-6 lg:flex-row lg:gap-10 lg:min-h-90">
-      {isAdmin && (
-        <Button
-          size="icon"
-          className="absolute top-2 left-2 z-10 h-8 w-8 bg-action text-action-foreground hover:bg-action/90 opacity-70 hover:opacity-100"
-          onClick={handleEdit}
-        >
-          <Pencil className="h-4 w-4" />
-        </Button>
-      )}
+      {isAdmin && <AdminEditButton onClick={handleEdit} absolute />}
       {/* Tall image on the left */}
       <div className="aspect-3/4 w-full overflow-hidden max-h-90 lg:w-52 lg:shrink-0 xl:w-56">
         {service.imageUrl ? (

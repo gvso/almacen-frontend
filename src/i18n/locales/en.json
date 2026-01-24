@@ -1,7 +1,10 @@
 {
   "nav": {
     "services": "Services",
-    "localGuide": "Quick Tips",
+    "localGuide": "Local Guide",
+    "quickTips": "Quick Tips",
+    "restaurants": "Restaurants",
+    "carRental": "Car Rental",
     "fridgeStocking": "Fridge Stocking",
     "celebration": "Celebration",
     "housekeeping": "Housekeeping",
@@ -19,6 +22,14 @@
     "localGuide": {
       "title": "Quick Tips",
       "subtitle": "Get insider tips on navigating Asunción like a local - from food delivery apps to transportation"
+    },
+    "restaurants": {
+      "title": "Restaurants",
+      "subtitle": "Discover the best local restaurants and dining experiences in Asunción"
+    },
+    "carRental": {
+      "title": "Car Rental",
+      "subtitle": "Find reliable car rental options for exploring the city and beyond"
     },
     "fridgeStocking": {
       "title": "Fridge Stocking",
@@ -108,5 +119,12 @@
     "description": "Get the inside scoop on navigating life in Asunción like a local. From food delivery apps to transportation, here's what you need to know.",
     "loadError": "Failed to load tips. Please try again later.",
     "empty": "No tips available yet."
+  },
+  "businesses": {
+    "badge": "Local Recommendations",
+    "title": "Places We Love",
+    "description": "Discover our favorite local spots in Asunción. From restaurants to cafes, these are the places we recommend to all our guests.",
+    "loadError": "Failed to load recommendations. Please try again later.",
+    "empty": "No recommendations available yet."
   }
 }

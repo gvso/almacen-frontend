@@ -16,7 +16,7 @@ export default function TipsPage() {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["tips", language, "quick_tip"],
-    queryFn: () => fetchTips(language, "quick_tip"),
+    queryFn: () => fetchTips({ language, tipType: "quick_tip" }),
   });
 
   const tips = data?.data ?? [];

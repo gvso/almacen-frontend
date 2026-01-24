@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowLeft, Tags, Plus, Trash2, Save, Languages, GripVertical } from "lucide-react";
+import { ArrowLeft, Tags, Plus, Trash2, Save, Languages, GripVertical, Package, Lightbulb } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -35,29 +35,42 @@ import {
   verifyAdminToken,
 } from "@/services/admin";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { AdminTag } from "@/types/Tag";
+import { useToast } from "@/hooks/use-toast";
+import type { AdminTag, TagCategory } from "@/types/Tag";
 
 const SUPPORTED_LANGUAGES = ["en", "es"];
 
+const TAG_CATEGORIES: { value: TagCategory; label: string; icon: React.ReactNode }[] = [
+  { value: "product", label: "Product Tags", icon: <Package className="h-4 w-4" /> },
+  { value: "tip", label: "Tip Tags", icon: <Lightbulb className="h-4 w-4" /> },
+];
+
 const tagSchema = z.object({
-    label: z.string().min(1, "Label is required"),
+  label: z.string().min(1, "Label is required"),
 });
 
 const translationSchema = z.object({
-    label: z.string().min(1, "Label is required"),
+  label: z.string().min(1, "Label is required"),
 });
 
 type TagFormData = z.infer<typeof tagSchema>;
 type TranslationFormData = z.infer<typeof translationSchema>;
 
 export default function AdminTagsPage() {
-  const [tags, setTags] = useState<AdminTag[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const category = (searchParams.get("category") as TagCategory) || "product";
+  const [allTags, setAllTags] = useState<AdminTag[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [editingTagId, setEditingTagId] = useState<number | null>(null);
   const [showNewTagForm, setShowNewTagForm] = useState(false);
   const navigate = useNavigate();
   const language = useLanguage();
+  const { toast } = useToast();
+
+  // Filter tags by current category
+  const tags = allTags.filter((t) => t.category === category);
+  const currentCategoryConfig = TAG_CATEGORIES.find((c) => c.value === category) || TAG_CATEGORIES[0];
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -79,7 +92,7 @@ export default function AdminTagsPage() {
     setIsLoading(true);
     try {
       const response = await fetchAdminTags();
-      setTags(response.data);
+      setAllTags(response.data);
     } catch (error) {
       console.error("Failed to load tags:", error);
     } finally {
@@ -95,33 +108,39 @@ export default function AdminTagsPage() {
 
   const handleCreateTag = async (data: TagFormData) => {
     try {
-      const newTag = await createTag({ label: data.label });
-      setTags([...tags, newTag]);
+      const newTag = await createTag({ label: data.label, category });
+      setAllTags([...allTags, newTag]);
       setShowNewTagForm(false);
+      toast({ description: "Tag created" });
     } catch (error) {
       console.error("Failed to create tag:", error);
+      toast({ description: "Failed to create tag", variant: "destructive" });
     }
   };
 
   const handleUpdateTag = async (tagId: number, data: TagFormData) => {
     try {
       const updated = await updateTag(tagId, { label: data.label });
-      setTags(tags.map((t) => (t.id === tagId ? updated : t)));
+      setAllTags(allTags.map((t) => (t.id === tagId ? updated : t)));
       setEditingTagId(null);
+      toast({ description: "Tag saved" });
     } catch (error) {
       console.error("Failed to update tag:", error);
+      toast({ description: "Failed to save tag", variant: "destructive" });
     }
   };
 
   const handleDeleteTag = async (tagId: number, tagLabel: string) => {
-    if (!window.confirm(`Are you sure you want to delete "${tagLabel}"? This will remove the tag from all products.`)) {
+    if (!window.confirm(`Are you sure you want to delete "${tagLabel}"? This will remove the tag from all ${category === "product" ? "products" : "tips"}.`)) {
       return;
     }
     try {
       await deleteTag(tagId);
-      setTags(tags.filter((t) => t.id !== tagId));
+      setAllTags(allTags.filter((t) => t.id !== tagId));
+      toast({ description: "Tag deleted" });
     } catch (error) {
       console.error("Failed to delete tag:", error);
+      toast({ description: "Failed to delete tag", variant: "destructive" });
     }
   };
 
@@ -131,18 +150,22 @@ export default function AdminTagsPage() {
         language: lang,
         label: data.label,
       });
-      setTags(tags.map((t) => (t.id === tagId ? updated : t)));
+      setAllTags(allTags.map((t) => (t.id === tagId ? updated : t)));
+      toast({ description: "Translation saved" });
     } catch (error) {
       console.error("Failed to save translation:", error);
+      toast({ description: "Failed to save translation", variant: "destructive" });
     }
   };
 
   const handleDeleteTranslation = async (tagId: number, lang: string) => {
     try {
       const updated = await deleteTagTranslation(tagId, lang);
-      setTags(tags.map((t) => (t.id === tagId ? updated : t)));
+      setAllTags(allTags.map((t) => (t.id === tagId ? updated : t)));
+      toast({ description: "Translation deleted" });
     } catch (error) {
       console.error("Failed to delete translation:", error);
+      toast({ description: "Failed to delete translation", variant: "destructive" });
     }
   };
 
@@ -153,12 +176,14 @@ export default function AdminTagsPage() {
       const oldIndex = tags.findIndex((t) => t.id === active.id);
       const newIndex = tags.findIndex((t) => t.id === over.id);
 
-      const newTags = arrayMove(tags, oldIndex, newIndex);
-      setTags(newTags);
+      const reorderedTags = arrayMove(tags, oldIndex, newIndex);
+      // Update allTags with the new order for the current category
+      const otherTags = allTags.filter((t) => t.category !== category);
+      setAllTags([...otherTags, ...reorderedTags]);
 
       // Save new order to backend
       try {
-        const items = newTags.map((t, index) => ({ id: t.id, order: index }));
+        const items = reorderedTags.map((t, index) => ({ id: t.id, order: index }));
         await reorderTags(items);
       } catch (error) {
         console.error("Failed to save order:", error);
@@ -185,7 +210,7 @@ export default function AdminTagsPage() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <Tags className="h-5 w-5" />
-            <h1 className="text-xl font-bold">Tags</h1>
+            <h1 className="text-xl font-bold">{currentCategoryConfig.label}</h1>
           </div>
           <Button onClick={() => setShowNewTagForm(true)} disabled={showNewTagForm} className="bg-action text-action-foreground hover:bg-action/90">
             <Plus className="h-4 w-4 mr-2" />
@@ -193,6 +218,27 @@ export default function AdminTagsPage() {
           </Button>
         </div>
       </header>
+
+      {/* Category Tabs */}
+      <div className="border-b bg-card">
+        <div className="container mx-auto px-4">
+          <div className="flex gap-4">
+            {TAG_CATEGORIES.map((cat) => (
+              <button
+                key={cat.value}
+                onClick={() => setSearchParams({ category: cat.value })}
+                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${category === cat.value
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
+              >
+                {cat.icon}
+                {cat.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
       <main className="container mx-auto px-4 py-8 space-y-4">
         {showNewTagForm && (
@@ -219,33 +265,33 @@ export default function AdminTagsPage() {
               No tags yet. Click "Add Tag" to create one.
             </CardContent>
           </Card>
-                ) : (
-                  <DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCenter}
-                    onDragEnd={handleDragEnd}
-                  >
-                    <SortableContext
-                      items={tags.map((t) => t.id)}
-                      strategy={verticalListSortingStrategy}
-                    >
-                      <div className="space-y-4">
-                        {tags.map((tag) => (
-                          <SortableTagCard
-                            key={tag.id}
-                            tag={tag}
-                            isEditing={editingTagId === tag.id}
-                            onEdit={() => setEditingTagId(tag.id)}
-                            onCancelEdit={() => setEditingTagId(null)}
-                            onUpdate={(data) => handleUpdateTag(tag.id, data)}
-                            onDelete={() => handleDeleteTag(tag.id, tag.label)}
-                            onSaveTranslation={(lang, data) => handleSaveTranslation(tag.id, lang, data)}
-                            onDeleteTranslation={(lang) => handleDeleteTranslation(tag.id, lang)}
-                          />
-                        ))}
-                      </div>
-                    </SortableContext>
-                  </DndContext>
+        ) : (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={tags.map((t) => t.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-4">
+                {tags.map((tag) => (
+                  <SortableTagCard
+                    key={tag.id}
+                    tag={tag}
+                    isEditing={editingTagId === tag.id}
+                    onEdit={() => setEditingTagId(tag.id)}
+                    onCancelEdit={() => setEditingTagId(null)}
+                    onUpdate={(data) => handleUpdateTag(tag.id, data)}
+                    onDelete={() => handleDeleteTag(tag.id, tag.label)}
+                    onSaveTranslation={(lang, data) => handleSaveTranslation(tag.id, lang, data)}
+                    onDeleteTranslation={(lang) => handleDeleteTranslation(tag.id, lang)}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         )}
       </main>
     </div>
@@ -433,12 +479,18 @@ function TagTranslationForm({ language, initialLabel, onSave, onDelete }: TagTra
     defaultValues: { label: initialLabel },
   });
 
+  const handleSave = async (data: TranslationFormData) => {
+    await onSave(data);
+    // Reset form with new values so isDirty works correctly for future edits
+    form.reset(data);
+  };
+
   return (
     <div className="flex items-center gap-3">
       <span className="text-sm font-medium uppercase w-8">{language}</span>
       <Input {...form.register("label")} placeholder="Translated label" className="flex-1" />
       {form.formState.isDirty && (
-        <Button size="sm" variant="outline" onClick={form.handleSubmit(onSave)}>
+        <Button size="sm" variant="outline" onClick={form.handleSubmit(handleSave)}>
           <Save className="h-3 w-3" />
         </Button>
       )}

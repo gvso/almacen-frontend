@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ShoppingCart, Refrigerator, PartyPopper, Sparkles, Menu, X, ChevronDown, MapPin } from "lucide-react";
+import { ShoppingCart, Refrigerator, PartyPopper, Sparkles, Menu, X, ChevronDown, MapPin, Lightbulb, UtensilsCrossed, Car } from "lucide-react";
 import { Button } from "./ui/button";
 import { useCart } from "@/services/cart";
 import { useLanguage, SUPPORTED_LANGUAGES, type Language } from "@/contexts/LanguageContext";
@@ -14,11 +14,30 @@ function Navbar() {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
   const servicesRef = useRef<HTMLDivElement>(null);
+  const guideRef = useRef<HTMLDivElement>(null);
 
   const isActive = (path: string) => location.pathname.includes(path);
-  const isServiceActive = () => 
+
+  // Check if a guide item with query params is active
+  const isGuideItemActive = (path: string) => {
+    const [pathPart, queryPart] = path.split("?");
+    if (!location.pathname.includes(`/${pathPart}`)) return false;
+    if (!queryPart) return !location.search; // No query params in path means only active if no search params
+    const params = new URLSearchParams(queryPart);
+    const currentParams = new URLSearchParams(location.search);
+    // Check if all params in the path match current URL
+    for (const [key, value] of params.entries()) {
+      if (currentParams.get(key) !== value) return false;
+    }
+    return true;
+  };
+
+  const isServiceActive = () =>
     isActive("/fridge-stocking") || isActive("/celebration") || isActive("/housekeeping");
+  const isGuideActive = () =>
+    guideItems.some(item => isGuideItemActive(item.path));
 
   const switchLanguage = (newLang: Language) => {
     // Replace current language prefix with the new one
@@ -33,9 +52,16 @@ function Navbar() {
     { path: "housekeeping", labelKey: "nav.housekeeping", icon: Sparkles },
   ];
 
+  const guideItems = [
+    { path: "tips", labelKey: "nav.quickTips", icon: Lightbulb },
+    { path: "businesses?tag=Restaurantes", labelKey: "nav.restaurants", icon: UtensilsCrossed },
+    { path: "businesses?tag=Alquiler de Autos", labelKey: "nav.carRental", icon: Car },
+  ];
+
   const handleNavClick = () => {
     setMobileMenuOpen(false);
     setServicesOpen(false);
+    setGuideOpen(false);
   };
 
   // Close dropdown when clicking outside
@@ -43,6 +69,9 @@ function Navbar() {
     const handleClickOutside = (event: MouseEvent) => {
       if (servicesRef.current && !servicesRef.current.contains(event.target as Node)) {
         setServicesOpen(false);
+      }
+      if (guideRef.current && !guideRef.current.contains(event.target as Node)) {
+        setGuideOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -88,7 +117,7 @@ function Navbar() {
                 {t("nav.services")}
                 <ChevronDown className={`h-4 w-4 transition-transform ${servicesOpen ? "rotate-180" : ""}`} />
               </Button>
-              
+
               {servicesOpen && (
                 <div className="absolute top-full left-0 mt-1 w-56 bg-white rounded-md shadow-lg border py-1 z-50">
                   {serviceItems.map(({ path, labelKey, icon: Icon }) => (
@@ -96,11 +125,10 @@ function Navbar() {
                       key={path}
                       to={`/${language}/${path}`}
                       onClick={handleNavClick}
-                      className={`flex items-center gap-3 px-4 py-2 text-sm transition-colors ${
-                        isActive(`/${path}`)
-                          ? "bg-primary/10 text-primary"
-                          : "text-stone-700 hover:bg-stone-100"
-                      }`}
+                      className={`flex items-center gap-3 px-4 py-2 text-sm transition-colors ${isActive(`/${path}`)
+                        ? "bg-primary/10 text-primary"
+                        : "text-stone-700 hover:bg-stone-100"
+                        }`}
                     >
                       <Icon className="h-4 w-4" />
                       {t(labelKey)}
@@ -110,18 +138,38 @@ function Navbar() {
               )}
             </div>
 
-            {/* Local Guide button */}
-            <Button
-              variant={isActive("/tips") ? "default" : "ghost"}
-              size="sm"
-              className="text-sm gap-2"
-              asChild
-            >
-              <Link to={`/${language}/tips`}>
+            {/* Local Guide dropdown */}
+            <div ref={guideRef} className="relative">
+              <Button
+                variant={isGuideActive() ? "default" : "ghost"}
+                size="sm"
+                className="text-sm gap-1"
+                onClick={() => setGuideOpen(!guideOpen)}
+              >
                 <MapPin className="h-4 w-4" />
                 {t("nav.localGuide")}
-              </Link>
-            </Button>
+                <ChevronDown className={`h-4 w-4 transition-transform ${guideOpen ? "rotate-180" : ""}`} />
+              </Button>
+
+              {guideOpen && (
+                <div className="absolute top-full left-0 mt-1 w-56 bg-white rounded-md shadow-lg border py-1 z-50">
+                  {guideItems.map(({ path, labelKey, icon: Icon }) => (
+                    <Link
+                      key={path}
+                      to={`/${language}/${path}`}
+                      onClick={handleNavClick}
+                      className={`flex items-center gap-3 px-4 py-2 text-sm transition-colors ${isGuideItemActive(path)
+                        ? "bg-primary/10 text-primary"
+                        : "text-stone-700 hover:bg-stone-100"
+                        }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {t(labelKey)}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -132,11 +180,10 @@ function Navbar() {
               <span key={lang} className="flex items-center">
                 <button
                   onClick={() => switchLanguage(lang)}
-                  className={`px-1.5 py-1 text-sm font-medium uppercase transition-colors ${
-                    language === lang
-                      ? "text-primary"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className={`px-1.5 py-1 text-sm font-medium uppercase transition-colors ${language === lang
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                    }`}
                 >
                   {lang}
                 </button>
@@ -178,33 +225,37 @@ function Navbar() {
                 key={path}
                 to={`/${language}/${path}`}
                 onClick={handleNavClick}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                  isActive(`/${path}`)
-                    ? "bg-primary text-primary-foreground"
-                    : "text-stone-700 hover:bg-stone-100"
-                }`}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive(`/${path}`)
+                  ? "bg-primary text-primary-foreground"
+                  : "text-stone-700 hover:bg-stone-100"
+                  }`}
               >
                 <Icon className="h-5 w-5" />
                 <span className="font-medium">{t(labelKey)}</span>
               </Link>
             ))}
-            
+
             {/* Divider */}
             <div className="border-t my-2" />
-            
-            {/* Local Guide */}
-            <Link
-              to={`/${language}/tips`}
-              onClick={handleNavClick}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                isActive("/tips")
+
+            {/* Local Guide section */}
+            <div className="text-xs font-semibold text-stone-500 uppercase tracking-wider px-4 pt-2">
+              {t("nav.localGuide")}
+            </div>
+            {guideItems.map(({ path, labelKey, icon: Icon }) => (
+              <Link
+                key={path}
+                to={`/${language}/${path}`}
+                onClick={handleNavClick}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isGuideItemActive(path)
                   ? "bg-primary text-primary-foreground"
                   : "text-stone-700 hover:bg-stone-100"
-              }`}
-            >
-              <MapPin className="h-5 w-5" />
-              <span className="font-medium">{t("nav.localGuide")}</span>
-            </Link>
+                  }`}
+              >
+                <Icon className="h-5 w-5" />
+                <span className="font-medium">{t(labelKey)}</span>
+              </Link>
+            ))}
           </div>
         </div>
       )}

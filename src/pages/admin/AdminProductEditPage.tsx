@@ -144,7 +144,8 @@ export default function AdminProductEditPage() {
         fetchAdminProducts({ type: productType }),
         fetchAdminTags(),
       ]);
-      setAllTags(tagsResponse.data);
+      // Filter to only show product category tags
+      setAllTags(tagsResponse.data.filter((tag) => tag.category === "product"));
       const found = productsResponse.data.find((p) => p.id === Number(productId));
       if (found) {
         setProduct(found);
@@ -166,7 +167,8 @@ export default function AdminProductEditPage() {
   const loadTags = useCallback(async () => {
     try {
       const tagsResponse = await fetchAdminTags();
-      setAllTags(tagsResponse.data);
+      // Filter to only show product category tags
+      setAllTags(tagsResponse.data.filter((tag) => tag.category === "product"));
     } catch (error) {
       console.error("Failed to load tags:", error);
     }

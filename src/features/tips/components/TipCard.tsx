@@ -1,5 +1,4 @@
-import { Pencil } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { AdminEditButton } from "@/components/AdminEditButton";
 import type { Tip } from "@/types/Tip";
 
 const STICKY_STYLES = [
@@ -21,11 +20,6 @@ interface TipCardProps {
 export function TipCard({ tip, colorIndex, isAdmin = false, onEdit }: TipCardProps) {
   const style = STICKY_STYLES[colorIndex % STICKY_STYLES.length];
 
-  const handleEdit = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onEdit?.();
-  };
-
   return (
     <div
       className={`
@@ -42,15 +36,7 @@ export function TipCard({ tip, colorIndex, isAdmin = false, onEdit }: TipCardPro
       }}
     >
       {/* Admin edit button */}
-      {isAdmin && onEdit && (
-        <Button
-          size="icon"
-          className="absolute top-2 left-2 z-10 h-8 w-8 bg-action text-action-foreground hover:bg-action/90 opacity-70 hover:opacity-100"
-          onClick={handleEdit}
-        >
-          <Pencil className="h-4 w-4" />
-        </Button>
-      )}
+      {isAdmin && onEdit && <AdminEditButton onClick={onEdit} absolute />}
 
       {/* Top edge shadow/fold effect */}
       <div

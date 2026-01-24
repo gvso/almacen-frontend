@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Refrigerator, PartyPopper, Sparkles, ArrowRight, MapPin } from "lucide-react";
+import { Refrigerator, PartyPopper, Sparkles, ArrowRight, MapPin, UtensilsCrossed, Car } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -179,9 +179,27 @@ export default function HomePage() {
             title={t("home.localGuide.title")}
             subtitle={t("home.localGuide.subtitle")}
             to={`/${language}/tips`}
-            cardClass="bg-quaternary md:col-start-2"
+            cardClass="bg-quaternary"
             delay="0ms"
             variant="quaternary"
+          />
+          <ServiceCard
+            icon={<UtensilsCrossed className="h-8 w-8 text-primary-foreground" />}
+            title={t("home.restaurants.title")}
+            subtitle={t("home.restaurants.subtitle")}
+            to={`/${language}/businesses?tag=Restaurantes`}
+            cardClass="bg-primary"
+            delay="100ms"
+            variant="primary"
+          />
+          <ServiceCard
+            icon={<Car className="h-8 w-8 text-secondary-foreground" />}
+            title={t("home.carRental.title")}
+            subtitle={t("home.carRental.subtitle")}
+            to={`/${language}/businesses?tag=Alquiler de Autos`}
+            cardClass="bg-secondary"
+            delay="200ms"
+            variant="secondary"
           />
         </div>
       </section>
