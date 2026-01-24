@@ -6,6 +6,7 @@ import {
   isValidLanguage,
   LanguageProvider,
 } from "@/contexts/LanguageContext";
+import ScrollToTop from "@/components/ScrollToTop";
 
 export default function LanguageLayout() {
   const { lang } = useParams<{ lang: string }>();
@@ -25,6 +26,7 @@ export default function LanguageLayout() {
 
   return (
     <LanguageProvider language={lang}>
+      <ScrollToTop />
       <Outlet />
     </LanguageProvider>
   );
