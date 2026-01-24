@@ -15,8 +15,8 @@ export default function TipsPage() {
   const { isAdmin } = useAdmin({ skipVerification: true });
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["tips", language],
-    queryFn: () => fetchTips(language),
+    queryKey: ["tips", language, "quick_tip"],
+    queryFn: () => fetchTips(language, "quick_tip"),
   });
 
   const tips = data?.data ?? [];

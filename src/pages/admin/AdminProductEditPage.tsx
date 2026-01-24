@@ -41,7 +41,8 @@ import {
   reorderVariations,
   verifyAdminToken,
   fetchAdminTags,
-  updateProductTags,
+  addProductTag,
+  removeProductTag,
 } from "@/services/admin";
 import type { AdminTag } from "@/types/Tag";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -346,14 +347,16 @@ export default function AdminProductEditPage() {
     try {
       const currentTagIds = product.tags?.map((t) => t.id) || [];
       const isSelected = currentTagIds.includes(tagId);
-      const newTagIds = isSelected
-        ? currentTagIds.filter((id) => id !== tagId)
-        : [...currentTagIds, tagId];
 
-      await updateProductTags(product.id, { tag_ids: newTagIds });
-      // Update local state
-      const newTags = allTags.filter((t) => newTagIds.includes(t.id));
-      setProduct({ ...product, tags: newTags });
+      let result;
+      if (isSelected) {
+        result = await removeProductTag(product.id, tagId);
+      } else {
+        result = await addProductTag(product.id, { tag_id: tagId });
+      }
+
+      // Update local state with the response
+      setProduct({ ...product, tags: result.data });
     } catch (error) {
       console.error("Failed to update tags:", error);
     } finally {

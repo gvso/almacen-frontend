@@ -39,7 +39,11 @@ export {
   deleteTagTranslation,
   reorderTags,
   getProductTags,
-  updateProductTags,
+  addProductTag,
+  removeProductTag,
+  getTipTags,
+  addTipTag,
+  removeTipTag,
 } from "./tags";
 
 // Tips

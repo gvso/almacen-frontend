@@ -62,7 +62,7 @@ export function HousekeepingCard({ service }: HousekeepingCardProps) {
       {isAdmin && (
         <Button
           size="icon"
-          className="absolute top-2 right-2 z-10 h-8 w-8 bg-action text-action-foreground hover:bg-action/90 opacity-70 hover:opacity-100"
+          className="absolute top-2 left-2 z-10 h-8 w-8 bg-action text-action-foreground hover:bg-action/90 opacity-70 hover:opacity-100"
           onClick={handleEdit}
         >
           <Pencil className="h-4 w-4" />

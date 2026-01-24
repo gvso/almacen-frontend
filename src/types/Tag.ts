@@ -4,15 +4,15 @@ export interface TagTranslation {
 }
 
 export interface Tag {
-  id: number;
-  label: string;
-  order: number;
-  insertedAt: string;
-  updatedAt: string;
+    id: number;
+    label: string;
+    order: number;
+    insertedAt: string;
+    updatedAt: string;
 }
 
 export interface AdminTag extends Tag {
-  translations: TagTranslation[];
+    translations: TagTranslation[];
 }
 
 // Request types
@@ -29,6 +29,6 @@ export interface TagTranslationData {
     label: string;
 }
 
-export interface ProductTagsUpdateData {
-    tag_ids: number[];
+export interface EntityTagAddData {
+    tag_id: number;
 }

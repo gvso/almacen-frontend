@@ -1,17 +1,17 @@
 import type {
-  AdminTag,
-  TagCreateData,
-  TagUpdateData,
-  TagTranslationData,
-  ProductTagsUpdateData,
+    AdminTag,
+    TagCreateData,
+    TagUpdateData,
+    TagTranslationData,
+    EntityTagAddData,
 } from "@/types/Tag";
 import { fetchAdminApi } from "./api";
 
 // ============ Reorder Types ============
 
 export interface ReorderItem {
-  id: number;
-  order: number;
+    id: number;
+    order: number;
 }
 
 // ============ Tag API ============
@@ -57,21 +57,21 @@ export async function createOrUpdateTagTranslation(
 }
 
 export async function deleteTagTranslation(
-  tagId: number,
-  language: string
+    tagId: number,
+    language: string
 ): Promise<AdminTag> {
-  return fetchAdminApi(`/api/v1/admin/tags/${tagId}/translations/${language}`, {
-    method: "DELETE",
-  });
+    return fetchAdminApi(`/api/v1/admin/tags/${tagId}/translations/${language}`, {
+        method: "DELETE",
+    });
 }
 
 // ============ Reorder API ============
 
 export async function reorderTags(items: ReorderItem[]): Promise<{ data: AdminTag[] }> {
-  return fetchAdminApi("/api/v1/admin/tags/reorder", {
-    method: "PATCH",
-    body: JSON.stringify({ items }),
-  });
+    return fetchAdminApi("/api/v1/admin/tags/reorder", {
+        method: "PATCH",
+        body: JSON.stringify({ items }),
+    });
 }
 
 // ============ Product Tags API ============
@@ -80,12 +80,46 @@ export async function getProductTags(productId: number): Promise<{ data: AdminTa
     return fetchAdminApi(`/api/v1/admin/tags/products/${productId}`);
 }
 
-export async function updateProductTags(
+export async function addProductTag(
     productId: number,
-    data: ProductTagsUpdateData
+    data: EntityTagAddData
 ): Promise<{ data: AdminTag[] }> {
     return fetchAdminApi(`/api/v1/admin/tags/products/${productId}`, {
-        method: "PUT",
+        method: "POST",
         body: JSON.stringify(data),
+    });
+}
+
+export async function removeProductTag(
+    productId: number,
+    tagId: number
+): Promise<{ data: AdminTag[] }> {
+    return fetchAdminApi(`/api/v1/admin/tags/products/${productId}/tags/${tagId}`, {
+        method: "DELETE",
+    });
+}
+
+// ============ Tip Tags API ============
+
+export async function getTipTags(tipId: number): Promise<{ data: AdminTag[] }> {
+    return fetchAdminApi(`/api/v1/admin/tags/tips/${tipId}`);
+}
+
+export async function addTipTag(
+    tipId: number,
+    data: EntityTagAddData
+): Promise<{ data: AdminTag[] }> {
+    return fetchAdminApi(`/api/v1/admin/tags/tips/${tipId}`, {
+        method: "POST",
+        body: JSON.stringify(data),
+    });
+}
+
+export async function removeTipTag(
+    tipId: number,
+    tagId: number
+): Promise<{ data: AdminTag[] }> {
+    return fetchAdminApi(`/api/v1/admin/tags/tips/${tipId}/tags/${tagId}`, {
+        method: "DELETE",
     });
 }
