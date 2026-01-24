@@ -7,12 +7,14 @@ import HomePage from "@/pages/home/HomePage";
 import ProductPage from "@/pages/product/ProductPage";
 import CartPage from "@/pages/cart/CartPage";
 import OrderPage from "@/pages/order/OrderPage";
+import TipsPage from "@/pages/tips/TipsPage";
 import AdminLoginPage from "@/pages/admin/AdminLoginPage";
 import AdminDashboardPage from "@/pages/admin/AdminDashboardPage";
 import AdminOrdersPage from "@/pages/admin/AdminOrdersPage";
 import AdminProductsPage from "@/pages/admin/AdminProductsPage";
 import AdminProductEditPage from "@/pages/admin/AdminProductEditPage";
 import AdminTagsPage from "@/pages/admin/AdminTagsPage";
+import AdminTipsPage from "@/pages/admin/AdminTipsPage";
 import LanguageLayout from "@/layouts/LanguageLayout";
 import { DEFAULT_LANGUAGE } from "@/contexts/LanguageContext";
 import { toCamelCase } from "./utils/casing";
@@ -41,6 +43,7 @@ function App() {
             <Route path="fridge-stocking" element={<ProductPage />} />
             <Route path="celebration" element={<ProductPage />} />
             <Route path="housekeeping" element={<ProductPage />} />
+            <Route path="tips" element={<TipsPage />} />
             <Route path="cart" element={<CartPage />} />
             <Route path="orders/:orderId" element={<OrderPage />} />
 
@@ -53,6 +56,7 @@ function App() {
             <Route path="admin/dashboard" element={<AdminDashboardPage />} />
             <Route path="admin/orders" element={<AdminOrdersPage />} />
             <Route path="admin/tags" element={<AdminTagsPage />} />
+            <Route path="admin/tips" element={<AdminTipsPage />} />
             <Route path="admin/:itemType" element={<AdminProductsPage />} />
             <Route path="admin/:itemType/:productId" element={<AdminProductEditPage />} />
           </Route>

@@ -11,10 +11,10 @@
    ============================================================================= */
 :root {
   /* Primary - Main brand color (buttons, links, accents) */
-  --primary: 0 94% 67%;
-  /* #FA5C5C - Coral red */
+  --primary: 0 80% 55%;
+  /* Deeper coral red for contrast */
   --primary-foreground: 0 0% 100%;
-  /* Text on primary */
+  /* White text */
 
   /* Secondary - Supporting color (secondary buttons, tags) */
   --secondary: 45 85% 84%;
@@ -25,6 +25,12 @@
   --tertiary: 160 35% 40%;
   /* Muted teal */
   --tertiary-foreground: 0 0% 98%;
+
+  /* Quaternary - Fourth accent color */
+  --quaternary: 38 80% 45%;
+  /* Deeper amber for contrast */
+  --quaternary-foreground: 0 0% 100%;
+  /* White text */
 
   /* Action - For action buttons (add to cart, toolbar actions, etc.) */
   --action: 160 35% 40%;
@@ -87,6 +93,9 @@
 
   --color-tertiary: hsl(var(--tertiary));
   --color-tertiary-foreground: hsl(var(--tertiary-foreground));
+
+  --color-quaternary: hsl(var(--quaternary));
+  --color-quaternary-foreground: hsl(var(--quaternary-foreground));
 
   --color-action: hsl(var(--action));
   --color-action-foreground: hsl(var(--action-foreground));

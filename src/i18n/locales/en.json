@@ -1,14 +1,25 @@
 {
   "nav": {
+    "services": "Services",
+    "localGuide": "Quick Tips",
     "fridgeStocking": "Fridge Stocking",
     "celebration": "Celebration",
-    "housekeeping": "Housekeeping"
+    "housekeeping": "Housekeeping",
+    "tips": "Tips"
   },
   "home": {
     "badge": "Guest Services",
     "title": "Meet Asunción",
     "welcome": "Welcome to your home in Asunción! We're truly grateful you chose to stay with us. Our goal is to make your time in Asunción as comfortable and stress-free as possible from the moment you step through the doors.",
     "description": "Whether you're arriving late and need a stocked fridge, are celebrating a special occasion, or simply want to treat yourself, please feel free to explore our guest services below:",
+    "guideSection": "Meet Our Guide",
+    "guideSectionDescription": "We put together some tips to help you navigate Asunción like a local.",
+    "servicesSection": "Meet Our Services",
+    "servicesSectionDescription": "We offer a variety of services to make your stay more comfortable.",
+    "localGuide": {
+      "title": "Quick Tips",
+      "subtitle": "Get insider tips on navigating Asunción like a local - from food delivery apps to transportation"
+    },
     "fridgeStocking": {
       "title": "Fridge Stocking",
       "subtitle": "Arrive to a kitchen full of your favorite snacks and essentials"
@@ -84,5 +95,18 @@
     "shareReminder": "To confirm your order, please share this link with your host.",
     "viewOrder": "View Order",
     "shareTitle": "My Order"
+  },
+  "footer": {
+    "tagline": "Making your stay in Asunción comfortable and memorable.",
+    "quickLinks": "Quick Links",
+    "contact": "Contact",
+    "rights": "All rights reserved."
+  },
+  "tips": {
+    "badge": "Local Insights",
+    "title": "Tips for Your Stay",
+    "description": "Get the inside scoop on navigating life in Asunción like a local. From food delivery apps to transportation, here's what you need to know.",
+    "loadError": "Failed to load tips. Please try again later.",
+    "empty": "No tips available yet."
   }
 }

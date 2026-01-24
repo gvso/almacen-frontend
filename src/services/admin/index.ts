@@ -41,3 +41,15 @@ export {
   getProductTags,
   updateProductTags,
 } from "./tags";
+
+// Tips
+export {
+  fetchAdminTips,
+  createTip,
+  getTip,
+  updateTip,
+  deleteTip,
+  createOrUpdateTipTranslation,
+  deleteTipTranslation,
+  reorderTips,
+} from "./tips";

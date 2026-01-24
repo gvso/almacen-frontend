@@ -1,14 +1,25 @@
 {
   "nav": {
+    "services": "Servicios",
+    "localGuide": "Tips Rápidos",
     "fridgeStocking": "Heladera",
     "celebration": "Celebración",
-    "housekeeping": "Limpieza"
+    "housekeeping": "Limpieza",
+    "tips": "Tips"
   },
   "home": {
     "badge": "Servicios para Huéspedes",
     "title": "Meet Asunción",
     "welcome": "¡Bienvenido a tu hogar en Asunción! Estamos muy agradecidos de que hayas elegido quedarte con nosotros. Nuestro objetivo es hacer que tu tiempo en Asunción sea lo más cómodo y sin estrés posible desde el momento en que cruces la puerta.",
     "description": "Ya sea que llegues tarde y necesites una heladera abastecida, estés celebrando una ocasión especial, o simplemente quieras darte un gusto, siéntete libre de explorar nuestros servicios para huéspedes:",
+    "guideSection": "Nuestra Guía",
+    "guideSectionDescription": "Preparamos algunos consejos para ayudarte a moverte por Asunción como un local.",
+    "servicesSection": "Nuestros Servicios",
+    "servicesSectionDescription": "Ofrecemos una variedad de servicios para hacer tu estadía más cómoda.",
+    "localGuide": {
+      "title": "Tips Rápidos",
+      "subtitle": "Consejos para moverte por Asunción como un local - desde apps de delivery hasta transporte"
+    },
     "fridgeStocking": {
       "title": "Llená tu Heladera",
       "subtitle": "Llega a una cocina llena de tus snacks y productos esenciales favoritos"
@@ -84,5 +95,18 @@
     "shareReminder": "Para confirmar tu pedido, por favor comparte este enlace con tu anfitrión.",
     "viewOrder": "Ver Pedido",
     "shareTitle": "Mi Pedido"
+  },
+  "footer": {
+    "tagline": "Haciendo tu estadía en Asunción cómoda y memorable.",
+    "quickLinks": "Enlaces Rápidos",
+    "contact": "Contacto",
+    "rights": "Todos los derechos reservados."
+  },
+  "tips": {
+    "badge": "Tips Locales",
+    "title": "Tips para tu Estadía",
+    "description": "Conoce los secretos para moverte por Asunción como un local. Desde apps de delivery hasta transporte, acá está todo lo que necesitás saber.",
+    "loadError": "No se pudieron cargar los tips. Por favor, inténtalo de nuevo más tarde.",
+    "empty": "Aún no hay tips disponibles."
   }
 }

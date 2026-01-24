@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Refrigerator, PartyPopper, Sparkles, ArrowRight } from "lucide-react";
+import { Refrigerator, PartyPopper, Sparkles, ArrowRight, MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 interface ServiceCardProps {
   icon: React.ReactNode;
@@ -11,21 +12,26 @@ interface ServiceCardProps {
   to: string;
   cardClass: string;
   delay: string;
-  variant: "primary" | "secondary" | "tertiary";
+  variant: "primary" | "secondary" | "tertiary" | "quaternary";
 }
 
 function ServiceCard({ icon, title, subtitle, to, cardClass, delay, variant }: ServiceCardProps) {
-  const textColorClass = variant === "secondary"
-    ? "text-secondary-foreground"
-    : variant === "primary"
-      ? "text-primary-foreground"
-      : "text-tertiary-foreground";
+  const textColorMap = {
+    primary: "text-primary-foreground",
+    secondary: "text-secondary-foreground",
+    tertiary: "text-tertiary-foreground",
+    quaternary: "text-quaternary-foreground",
+  };
 
-  const subtextColorClass = variant === "secondary"
-    ? "text-secondary-foreground/70"
-    : variant === "primary"
-      ? "text-primary-foreground/80"
-      : "text-tertiary-foreground/80";
+  const subtextColorMap = {
+    primary: "text-primary-foreground/80",
+    secondary: "text-secondary-foreground/70",
+    tertiary: "text-tertiary-foreground/80",
+    quaternary: "text-quaternary-foreground/80",
+  };
+
+  const textColorClass = textColorMap[variant];
+  const subtextColorClass = subtextColorMap[variant];
 
   return (
     <Link
@@ -42,8 +48,8 @@ function ServiceCard({ icon, title, subtitle, to, cardClass, delay, variant }: S
           {icon}
         </div>
 
-        <h3 className={`mb-3 text-2xl font-bold ${textColorClass}`}>{title}</h3>
-        <p className={`mb-6 flex-1 text-base leading-relaxed ${subtextColorClass}`}>{subtitle}</p>
+        <h3 className={`mb-3 text-xl font-bold ${textColorClass}`}>{title}</h3>
+        <p className={`mb-6 flex-1 text-md font-medium leading-relaxed ${subtextColorClass}`}>{subtitle}</p>
 
         <div className={`flex items-center gap-2 text-sm font-medium ${subtextColorClass} transition-all duration-300 group-hover:gap-4`}>
           <span>Explore</span>
@@ -65,10 +71,10 @@ export default function HomePage() {
     to: string;
     cardClass: string;
     delay: string;
-    variant: "primary" | "secondary" | "tertiary";
+    variant: "primary" | "secondary" | "tertiary" | "quaternary";
   }> = [
       {
-        icon: <Refrigerator className="h-8 w-8 text-tertiary-foreground" />,
+        icon: <Refrigerator className="h-8 w-8 text-primary-foreground" />,
         titleKey: "home.fridgeStocking.title",
         subtitleKey: "home.fridgeStocking.subtitle",
         to: `/${language}/fridge-stocking`,
@@ -86,7 +92,7 @@ export default function HomePage() {
         variant: "secondary",
       },
       {
-        icon: <Sparkles className="h-8 w-8 text-primary-foreground" />,
+        icon: <Sparkles className="h-8 w-8 text-tertiary-foreground" />,
         titleKey: "home.housekeeping.title",
         subtitleKey: "home.housekeeping.subtitle",
         to: `/${language}/housekeeping`,
@@ -140,7 +146,11 @@ export default function HomePage() {
       </section>
 
       {/* Services Section */}
-      <section className="container mx-auto mt-10 px-4 pb-20">
+      <section className="container mx-auto mt-16 px-4">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-stone-800 mb-3">{t("home.servicesSection")}</h2>
+          <p className="text-stone-600 text-lg">{t("home.servicesSectionDescription")}</p>
+        </div>
         <div className="grid gap-6 md:grid-cols-3">
           {services.map((service, index) => (
             <ServiceCard
@@ -156,6 +166,27 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* Guide Section */}
+      <section className="container mx-auto mt-16 px-4 pb-20">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-stone-800 mb-3">{t("home.guideSection")}</h2>
+          <p className="text-stone-600 text-lg">{t("home.guideSectionDescription")}</p>
+        </div>
+        <div className="grid gap-6 grid-cols-1 max-w-sm mx-auto md:max-w-none md:grid-cols-3">
+          <ServiceCard
+            icon={<MapPin className="h-8 w-8 text-quaternary-foreground" />}
+            title={t("home.localGuide.title")}
+            subtitle={t("home.localGuide.subtitle")}
+            to={`/${language}/tips`}
+            cardClass="bg-quaternary md:col-start-2"
+            delay="0ms"
+            variant="quaternary"
+          />
+        </div>
+      </section>
+
+      <Footer />
     </div>
   );
 }

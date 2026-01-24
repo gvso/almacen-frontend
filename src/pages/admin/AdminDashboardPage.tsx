@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogOut, LayoutDashboard, Package, Wrench, ShoppingCart, ChevronRight, Sparkles, Tags } from "lucide-react";
+import { LogOut, LayoutDashboard, Package, Wrench, ShoppingCart, ChevronRight, Sparkles, Tags, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { clearAdminToken, verifyAdminToken } from "@/services/admin";
@@ -79,6 +79,24 @@ export default function AdminDashboardPage() {
             <CardContent>
               <p className="text-sm text-muted-foreground">
                 Manage tags for categorizing products and services
+              </p>
+              <div className="flex items-center text-base text-action mt-3 font-medium">
+                View all <ChevronRight className="h-5 w-5 ml-1" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card
+            className="cursor-pointer hover:bg-muted/50 transition-colors"
+            onClick={() => navigate(`/${language}/admin/tips`)}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-lg font-semibold">Guide Tips</CardTitle>
+              <Lightbulb className="h-6 w-6 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Manage tips and local insights for guests
               </p>
               <div className="flex items-center text-base text-action mt-3 font-medium">
                 View all <ChevronRight className="h-5 w-5 ml-1" />

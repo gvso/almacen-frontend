@@ -79,7 +79,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
   };
 
   return (
-    <div className="group relative flex flex-col gap-6 md:flex-row md:gap-10 md:min-h-90">
+    <div className="group relative flex flex-col gap-6 md:flex-row md:gap-4 lg:gap-10 md:min-h-90">
       {isAdmin && (
         <Button
           size="icon"
