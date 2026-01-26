@@ -44,7 +44,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
   const handleEdit = () => {
     const language = i18n.language;
     navigate(`/${language}/admin/services/${service.id}`, {
-      state: { fromMarketplace: window.location.pathname },
+      state: { fromMarketplace: window.location.pathname + window.location.search },
     });
   };
 

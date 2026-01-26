@@ -30,7 +30,7 @@ export function HousekeepingCard({ service }: HousekeepingCardProps) {
   const handleEdit = () => {
     const language = i18n.language;
     navigate(`/${language}/admin/housekeeping/${service.id}`, {
-      state: { fromMarketplace: window.location.pathname },
+      state: { fromMarketplace: window.location.pathname + window.location.search },
     });
   };
 

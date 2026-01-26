@@ -67,7 +67,7 @@ export default function TipsPage() {
                 colorIndex={index}
                 isAdmin={isAdmin}
                 onEdit={() => navigate(`/${language}/admin/tips/${tip.id}`, {
-                  state: { fromMarketplace: window.location.pathname },
+                  state: { fromMarketplace: window.location.pathname + window.location.search },
                 })}
               />
             ))}

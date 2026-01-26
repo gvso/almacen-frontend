@@ -42,7 +42,7 @@ const SUPPORTED_LANGUAGES = ["en", "es"];
 
 const TAG_CATEGORIES: { value: TagCategory; label: string; icon: React.ReactNode }[] = [
   { value: "product", label: "Product Tags", icon: <Package className="h-4 w-4" /> },
-  { value: "tip", label: "Tip Tags", icon: <Lightbulb className="h-4 w-4" /> },
+  { value: "tip", label: "Guide Tags", icon: <Lightbulb className="h-4 w-4" /> },
 ];
 
 const tagSchema = z.object({

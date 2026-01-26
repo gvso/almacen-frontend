@@ -123,7 +123,7 @@
   "businesses": {
     "badge": "Local Recommendations",
     "title": "Places We Love",
-    "description": "Discover our favorite local spots in Asunción. From restaurants to cafes, these are the places we recommend to all our guests.",
+    "description": "We're still working on the content for this site. If you need info about restaurants, car rental or any other topic please let us know and we'll be happy to help you.",
     "loadError": "Failed to load recommendations. Please try again later.",
     "empty": "No recommendations available yet."
   }

@@ -125,7 +125,8 @@ export default function AdminTipEditPage() {
     if (fromMarketplace) {
       navigate(fromMarketplace);
     } else {
-      navigate(`/${language}/admin/tips`);
+      // Fallback: navigate to admin tips page with appropriate tab
+      navigate(`/${language}/admin/tips?type=${tipType}`);
     }
   };
 

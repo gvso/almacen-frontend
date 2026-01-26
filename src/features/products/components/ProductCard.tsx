@@ -39,7 +39,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const handleEdit = () => {
     const language = i18n.language;
     navigate(`/${language}/admin/products/${product.id}`, {
-      state: { fromMarketplace: window.location.pathname },
+      state: { fromMarketplace: window.location.pathname + window.location.search },
     });
   };
 

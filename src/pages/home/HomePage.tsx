@@ -175,31 +175,31 @@ export default function HomePage() {
         </div>
         <div className="grid gap-6 grid-cols-1 max-w-sm mx-auto md:max-w-none md:grid-cols-3">
           <ServiceCard
-            icon={<MapPin className="h-8 w-8 text-quaternary-foreground" />}
+            icon={<MapPin className="h-8 w-8 text-secondary-foreground" />}
             title={t("home.localGuide.title")}
             subtitle={t("home.localGuide.subtitle")}
             to={`/${language}/tips`}
-            cardClass="bg-quaternary"
+            cardClass="bg-secondary"
             delay="0ms"
-            variant="quaternary"
+            variant="secondary"
           />
           <ServiceCard
-            icon={<UtensilsCrossed className="h-8 w-8 text-primary-foreground" />}
+            icon={<UtensilsCrossed className="h-8 w-8 text-tertiary-foreground" />}
             title={t("home.restaurants.title")}
             subtitle={t("home.restaurants.subtitle")}
             to={`/${language}/businesses?tag=Restaurantes`}
-            cardClass="bg-primary"
+            cardClass="bg-tertiary"
             delay="100ms"
-            variant="primary"
+            variant="tertiary"
           />
           <ServiceCard
-            icon={<Car className="h-8 w-8 text-secondary-foreground" />}
+            icon={<Car className="h-8 w-8 text-primary-foreground" />}
             title={t("home.carRental.title")}
             subtitle={t("home.carRental.subtitle")}
             to={`/${language}/businesses?tag=Alquiler de Autos`}
-            cardClass="bg-secondary"
+            cardClass="bg-primary"
             delay="200ms"
-            variant="secondary"
+            variant="primary"
           />
         </div>
       </section>

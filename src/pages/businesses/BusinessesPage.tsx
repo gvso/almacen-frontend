@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Building2 } from "lucide-react";
 import { AdminEditButton } from "@/components/AdminEditButton";
+import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAdmin } from "@/hooks/useAdmin";
 import Navbar from "@/components/Navbar";
@@ -136,7 +137,7 @@ export default function BusinessesPage() {
 
         {/* Business Cards Grid */}
         {!isLoading && !isError && tips.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {tips.map((tip) => (
               <BusinessCard
                 key={tip.id}
@@ -144,7 +145,7 @@ export default function BusinessesPage() {
                 isAdmin={isAdmin}
                 onEdit={() =>
                   navigate(`/${language}/admin/tips/${tip.id}`, {
-                    state: { fromMarketplace: window.location.pathname },
+                    state: { fromMarketplace: window.location.pathname + window.location.search },
                   })
                 }
               />
@@ -164,21 +165,28 @@ interface BusinessCardProps {
 
 function BusinessCard({ tip, isAdmin, onEdit }: BusinessCardProps) {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-      {tip.imageUrl && (
-        <div className="aspect-video w-full overflow-hidden">
+    <Card className="group relative flex h-full flex-col overflow-hidden transition-all hover:shadow-lg">
+      {isAdmin && onEdit && <AdminEditButton onClick={onEdit} absolute />}
+
+      {/* Image at the top */}
+      <div className="h-60 w-full overflow-hidden bg-muted">
+        {tip.imageUrl ? (
           <img
             src={tip.imageUrl}
             alt={tip.title}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover transition-transform group-hover:scale-105"
           />
-        </div>
-      )}
-      <div className="p-6">
-        <div className="flex items-start gap-2">
-          {isAdmin && onEdit && <AdminEditButton onClick={onEdit} />}
-          <h3 className="font-semibold text-lg text-stone-800">{tip.title}</h3>
-        </div>
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <Building2 className="h-10 w-10 text-muted-foreground" />
+          </div>
+        )}
+      </div>
+
+      {/* Content at the bottom */}
+      <CardContent className="flex flex-1 flex-col p-5">
+        <h3 className="text-lg font-semibold text-foreground">{tip.title}</h3>
+
         {tip.tags && tip.tags.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1">
             {tip.tags.map((tag) => (
@@ -191,11 +199,12 @@ function BusinessCard({ tip, isAdmin, onEdit }: BusinessCardProps) {
             ))}
           </div>
         )}
+
         <div
-          className="mt-3 text-sm text-stone-600 prose prose-sm max-w-none line-clamp-3"
+          className="mt-2 text-sm text-muted-foreground leading-relaxed prose prose-sm max-w-none [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0 [&_li_p]:my-0 [&_li]:marker:text-current [&_span]:text-[length:inherit]"
           dangerouslySetInnerHTML={{ __html: tip.description }}
         />
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
