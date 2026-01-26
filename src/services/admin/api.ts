@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@/contants";
-import { toCamelCase } from "@/utils/casing";
+import { toCamelCase, toSnakeCase } from "@/utils/casing";
 
 const ADMIN_TOKEN_KEY = "admin_token";
 
@@ -17,7 +17,18 @@ export function clearAdminToken(): void {
 
 export async function fetchAdminApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const token = getAdminToken();
-  
+
+  // Convert body to snake_case if it exists
+  let body = options?.body;
+  if (body && typeof body === 'string') {
+    try {
+      const parsed = JSON.parse(body);
+      body = JSON.stringify(toSnakeCase(parsed));
+    } catch {
+      // If parsing fails, use the original body
+    }
+  }
+
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     headers: {
       "Content-Type": "application/json",
@@ -25,6 +36,7 @@ export async function fetchAdminApi<T>(endpoint: string, options?: RequestInit):
       ...options?.headers,
     },
     ...options,
+    body,
   });
 
   if (!response.ok) {

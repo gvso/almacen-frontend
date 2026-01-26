@@ -5,7 +5,7 @@
     "quickTips": "Quick Tips",
     "restaurants": "Restaurants",
     "carRental": "Car Rental",
-    "fridgeStocking": "Fridge Stocking",
+    "fridgeStocking": "Groceries",
     "celebration": "Celebration",
     "housekeeping": "Housekeeping",
     "tips": "Tips"
@@ -32,7 +32,7 @@
       "subtitle": "Find reliable car rental options for exploring the city and beyond"
     },
     "fridgeStocking": {
-      "title": "Fridge Stocking",
+      "title": "Groceries",
       "subtitle": "Arrive to a kitchen full of your favorite snacks and essentials"
     },
     "celebration": {

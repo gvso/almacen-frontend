@@ -167,6 +167,9 @@ interface BusinessCardProps {
 }
 
 function BusinessCard({ tip, isAdmin, onEdit }: BusinessCardProps) {
+  const filterableTags = tip.tags?.filter(tag => tag.isFilterable) || [];
+  const nonFilterableTags = tip.tags?.filter(tag => !tag.isFilterable) || [];
+
   return (
     <Card className="group relative flex h-full flex-col overflow-hidden transition-all hover:shadow-lg">
       {isAdmin && onEdit && <AdminEditButton onClick={onEdit} absolute />}
@@ -190,12 +193,28 @@ function BusinessCard({ tip, isAdmin, onEdit }: BusinessCardProps) {
       <CardContent className="flex flex-1 flex-col p-5">
         <h3 className="text-lg font-semibold text-foreground">{tip.title}</h3>
 
-        {tip.tags && tip.tags.length > 0 && (
+        {/* Filterable Tags */}
+        {filterableTags.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1">
-            {tip.tags.map((tag) => (
+            {filterableTags.map((tag) => (
               <span
                 key={tag.id}
                 className="text-xs bg-stone-100 text-stone-600 px-2 py-0.5 rounded"
+              >
+                {tag.label}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Non-Filterable Tags */}
+        {nonFilterableTags.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1">
+            {nonFilterableTags.map((tag) => (
+              <span
+                key={tag.id}
+                className="text-xs px-2 py-0.5 rounded"
+                style={{ backgroundColor: tag.bgColor, color: tag.textColor }}
               >
                 {tag.label}
               </span>

@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowLeft, Tags, Plus, Trash2, Save, Languages, GripVertical, Package, Lightbulb } from "lucide-react";
@@ -47,6 +47,9 @@ const TAG_CATEGORIES: { value: TagCategory; label: string; icon: React.ReactNode
 
 const tagSchema = z.object({
   label: z.string().min(1, "Label is required"),
+  isFilterable: z.boolean(),
+  bgColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color"),
+  textColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color"),
 });
 
 const translationSchema = z.object({
@@ -108,7 +111,14 @@ export default function AdminTagsPage() {
 
   const handleCreateTag = async (data: TagFormData) => {
     try {
-      const newTag = await createTag({ label: data.label, category });
+      const newTag = await createTag({
+        label: data.label,
+        category,
+        isFilterable: data.isFilterable,
+        // Only use custom colors for non-filterable tags
+        bgColor: data.isFilterable ? "#f5f5f4" : data.bgColor,
+        textColor: data.isFilterable ? "#57534e" : data.textColor,
+      });
       setAllTags([...allTags, newTag]);
       setShowNewTagForm(false);
       toast({ description: "Tag created" });
@@ -120,7 +130,13 @@ export default function AdminTagsPage() {
 
   const handleUpdateTag = async (tagId: number, data: TagFormData) => {
     try {
-      const updated = await updateTag(tagId, { label: data.label });
+      const updated = await updateTag(tagId, {
+        label: data.label,
+        isFilterable: data.isFilterable,
+        // Only use custom colors for non-filterable tags
+        bgColor: data.isFilterable ? "#f5f5f4" : data.bgColor,
+        textColor: data.isFilterable ? "#57534e" : data.textColor,
+      });
       setAllTags(allTags.map((t) => (t.id === tagId ? updated : t)));
       setEditingTagId(null);
       toast({ description: "Tag saved" });
@@ -308,25 +324,116 @@ interface NewTagFormProps {
 function NewTagForm({ onSave, onCancel }: NewTagFormProps) {
   const form = useForm<TagFormData>({
     resolver: zodResolver(tagSchema),
-    defaultValues: { label: "" },
+    defaultValues: {
+      label: "",
+      isFilterable: true,
+      bgColor: "#f5f5f4",
+      textColor: "#57534e",
+    },
   });
 
+  const watchLabel = form.watch("label");
+  const watchIsFilterable = form.watch("isFilterable");
+  const watchBgColor = form.watch("bgColor");
+  const watchTextColor = form.watch("textColor");
+
   return (
-    <form onSubmit={form.handleSubmit(onSave)} className="flex gap-4 items-end">
-      <div className="flex-1 space-y-2">
-        <label className="text-sm font-medium">Label</label>
-        <Input {...form.register("label")} placeholder="Enter tag label" autoFocus />
-        {form.formState.errors.label && (
-          <p className="text-xs text-destructive">{form.formState.errors.label.message}</p>
-        )}
+    <form onSubmit={form.handleSubmit(onSave)} className="space-y-4">
+      <div className="flex gap-4 items-end">
+        <div className="flex-1 space-y-2">
+          <label className="text-sm font-medium">Label</label>
+          <Input {...form.register("label")} placeholder="Enter tag label" autoFocus />
+          {form.formState.errors.label && (
+            <p className="text-xs text-destructive">{form.formState.errors.label.message}</p>
+          )}
+        </div>
       </div>
-      <Button type="submit" disabled={form.formState.isSubmitting} className="bg-action text-action-foreground hover:bg-action/90">
-        <Save className="h-4 w-4 mr-2" />
-        Create
-      </Button>
-      <Button type="button" variant="outline" onClick={onCancel}>
-        Cancel
-      </Button>
+      {watchLabel && (
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Preview</label>
+          <div className="flex items-center gap-2">
+            <span
+              className={watchIsFilterable ? "text-xs bg-stone-100 text-stone-600 px-2 py-1 rounded" : "text-xs px-2 py-1 rounded"}
+              style={!watchIsFilterable ? { backgroundColor: watchBgColor, color: watchTextColor } : undefined}
+            >
+              {watchLabel}
+            </span>
+            {watchIsFilterable && (
+              <span className="text-xs text-muted-foreground italic">
+                (Will use default colors as filter)
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="isFilterable"
+          {...form.register("isFilterable")}
+          className="h-4 w-4 rounded border-gray-300"
+        />
+        <label htmlFor="isFilterable" className="text-sm font-medium cursor-pointer">
+          Show as filter (if unchecked, tag will only be visible on individual items and you can customize colors)
+        </label>
+      </div>
+      {!form.watch("isFilterable") && (
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label htmlFor="bgColor" className="text-sm font-medium">Background Color</label>
+            <div className="flex gap-2">
+              <Controller
+                name="bgColor"
+                control={form.control}
+                render={({ field }) => (
+                  <input
+                    type="color"
+                    id="bgColor"
+                    value={field.value}
+                    onChange={field.onChange}
+                    className="h-10 w-16 rounded border cursor-pointer"
+                  />
+                )}
+              />
+              <Input {...form.register("bgColor")} placeholder="#f5f5f4" className="flex-1" />
+            </div>
+            {form.formState.errors.bgColor && (
+              <p className="text-xs text-destructive">{form.formState.errors.bgColor.message}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <label htmlFor="textColor" className="text-sm font-medium">Text Color</label>
+            <div className="flex gap-2">
+              <Controller
+                name="textColor"
+                control={form.control}
+                render={({ field }) => (
+                  <input
+                    type="color"
+                    id="textColor"
+                    value={field.value}
+                    onChange={field.onChange}
+                    className="h-10 w-16 rounded border cursor-pointer"
+                  />
+                )}
+              />
+              <Input {...form.register("textColor")} placeholder="#57534e" className="flex-1" />
+            </div>
+            {form.formState.errors.textColor && (
+              <p className="text-xs text-destructive">{form.formState.errors.textColor.message}</p>
+            )}
+          </div>
+        </div>
+      )}
+      <div className="flex gap-2">
+        <Button type="submit" disabled={form.formState.isSubmitting} className="bg-action text-action-foreground hover:bg-action/90">
+          <Save className="h-4 w-4 mr-2" />
+          Create
+        </Button>
+        <Button type="button" variant="outline" onClick={onCancel}>
+          Cancel
+        </Button>
+      </div>
     </form>
   );
 }
@@ -381,8 +488,18 @@ function TagCard({
 
   const form = useForm<TagFormData>({
     resolver: zodResolver(tagSchema),
-    defaultValues: { label: tag.label },
+    defaultValues: {
+      label: tag.label,
+      isFilterable: tag.isFilterable,
+      bgColor: tag.bgColor,
+      textColor: tag.textColor,
+    },
   });
+
+  const watchLabel = form.watch("label");
+  const watchIsFilterable = form.watch("isFilterable");
+  const watchBgColor = form.watch("bgColor");
+  const watchTextColor = form.watch("textColor");
 
   const handleSubmit = (data: TagFormData) => {
     onUpdate(data);
@@ -392,15 +509,96 @@ function TagCard({
     <Card>
       <CardContent className="p-4">
         {isEditing ? (
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="flex gap-4 items-center">
-            <Input {...form.register("label")} className="flex-1" autoFocus />
-            <Button type="submit" size="sm" className="bg-action text-action-foreground hover:bg-action/90">
-              <Save className="h-4 w-4 mr-2" />
-              Save
-            </Button>
-            <Button type="button" variant="outline" size="sm" onClick={onCancelEdit}>
-              Cancel
-            </Button>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <div className="flex gap-4 items-center">
+              <Input {...form.register("label")} className="flex-1" autoFocus />
+            </div>
+            {watchLabel && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Preview</label>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={watchIsFilterable ? "text-xs bg-stone-100 text-stone-600 px-2 py-1 rounded" : "text-xs px-2 py-1 rounded"}
+                    style={!watchIsFilterable ? { backgroundColor: watchBgColor, color: watchTextColor } : undefined}
+                  >
+                    {watchLabel}
+                  </span>
+                  {watchIsFilterable && (
+                    <span className="text-xs text-muted-foreground italic">
+                      (Will use default colors as filter)
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id={`isFilterable-${tag.id}`}
+                {...form.register("isFilterable")}
+                className="h-4 w-4 rounded border-gray-300"
+              />
+              <label htmlFor={`isFilterable-${tag.id}`} className="text-sm font-medium cursor-pointer">
+                Show as filter
+              </label>
+            </div>
+            {!form.watch("isFilterable") && (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor={`bgColor-${tag.id}`} className="text-sm font-medium">Background Color</label>
+                  <div className="flex gap-2">
+                    <Controller
+                      name="bgColor"
+                      control={form.control}
+                      render={({ field }) => (
+                        <input
+                          type="color"
+                          id={`bgColor-${tag.id}`}
+                          value={field.value}
+                          onChange={field.onChange}
+                          className="h-10 w-16 rounded border cursor-pointer"
+                        />
+                      )}
+                    />
+                    <Input {...form.register("bgColor")} className="flex-1" />
+                  </div>
+                  {form.formState.errors.bgColor && (
+                    <p className="text-xs text-destructive">{form.formState.errors.bgColor.message}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor={`textColor-${tag.id}`} className="text-sm font-medium">Text Color</label>
+                  <div className="flex gap-2">
+                    <Controller
+                      name="textColor"
+                      control={form.control}
+                      render={({ field }) => (
+                        <input
+                          type="color"
+                          id={`textColor-${tag.id}`}
+                          value={field.value}
+                          onChange={field.onChange}
+                          className="h-10 w-16 rounded border cursor-pointer"
+                        />
+                      )}
+                    />
+                    <Input {...form.register("textColor")} className="flex-1" />
+                  </div>
+                  {form.formState.errors.textColor && (
+                    <p className="text-xs text-destructive">{form.formState.errors.textColor.message}</p>
+                  )}
+                </div>
+              </div>
+            )}
+            <div className="flex gap-2">
+              <Button type="submit" size="sm" className="bg-action text-action-foreground hover:bg-action/90">
+                <Save className="h-4 w-4 mr-2" />
+                Save
+              </Button>
+              <Button type="button" variant="outline" size="sm" onClick={onCancelEdit}>
+                Cancel
+              </Button>
+            </div>
           </form>
         ) : (
           <div className="flex items-center justify-between">
@@ -414,12 +612,21 @@ function TagCard({
                   <GripVertical className="h-5 w-5" />
                 </button>
               )}
-              <span className="font-medium">{tag.label}</span>
-              {hasTranslations && (
-                <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">
-                  {tag.translations.length} translation(s)
-                </span>
-              )}
+              <div className="flex flex-col gap-1">
+                <span className="font-medium">{tag.label}</span>
+                <div className="flex items-center gap-2">
+                  {!tag.isFilterable && (
+                    <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">
+                      Not filterable
+                    </span>
+                  )}
+                  {hasTranslations && (
+                    <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">
+                      {tag.translations.length} translation(s)
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
             <div className="flex gap-2">
               <Button

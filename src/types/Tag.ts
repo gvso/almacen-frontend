@@ -11,6 +11,9 @@ export interface Tag {
     key: string;  // Original/base label for URL matching (language-independent)
     category: TagCategory;
     order: number;
+    isFilterable: boolean;
+    bgColor: string;
+    textColor: string;
     insertedAt: string;
     updatedAt: string;
 }
@@ -23,11 +26,17 @@ export interface AdminTag extends Tag {
 export interface TagCreateData {
     label: string;
     category?: TagCategory;
+    isFilterable?: boolean;
+    bgColor?: string;
+    textColor?: string;
 }
 
 export interface TagUpdateData {
     label?: string;
     category?: TagCategory;
+    isFilterable?: boolean;
+    bgColor?: string;
+    textColor?: string;
 }
 
 export interface TagTranslationData {
