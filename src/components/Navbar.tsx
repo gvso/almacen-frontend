@@ -99,9 +99,14 @@ function Navbar() {
 
           <Link
             to={`/${language}`}
-            className="text-xl font-bold text-stone-800 hover:text-stone-600 transition-colors"
+            className="flex items-center hover:opacity-80 transition-opacity"
+            title="Meet Asunción"
           >
-            Meet Asunción
+            <img
+              src="/assets/img/logo.svg"
+              alt="Meet Asunción"
+              className="h-10 w-auto"
+            />
           </Link>
 
           {/* Desktop nav */}
