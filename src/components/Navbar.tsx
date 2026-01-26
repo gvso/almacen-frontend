@@ -236,7 +236,7 @@ function Navbar() {
                   }`}
               >
                 <Icon className="h-5 w-5" />
-                <span className="font-medium">{t(labelKey)}</span>
+                <span className="text-sm font-medium">{t(labelKey)}</span>
               </Link>
             ))}
 
@@ -258,7 +258,7 @@ function Navbar() {
                   }`}
               >
                 <Icon className="h-5 w-5" />
-                <span className="font-medium">{t(labelKey)}</span>
+                <span className="text-sm font-medium">{t(labelKey)}</span>
               </Link>
             ))}
           </div>

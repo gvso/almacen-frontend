@@ -122,8 +122,9 @@
   },
   "businesses": {
     "badge": "Recomendaciones Locales",
-    "title": "Lugares que Amamos",
-    "description": "Todavía estamos trabajando en el contenido de este sitio. Si necesitás información sobre restaurantes, alquiler de autos o cualquier otro tema, por favor avisanos y estaremos felices de ayudarte.",
+    "title": "Directorio de Negocios",
+    "description": "Hemos recopilado estos listados para ayudarte a encontrar información rápidamente, pero ten en cuenta que no respaldamos ni estamos afiliados con ninguno de los negocios mencionados. Este directorio es solo para fines informativos. Es tu responsabilidad hacer tu propia investigación; no somos responsables de ninguna interacción o transacción entre vos y estos terceros.",
+    "disclaimer": "Todavía estamos trabajando en el contenido de este sitio. Si necesitás información sobre restaurantes, alquiler de autos o cualquier otro tema, por favor avisanos y estaremos felices de ayudarte.",
     "loadError": "No se pudieron cargar las recomendaciones. Por favor, inténtalo de nuevo más tarde.",
     "empty": "Aún no hay recomendaciones disponibles."
   }

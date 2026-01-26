@@ -82,8 +82,11 @@ export default function BusinessesPage() {
             <h1 className="mb-6 text-4xl font-bold tracking-tight text-white md:text-5xl">
               {t("businesses.title")}
             </h1>
-            <p className="text-lg leading-relaxed text-white/90 md:text-xl">
+            <p className="text-md leading-relaxed text-white/90 md:text-lg">
               {t("businesses.description")}
+            </p>
+            <p className="mt-4 text-sm leading-relaxed text-white/80">
+              {t("businesses.disclaimer")}
             </p>
           </div>
         </div>

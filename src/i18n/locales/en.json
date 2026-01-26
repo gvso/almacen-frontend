@@ -122,8 +122,9 @@
   },
   "businesses": {
     "badge": "Local Recommendations",
-    "title": "Places We Love",
-    "description": "We're still working on the content for this site. If you need info about restaurants, car rental or any other topic please let us know and we'll be happy to help you.",
+    "title": "Business Directory",
+    "description": "We've gathered these listings to help you find information quickly, but please note that we do not endorse, and are not affiliated with, any of the businesses mentioned. This directory is for informational purposes only. It is your responsibility to do your own research; we are not responsible for any interactions or transactions between you and these third parties.",
+    "disclaimer": "We're still working on the content for this site. If you need info about restaurants, car rental or any other topic please let us know and we'll be happy to help you.",
     "loadError": "Failed to load recommendations. Please try again later.",
     "empty": "No recommendations available yet."
   }
